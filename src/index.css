@@ -390,3 +390,14 @@ footer {
   h1 { font-size: 2.2rem; }
   h2 { font-size: 1.6rem; }
 }
+
+/* more */
+.welcome-logo {
+    width:40vw;
+    height:auto;
+    float:right;
+    position:relative;
+    padding-top:7.5vh;
+    padding-right:7.5vw;
+    z-index:100;
+}

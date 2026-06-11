@@ -1,4 +1,6 @@
 import './index.css'
+import logo from './assets/logo.png'
+import logo_sleep from './assets/logo_sleep.png'
 
 function App() {
   return (
@@ -16,6 +18,7 @@ function App() {
         </ul>
         <a href="#register" className="nav-register">Register →</a>
       </nav>
+      <img src={logo} className="welcome-logo"></img>
 
       {/* ── Section 1 · Hero ── */}
       <section id="hero" className="section section-1">
