@@ -34,6 +34,7 @@ function App() {
               <a href="#about" className="btn-outline">Learn More</a>
             </div>
           </div>
+
         </div>
       </section>
 

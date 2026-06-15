@@ -1,3 +1,31 @@
+@font-face {
+  font-family: 'Great Vibes';
+  src: url('/fonts/GreatVibes-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Delius';
+  src: url('/fonts/Delius-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/fonts/DM_Sans/DMSans-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/fonts/DM_Sans/DMSans-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -9,7 +37,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Delius', cursive;
   background: linear-gradient(
     180deg,
     #F5E2FF 0%,
@@ -115,6 +143,7 @@ nav {
 }
 
 h1 {
+  font-family: 'Great Vibes', cursive;
   font-size: clamp(2.6rem, 6vw, 5rem);
   font-weight: 800;
   letter-spacing: -0.025em;
@@ -123,6 +152,7 @@ h1 {
 }
 
 h2 {
+  font-family: 'Great Vibes', cursive;
   font-size: clamp(1.8rem, 3.5vw, 2.8rem);
   font-weight: 700;
   letter-spacing: -0.02em;
