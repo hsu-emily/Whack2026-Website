@@ -182,7 +182,7 @@ h2 {
 }
 
 .title-whale {
-  width: 100%;
+  width: 50%;
   max-width: 600px;
   height: auto;
   /*flex-shrink: 0;*/
