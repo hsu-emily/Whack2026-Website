@@ -42,7 +42,7 @@ function App() {
       <section id="about" className="section section-2">
         <div className="section-inner">
           <span className="eyebrow">What is WHACK?</span>
-          <h2>36 hours. Infinite possibilities.</h2>
+          <h2>What is WHACK?</h2>
           <p className="section-lead">
             WHACK brings together curious minds from across the country for a
             weekend of hacking, learning, and community. No experience required —
@@ -77,7 +77,7 @@ function App() {
       <section id="stats" className="section section-3">
         <div className="section-inner centered">
           <span className="eyebrow">By the Numbers</span>
-          <h2>WHACK By the Numbers</h2>
+          <h1>By the Numbers</h1>
           <p className="section-lead">
             Every year WHACK grows bigger. Here's a snapshot of what we accomplished together last year.
           </p>
@@ -113,8 +113,8 @@ function App() {
       {/* ── Section 4 · Schedule ── */}
       <section id="schedule" className="section section-4">
         <div className="section-inner">
-          <span className="eyebrow">The Schedule</span>
-          <h2>Weekend at a glance</h2>
+          <span className="eyebrow">Schedule</span>
+          <h1>The Schedule</h1>
           <p className="section-lead">
             From check-in to closing ceremonies, every moment is designed to fuel your creativity.
           </p>
@@ -145,7 +145,7 @@ function App() {
       <section id="prizes" className="section section-5">
         <div className="section-inner centered">
           <span className="eyebrow">Tracks</span>
-          <h2>Win big. Build bigger.</h2>
+          <h1>Tracks</h1>
           <p className="section-lead">
             Over $30,000 in prizes across general tracks and sponsor challenges.
           </p>
@@ -188,7 +188,7 @@ function App() {
       <section id="sponsors" className="section section-6">
         <div className="section-inner centered">
           <span className="eyebrow">Sponsors</span>
-          <h2>Backed by the best.</h2>
+          <h1>Sponsors</h1>
           <p className="section-lead">
             WHACK is made possible by industry partners who believe in the next
             generation of builders. Interested in sponsoring?{' '}
@@ -221,7 +221,7 @@ function App() {
       <section id="faq" className="section section-7">
         <div className="section-inner">
           <span className="eyebrow">FAQ</span>
-          <h2>Got questions?</h2>
+          <h1>Frequently Asked Questions</h1>
           <p className="section-lead">
             Here are the most common questions we get. Still curious?{' '}
             <a href="mailto:hello@whack.ucsc.edu" style={{ color: 'white' }}>Email us →</a>
