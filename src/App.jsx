@@ -1,4 +1,5 @@
 import './index.css'
+import whaleJump from './assets/whale_jump.png'
 
 function App() {
   return (
@@ -19,16 +20,19 @@ function App() {
 
       {/* ── Section 1 · Hero ── */}
       <section id="hero" className="section section-1">
-        <div className="section-inner">
-          <span className="eyebrow">November 10-12, 2026 · Wellesley College</span>
-          <h1>Build Something<br />That Matters.</h1>
-          <p className="section-lead">
-            WHACK is a 36-hour hackathon where students, designers, and engineers
-            come together to turn bold ideas into working products.
-          </p>
-          <div className="hero-actions">
-            <a href="#register" className="btn-primary">Apply Now</a>
-            <a href="#about" className="btn-outline">Learn More</a>
+        <div className="section-inner title-inner">
+          <img src={whaleJump} alt="whale logo" className="title-whale" />
+          <div className="title-text">
+            <span className="eyebrow">November 10-12, 2026 · Wellesley College</span>
+            <h1>Build Something<br />That Matters.</h1>
+            <p className="section-lead">
+              WHACK is a 36-hour hackathon where students, designers, and engineers
+              come together to turn bold ideas into working products.
+            </p>
+            <div className="hero-actions">
+              <a href="#register" className="btn-primary">Apply Now</a>
+              <a href="#about" className="btn-outline">Learn More</a>
+            </div>
           </div>
         </div>
       </section>
