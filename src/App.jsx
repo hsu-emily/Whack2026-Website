@@ -11,7 +11,7 @@ function App() {
           <li><a href="#about">About</a></li>
           <li><a href="#stats">By the Numbers</a></li>
           <li><a href="#schedule">Schedule</a></li>
-          <li><a href="#prizes">Prizes</a></li>
+          <li><a href="#prizes">Tracks</a></li>
           <li><a href="#sponsors">Sponsors</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
@@ -24,7 +24,7 @@ function App() {
           <img src={whaleJump} alt="whale logo" className="title-whale" />
           <div className="title-text">
             <span className="eyebrow">November 10-12, 2026 · Wellesley College</span>
-            <h1>Build Something<br />That Matters.</h1>
+            <h1>Wish upon<br />a Whale</h1>
             <p className="section-lead">
               WHACK is a 36-hour hackathon where students, designers, and engineers
               come together to turn bold ideas into working products.
@@ -77,7 +77,7 @@ function App() {
       <section id="stats" className="section section-3">
         <div className="section-inner centered">
           <span className="eyebrow">By the Numbers</span>
-          <h2>WHACK 2025 by the numbers</h2>
+          <h2>WHACK By the Numbers</h2>
           <p className="section-lead">
             Every year WHACK grows bigger. Here's a snapshot of what we accomplished together last year.
           </p>
@@ -113,7 +113,7 @@ function App() {
       {/* ── Section 4 · Schedule ── */}
       <section id="schedule" className="section section-4">
         <div className="section-inner">
-          <span className="eyebrow">Schedule</span>
+          <span className="eyebrow">The Schedule</span>
           <h2>Weekend at a glance</h2>
           <p className="section-lead">
             From check-in to closing ceremonies, every moment is designed to fuel your creativity.
@@ -144,7 +144,7 @@ function App() {
       {/* ── Section 5 · Prizes ── */}
       <section id="prizes" className="section section-5">
         <div className="section-inner centered">
-          <span className="eyebrow">Prizes</span>
+          <span className="eyebrow">Tracks</span>
           <h2>Win big. Build bigger.</h2>
           <p className="section-lead">
             Over $30,000 in prizes across general tracks and sponsor challenges.
