@@ -41,8 +41,7 @@ function App() {
       {/* ── Section 2 · About ── */}
       <section id="about" className="section section-2">
         <div className="section-inner">
-          <span className="eyebrow">What is WHACK?</span>
-          <h2>What is WHACK?</h2>
+          <h1>What is whack?</h1>
           <p className="section-lead">
             WHACK brings together curious minds from across the country for a
             weekend of hacking, learning, and community. No experience required —
@@ -76,7 +75,6 @@ function App() {
       {/* ── Section 3 · Stats ── */}
       <section id="stats" className="section section-3">
         <div className="section-inner centered">
-          <span className="eyebrow">By the Numbers</span>
           <h1>By the Numbers</h1>
           <p className="section-lead">
             Every year WHACK grows bigger. Here's a snapshot of what we accomplished together last year.
@@ -113,7 +111,6 @@ function App() {
       {/* ── Section 4 · Schedule ── */}
       <section id="schedule" className="section section-4">
         <div className="section-inner">
-          <span className="eyebrow">Schedule</span>
           <h1>The Schedule</h1>
           <p className="section-lead">
             From check-in to closing ceremonies, every moment is designed to fuel your creativity.
@@ -144,7 +141,6 @@ function App() {
       {/* ── Section 5 · Prizes ── */}
       <section id="prizes" className="section section-5">
         <div className="section-inner centered">
-          <span className="eyebrow">Tracks</span>
           <h1>Tracks</h1>
           <p className="section-lead">
             Over $30,000 in prizes across general tracks and sponsor challenges.
@@ -187,7 +183,6 @@ function App() {
       {/* ── Section 6 · Sponsors ── */}
       <section id="sponsors" className="section section-6">
         <div className="section-inner centered">
-          <span className="eyebrow">Sponsors</span>
           <h1>Sponsors</h1>
           <p className="section-lead">
             WHACK is made possible by industry partners who believe in the next
@@ -220,7 +215,6 @@ function App() {
       {/* ── Section 7 · FAQ ── */}
       <section id="faq" className="section section-7">
         <div className="section-inner">
-          <span className="eyebrow">FAQ</span>
           <h1>Frequently Asked Questions</h1>
           <p className="section-lead">
             Here are the most common questions we get. Still curious?{' '}
@@ -247,7 +241,6 @@ function App() {
       {/* ── Section 8 · Register CTA ── */}
       <section id="register" className="section section-8">
         <div className="section-inner centered">
-          <span className="eyebrow">Join Us</span>
           <h2>Ready to build?</h2>
           <p className="section-lead">
             Applications for WHACK 2026 open August 15. Spots are limited —
