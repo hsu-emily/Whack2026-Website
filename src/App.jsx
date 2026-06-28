@@ -24,7 +24,7 @@ function App() {
         <div className="section-inner title-inner">
           <img src={whaleJump} alt="whale logo" className="title-whale" />
           <div className="title-text">
-            <span className="eyebrow">November 10-12, 2026 · Wellesley College</span>
+            <span className="eyebrow">November 20-22, 2026 · Wellesley College</span>
             <h1>Wish upon<br />a Whale</h1>
             <p className="section-lead">
               WHACK is a 36-hour hackathon where students, designers, and engineers
