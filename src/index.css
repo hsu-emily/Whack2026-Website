@@ -179,13 +179,15 @@ h2 {
   display: flex;
   align-items: flex;
   gap: 48px;
+  align-items: center;
 }
 
 .title-whale {
   width: 50%;
   max-width: 600px;
   height: auto;
-  /*flex-shrink: 0;*/
+  object-fit: contain
+  /* flex-shrink: 0; */
 }
 
 /*.title-text { flex: 1; }*/
@@ -434,6 +436,8 @@ footer {
   .section { padding: 100px 24px 64px; }
   h1 { font-size: 2.2rem; }
   h2 { font-size: 1.6rem; }
+  .title-inner { flex-direction: column; text-align: center; gap: 24px; }
+  .title-whale { width: 80%; max-width: 300px; }
   .hero-inner { flex-direction: column; align-items: flex-start; gap: 28px; }
   .hero-whale { width: 60%; }
 }

@@ -1,5 +1,6 @@
 import './index.css'
 import whaleJump from './assets/whale_jump.png'
+import yellowStar from './assets/yellow_star.png'
 
 function App() {
   return (
