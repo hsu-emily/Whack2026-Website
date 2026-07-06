@@ -309,46 +309,65 @@ h2 {
 .timeline-content h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
 .timeline-content p  { font-size: 0.85rem; opacity: 0.55; line-height: 1.5; }
 
-/* ── Section 5 – Prizes ─────────────────────── */
+/* ── Section 5 – Tracks ─────────────────────── */
 .section-5 { color: white; }
 
-.prizes {
+/* the canvas is absolutely positioned inside the section, so the section
+   itself must be a positioning context and clip any overdraw */
+.galaxy-section {
+  position: relative;
+  overflow: hidden;
+}
+ 
+.galaxy-section .galaxy-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* never intercepts clicks on cards/links */
+  z-index: 0;
+}
+ 
+/* keep the real content above the canvas */
+.galaxy-section .section-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.tracks {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: minmax(0, 640px);
+  justify-content: start;
   gap: 18px;
   margin-top: 2rem;
 }
 
-.prize-card {
+.track-card {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
   padding: 32px 26px;
-  text-align: center;
+  text-align: left;
 }
 
-.prize-card.first {
+.track-card.first {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 255, 255, 0.28);
 }
 
-.prize-rank {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  opacity: 0.45;
-  margin-bottom: 10px;
-}
-
-.prize-amount {
-  font-size: 2.2rem;
+.track-name {
+  /*font-family: 'Great Vibes';*/
+  font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-bottom: 8px;
 }
 
-.prize-desc { font-size: 0.84rem; opacity: 0.55; line-height: 1.5; }
+.track-desc { 
+  font-size: 0.8rem; 
+  opacity: 0.55; 
+  line-height: 1.5; 
+}
 
 /* ── Section 6 – Sponsors ───────────────────── */
 .section-6 { color: white; }

@@ -1,5 +1,6 @@
 import './index.css'
 import whaleJump from './assets/whale_jump.png'
+import GalaxyStream from './GalaxyStream'
 
 function App() {
   return (
@@ -11,7 +12,7 @@ function App() {
           <li><a href="#about">About</a></li>
           <li><a href="#stats">By the Numbers</a></li>
           <li><a href="#schedule">Schedule</a></li>
-          <li><a href="#prizes">Tracks</a></li>
+          <li><a href="#tracks">Tracks</a></li>
           <li><a href="#sponsors">Sponsors</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
@@ -141,44 +142,24 @@ function App() {
         </div>
       </section>
 
-      {/* ── Section 5 · Prizes ── */}
-      <section id="prizes" className="section section-5">
+      {/* ── Section 5 · Tracks ── */}
+      <section id="tracks" className="section section-5 galaxy-section">
+        <GalaxyStream variant="galaxy" />
         <div className="section-inner centered">
           <span className="eyebrow">Tracks</span>
           <h1>Tracks</h1>
-          <p className="section-lead">
-            Over $30,000 in prizes across general tracks and sponsor challenges.
-          </p>
-          <div className="prizes">
-            <div className="prize-card first">
-              <div className="prize-rank">Grand Prize</div>
-              <div className="prize-amount">$5,000</div>
-              <div className="prize-desc">Best overall hack of the weekend, judged across all tracks.</div>
+          <div className="tracks">
+            <div className="track-card first">
+              <div className="track-name">Better Worlds: Dreaming of a better future</div>
+              <div className="track-desc">Design solutions that reimagine society. Tackle challenges like accessibility, education, sustainability, and equity to turn hopeful visions into meaningful change for communities around the world.</div>
             </div>
-            <div className="prize-card">
-              <div className="prize-rank">2nd Place</div>
-              <div className="prize-amount">$2,500</div>
-              <div className="prize-desc">Runner-up with strong technical execution and presentation.</div>
+            <div className="track-card">
+              <div className="track-name">Beyond Reality: Imagining far and wide</div>
+              <div className="track-desc">Push the boundaries of technology. Build cutting-edge tools, platforms, or systems that explore what’s next—whether it’s AI, VR/AR, cybersecurity, or entirely new ways of thinking.</div>
             </div>
-            <div className="prize-card">
-              <div className="prize-rank">3rd Place</div>
-              <div className="prize-amount">$1,000</div>
-              <div className="prize-desc">Third place with outstanding creativity and impact.</div>
-            </div>
-            <div className="prize-card">
-              <div className="prize-rank">Best Beginner</div>
-              <div className="prize-amount">$1,000</div>
-              <div className="prize-desc">Top project from a first-time hacker team.</div>
-            </div>
-            <div className="prize-card">
-              <div className="prize-rank">Best Design</div>
-              <div className="prize-amount">$750</div>
-              <div className="prize-desc">Outstanding UX, accessibility, and visual craftsmanship.</div>
-            </div>
-            <div className="prize-card">
-              <div className="prize-rank">Best Social Impact</div>
-              <div className="prize-amount">$750</div>
-              <div className="prize-desc">Project with the most meaningful real-world impact.</div>
+            <div className="track-card">
+              <div className="track-name">In Your Wildest Dreams: Open category</div>
+              <div className="track-desc">No rules, no limits. Let your creativity run free and bring your most imaginative ideas to life. Could be practical, playful or completely out-of-the-box.</div>
             </div>
           </div>
         </div>
