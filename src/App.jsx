@@ -1,10 +1,43 @@
 import './index.css'
 import whaleJump from './assets/whale_jump.png'
 import yellowStar from './assets/yellow_star.png'
+import { useState, useEffect } from 'react'
 
 function App() {
+  const [scrollProgress, setScrollProgress] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight
+      if (totalHeight > 0) {
+        const progress = window.scrollY / totalHeight
+        setScrollProgress(progress)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // X-axis: Parabolic swing (Starts right, arcs left at 50% scroll, returns right)
+  const leftPosition = 85 - 280 * scrollProgress * (1 - scrollProgress)
+  
+  // Y-axis: Starts exactly halfway down the screen (50vh) 
+  // As you scroll, it drops by an additional percentage of the viewport 
+  // to give the illusion of tracking down the page content.
+  const topPosition = 50 + (scrollProgress * 20)
   return (
     <>
+      {/* ── Floating Scrolling Star ── */}
+      <img 
+        src={yellowStar} 
+        alt="floating star" 
+        className="scrolling-star"
+        style={{
+          left: `${leftPosition}vw`,
+          top: `${topPosition}vh`
+        }}
+      />
       {/* ── Nav ── */}
       <nav>
         <a href="#hero" className="nav-logo">WHACK 2026</a>

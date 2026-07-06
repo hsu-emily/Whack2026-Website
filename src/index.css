@@ -429,6 +429,17 @@ footer {
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
+/* ── Scrolling star ─────────────────────────────── */
+.scrolling-star {
+  position: fixed;
+  width: 100px;
+  height: auto;
+  z-index: 1000;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  will-change: left, top;
+}
+
 /* ── Responsive ─────────────────────────────── */
 @media (max-width: 680px) {
   nav { padding: 14px 20px; }
