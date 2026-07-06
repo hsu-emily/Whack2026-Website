@@ -19,12 +19,7 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // X-axis: Parabolic swing (Starts right, arcs left at 50% scroll, returns right)
   const leftPosition = 85 - 280 * scrollProgress * (1 - scrollProgress)
-  
-  // Y-axis: Starts exactly halfway down the screen (50vh) 
-  // As you scroll, it drops by an additional percentage of the viewport 
-  // to give the illusion of tracking down the page content.
   const topPosition = 50 + (scrollProgress * 20)
   return (
     <>
