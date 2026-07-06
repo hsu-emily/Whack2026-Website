@@ -1,10 +1,13 @@
+import { useEffect, useRef, useState } from 'react'
 import './index.css'
-import whaleJump from './assets/whale_jump.png'
+import whaleJump from './assets/whale_jump_temp.png'
 import GalaxyStream from './GalaxyStream'
 import yellowStar from './assets/yellow_star.png'
-import { useState, useEffect } from 'react'
+import Cloud from './components/Cloud'
+import Schedule from './components/Schedule'
 
 function App() {
+  const heroRef = useRef(null)
   const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
@@ -22,6 +25,38 @@ function App() {
 
   const leftPosition = 85 - 280 * scrollProgress * (1 - scrollProgress)
   const topPosition = 50 + (scrollProgress * 20)
+
+  // Part the hero clouds as you scroll down: 0 (closed) → 1 (fully parted).
+  useEffect(() => {
+    const hero = heroRef.current
+    if (!hero) return
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const h = hero.offsetHeight || 1
+      // progress through the hero's own scroll span
+      const p = Math.min(1, Math.max(0, window.scrollY / (h * 0.85)))
+      hero.style.setProperty('--part', p.toFixed(3))
+
+      // big scroll-driven whale arc: sweeps up-and-over along a parabola.
+      const arcX = p * 320                    // px: drifts right across the hero
+      const arcY = -Math.sin(p * Math.PI) * 220 // px: rises to a peak mid-scroll, comes back down
+      const arcRot = Math.sin(p * Math.PI) * 16 - p * 8 // tilts up then noses over
+      hero.style.setProperty('--whale-x', arcX.toFixed(1) + 'px')
+      hero.style.setProperty('--whale-y', arcY.toFixed(1) + 'px')
+      hero.style.setProperty('--whale-rot', arcRot.toFixed(2) + 'deg')
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [])
+
   return (
     <>
       {/* ── Floating Scrolling Star ── */}
@@ -38,8 +73,6 @@ function App() {
       <nav>
         <a href="#hero" className="nav-logo">WHACK 2026</a>
         <ul className="nav-links">
-          <li><a href="#about">About</a></li>
-          <li><a href="#stats">By the Numbers</a></li>
           <li><a href="#schedule">Schedule</a></li>
           <li><a href="#tracks">Tracks</a></li>
           <li><a href="#sponsors">Sponsors</a></li>
@@ -49,122 +82,107 @@ function App() {
       </nav>
 
       {/* ── Section 1 · Hero ── */}
-      <section id="hero" className="section section-1">
+      <section id="hero" className="section section-1" ref={heroRef}>
+        {/* big crescent moon behind everything */}
+        <div className="hero-moon" aria-hidden="true" />
+
+        {/* scattered stars */}
+        <div className="star-field" aria-hidden="true">
+          <span className="sky-star sky-star-y" style={{ left: '58%', top: '22%', '--s': '18px' }} />
+          <span className="sky-star" style={{ left: '68%', top: '14%', '--s': '13px' }} />
+          <span className="sky-star sky-star-y" style={{ left: '82%', top: '34%', '--s': '15px' }} />
+          <span className="sky-star" style={{ left: '20%', top: '52%', '--s': '11px' }} />
+          <span className="sky-star sky-star-y" style={{ left: '14%', top: '40%', '--s': '13px' }} />
+          <span className="sky-star" style={{ left: '76%', top: '58%', '--s': '10px' }} />
+        </div>
+
+        {/* thin cloud wisps up top — squashed + extra-fuzzy so they read as sky streaks */}
+        <div className="cloud-layer cloud-layer-top" aria-hidden="true">
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '2%', top: '12%' }}>
+            <Cloud colors={['#ffffff', '#eef4ff', '#dbe8ff']} width={340} grain={0.08} fuzziness={54} opacity={0.55}
+              drift driftSpeed={17} style={{ transform: 'scaleY(0.55)', transformOrigin: '50% 50%' }} />
+          </div>
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '18%', top: '30%' }}>
+            <Cloud colors={['#ffffff', '#f0f5ff', '#d5e6ff']} width={240} grain={0.08} fuzziness={56} opacity={0.4}
+              drift driftSpeed={21} style={{ transform: 'scaleY(0.5)', transformOrigin: '50% 50%' }} />
+          </div>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '4%', top: '20%' }}>
+            <Cloud colors={['#ffffff', '#f3ecff', '#e2d6ff']} width={280} grain={0.08} fuzziness={54} opacity={0.5}
+              drift driftSpeed={14} style={{ transform: 'scaleY(0.55)', transformOrigin: '50% 50%' }} />
+          </div>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '22%', top: '8%' }}>
+            <Cloud colors={['#ffffff', '#f6efff', '#e8dcff']} width={200} grain={0.08} fuzziness={56} opacity={0.38}
+              drift driftSpeed={19} style={{ transform: 'scaleY(0.5)', transformOrigin: '50% 50%' }} />
+          </div>
+        </div>
+
+        {/* back + mid cloud bank — sits BEHIND the whale */}
+        <div className="cloud-bank" aria-hidden="true">
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '-14%', bottom: '-2%' }}>
+            <Cloud colors={['#ffffff', '#eaf1ff', '#cddffb']} width={760} grain={0.08} fuzziness={56} opacity={0.75}
+              drift driftSpeed={22} style={{ transform: 'scaleY(0.62)', transformOrigin: '50% 100%' }} />
+          </div>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '-14%', bottom: '-2%' }}>
+            <Cloud colors={['#ffffff', '#f1eaff', '#d7cbfb']} width={740} grain={0.08} fuzziness={56} opacity={0.75}
+              drift driftSpeed={20} style={{ transform: 'scaleY(0.62)', transformOrigin: '50% 100%' }} />
+          </div>
+          {/* offset puffs filling the gap between back and front layers */}
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '22%', bottom: '2%' }}>
+            <Cloud colors={['#ffffff', '#fff2f9', '#ffdcef']} width={440} grain={0.08} fuzziness={54} opacity={0.8}
+              drift driftSpeed={21} style={{ transform: 'scaleY(0.6)', transformOrigin: '50% 100%' }} />
+          </div>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '20%', bottom: '0%' }}>
+            <Cloud colors={['#ffffff', '#eef6ff', '#cfe6ff']} width={460} grain={0.08} fuzziness={54} opacity={0.8}
+              drift driftSpeed={23} style={{ transform: 'scaleY(0.6)', transformOrigin: '50% 100%' }} />
+          </div>
+        </div>
+
         <div className="section-inner title-inner">
-          <img src={whaleJump} alt="whale logo" className="title-whale" />
+          <div className="title-whale-wrap">
+            <img src={whaleJump} alt="whale logo" className="title-whale whale-arc" />
+          </div>
           <div className="title-text">
+            <span className="title-kicker">Whack 2026</span>
             <span className="eyebrow">November 20-22, 2026 · Wellesley College</span>
             <h1>Wish upon<br />a Whale</h1>
-            <p className="section-lead">
-              WHACK is a 36-hour hackathon where students, designers, and engineers
-              come together to turn bold ideas into working products.
-            </p>
-            <div className="hero-actions">
-              <a href="#register" className="btn-primary">Apply Now</a>
-              <a href="#about" className="btn-outline">Learn More</a>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── Section 2 · About ── */}
-      <section id="about" className="section section-2">
-        <div className="section-inner">
-          <h1>What is whack?</h1>
-          <p className="section-lead">
-            WHACK brings together curious minds from across the country for a
-            weekend of hacking, learning, and community. No experience required —
-            just bring your ideas.
-          </p>
-          <div className="cards">
-            <div className="card">
-              <div className="card-icon">🛠</div>
-              <h3>Build</h3>
-              <p>Prototype anything — apps, hardware, art, tools. If you can dream it, you can hack it.</p>
-            </div>
-            <div className="card">
-              <div className="card-icon">🧠</div>
-              <h3>Learn</h3>
-              <p>Workshops, mentors, and tech talks from industry leaders throughout the weekend.</p>
-            </div>
-            <div className="card">
-              <div className="card-icon">🤝</div>
-              <h3>Connect</h3>
-              <p>Network with 400+ students, founders, and engineers from across the region.</p>
-            </div>
-            <div className="card">
-              <div className="card-icon">🚀</div>
-              <h3>Launch</h3>
-              <p>Demo your project to judges and sponsors. Real prizes, real feedback, real impact.</p>
-            </div>
           </div>
         </div>
-      </section>
 
-      {/* ── Section 3 · Stats ── */}
-      <section id="stats" className="section section-3">
-        <div className="section-inner centered">
-          <h1>By the Numbers</h1>
-          <p className="section-lead">
-            Every year WHACK grows bigger. Here's a snapshot of what we accomplished together last year.
-          </p>
-          <div className="stats">
-            <div className="stat">
-              <div className="stat-number">450+</div>
-              <div className="stat-label">Hackers</div>
-            </div>
-            <div className="stat">
-              <div className="stat-number">36h</div>
-              <div className="stat-label">Hacking time</div>
-            </div>
-            <div className="stat">
-              <div className="stat-number">120</div>
-              <div className="stat-label">Projects</div>
-            </div>
-            <div className="stat">
-              <div className="stat-number">$30K</div>
-              <div className="stat-label">In prizes</div>
-            </div>
-            <div className="stat">
-              <div className="stat-number">40+</div>
-              <div className="stat-label">Workshops</div>
-            </div>
-            <div className="stat">
-              <div className="stat-number">25+</div>
-              <div className="stat-label">Sponsors</div>
-            </div>
+        {/* front cloud bank — sits IN FRONT of the whale so it rises out of the clouds */}
+        <div className="cloud-bank cloud-bank-front" aria-hidden="true">
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '2%', bottom: '-8%' }}>
+            <Cloud colors={['#ffffff', '#ffeef7', '#ffd3ea']} width={580} grain={0.08} fuzziness={52} opacity={0.88}
+              drift driftSpeed={18} style={{ transform: 'scaleY(0.58)', transformOrigin: '50% 100%' }} />
+          </div>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '0%', bottom: '-10%' }}>
+            <Cloud colors={['#ffffff', '#eaf4ff', '#c6e2ff']} width={620} grain={0.08} fuzziness={52} opacity={0.88}
+              drift driftSpeed={16} style={{ transform: 'scaleY(0.58)', transformOrigin: '50% 100%' }} />
+          </div>
+          <div className="cloud-drift cloud-center" style={{ position: 'absolute', left: '50%', bottom: '-14%' }}>
+            <Cloud colors={['#ffffff', '#f7fbff', '#e4effd']} width={780} grain={0.06} fuzziness={50} opacity={0.95}
+              drift driftSpeed={24} style={{ transform: 'scaleY(0.6)', transformOrigin: '50% 100%' }} />
           </div>
         </div>
       </section>
 
       {/* ── Section 4 · Schedule ── */}
       <section id="schedule" className="section section-4">
-        <div className="section-inner">
+        {/* cloud bed the hourglass rests in */}
+        <div className="cloud-layer cloud-layer-bottom" aria-hidden="true">
+          <Cloud color="#dfe8fb" width={520} grain={0.42} fuzziness={40} opacity={0.9}
+            drift driftSpeed={22}
+            style={{ position: 'absolute', left: '-8%', bottom: '-2%' }} />
+          <Cloud color="#e6ecff" width={480} grain={0.4} fuzziness={40} opacity={0.88}
+            drift driftSpeed={19}
+            style={{ position: 'absolute', right: '-6%', bottom: '4%' }} />
+          <Cloud color="#eef0ff" width={360} grain={0.4} opacity={0.8}
+            drift driftSpeed={16}
+            style={{ position: 'absolute', left: '34%', bottom: '-6%' }} />
+        </div>
+
+        <div className="section-inner centered">
           <h1>The Schedule</h1>
-          <p className="section-lead">
-            From check-in to closing ceremonies, every moment is designed to fuel your creativity.
-          </p>
-          <div className="timeline">
-            {[
-              { time: 'Fri 6pm',  title: 'Check-in & Opening', desc: 'Pick up your badge, grab dinner, and meet your fellow hackers.' },
-              { time: 'Fri 9pm',  title: 'Hacking Begins',      desc: 'The clock starts. Team up, ideate, and start building.' },
-              { time: 'Sat 10am', title: 'Morning Workshops',   desc: 'AI/ML, web dev, hardware, design thinking and more.' },
-              { time: 'Sat 3pm',  title: 'Sponsor Expo',        desc: 'Meet reps from top tech companies. Snag swag and opportunities.' },
-              { time: 'Sat 8pm',  title: 'Midnight Snacks',     desc: 'Keep the energy up with food, games, and mini-challenges.' },
-              { time: 'Sun 9am',  title: 'Submissions Due',     desc: 'Final commits, demos recorded. Time to clean up your README.' },
-              { time: 'Sun 1pm',  title: 'Demos & Judging',     desc: 'Present your project to judges and the whole WHACK community.' },
-              { time: 'Sun 4pm',  title: 'Closing Ceremony',    desc: 'Awards, announcements, and a look ahead to WHACK 2027.' },
-            ].map((item) => (
-              <div className="timeline-item" key={item.time}>
-                <div className="timeline-time">{item.time}</div>
-                <div className="timeline-content">
-                  <h3>{item.title}</h3>
-                  <p>{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Schedule />
         </div>
       </section>
 
