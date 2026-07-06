@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './index.css'
 import whaleJump from './assets/whale_jump_temp.png'
-import GalaxyStream from './GalaxyStream'
+import GalaxyStream from './components/GalaxyStream'
 import yellowStar from './assets/yellow_star.png'
 import Cloud from './components/Cloud'
 import Schedule from './components/Schedule'
