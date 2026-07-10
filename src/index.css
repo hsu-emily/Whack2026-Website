@@ -611,7 +611,13 @@ h2 {
 .day-event-desc  { font-size: 1.02rem; opacity: 0.6; line-height: 1.55; }
 
 /* ── Section 5 – Tracks ─────────────────────── */
-.section-5 { color: white; }
+/* paints its own slice of the day→night ramp so it chains with its neighbors:
+   picks up #4B3DBF where Schedule ends, hands off #2E3390 where Sponsors starts.
+   The galaxy canvas is transparent and draws additively over this. */
+.section-5 {
+  color: white;
+  background: linear-gradient(180deg, #4B3DBF 0%, #2E3390 100%);
+}
 
 /* the canvas is absolutely positioned inside the section, so the section
    itself must be a positioning context and clip any overdraw */
