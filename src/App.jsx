@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import './index.css'
 import whaleJump from './assets/whale_jump_temp.png'
 import GalaxyStream from './components/GalaxyStream'
-import yellowStar from './assets/yellow_star.png'
+// import yellowStar from './assets/yellow_star.png'
+import Star from './components/Star'
 import Cloud from './components/Cloud'
 import Schedule from './components/Schedule'
 
@@ -60,15 +61,21 @@ function App() {
   return (
     <>
       {/* ── Floating Scrolling Star ── */}
-      <img 
-        src={yellowStar} 
-        alt="floating star" 
+      <div 
         className="scrolling-star"
         style={{
+          position: 'fixed',
           left: `${leftPosition}vw`,
-          top: `${topPosition}vh`
+          top: `${topPosition}vh`,
+          transform: 'translate(-50%, -50%)',
+          width: '240px',  // Provides enough clipping margins for 3D bloom trails
+          height: '240px', 
+          pointerEvents: 'none',
+          zIndex: 100,
         }}
-      />
+      >
+        < Star />
+      </div>
       {/* ── Nav ── */}
       <nav>
         <a href="#hero" className="nav-logo">WHACK 2026</a>
