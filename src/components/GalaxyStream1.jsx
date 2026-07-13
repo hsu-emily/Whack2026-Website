@@ -3,14 +3,12 @@ import { useEffect, useRef } from 'react'
 /**
  * GalaxyStream — spiral-galaxy canvas background for the Tracks section.
  *
+ * Tuned to the mockup: the disc sits in the upper-right quadrant, tilted and
+ * heavily squashed (Andromeda-style), with a hot core and no falling trails —
+ * the left half of the section is left dark and quiet for the track list.
+ *
  * The canvas is transparent: the section's own gradient shows through.
  * Stars are drawn additively, so it reads best over a dark background.
- *
- * Usage:
- *   <section className="section section-5 galaxy-section">
- *     <GalaxyStream />
- *     <div className="section-inner">…</div>
- *   </section>
  *
  * ─── HOW THE GALAXY IS BUILT (so you can tune it) ────────────────────
  * Every star lives in flat "disc space" as (radius r, angle θ):
@@ -18,54 +16,51 @@ import { useEffect, useRef } from 'react'
  *   r = random^bias · R          bias < 1 packs stars toward the core
  *   θ = armAngle + winding·(r/R) + scatter
  *
- * armAngle spaces the arms evenly (2π / ARMS per arm). The winding term
- * makes each arm wrap around the center as radius grows — that IS the
- * spiral. scatter fuzzes stars off the exact arm line so arms look like
- * star clouds, not drawn curves.
- *
  * To render, each flat (r, θ) point is squashed in y (SQUASH) and then
- * rotated (TILT) — that fakes viewing the disc at an angle, like the
- * Andromeda photo. Rotation is animated by slowly adding to θ.
+ * rotated (TILT) — that fakes viewing the disc at an angle.
  * ─────────────────────────────────────────────────────────────────────
  */
 
 // ═══════════════════════ TUNE ME ═══════════════════════
 const CONFIG = {
   // ── placement (fractions of the section's width/height) ──
-  centerX: 0.69, // 0 = left edge, 1 = right edge
-  centerY: 0.42, // 0 = top, 1 = bottom
-  radius: 0.42, // disc radius as a fraction of min(sectionW, sectionH)
+  centerX: 0.74, // pushed right, mirroring the mockup
+  centerY: 0.34, // high in the section, behind/above the heading
+  radius: 0.46, // disc radius as a fraction of min(sectionW, sectionH)
 
   // ── 3D-ish orientation ──
-  tilt: -0.45, // rotation of the whole disc, radians (0 = horizontal)
-  squash: 0.42, // 1 = face-on circle, 0.2 = nearly edge-on
+  tilt: -0.38, // rotation of the whole disc, radians (0 = horizontal)
+  squash: 0.3, // 1 = face-on circle, 0.2 = nearly edge-on
 
-  // ── spiral shape ── ("stuff going around the center" lives here)
-  arms: 4, // number of spiral arms
-  winding: 4.6, // how far each arm wraps around, radians (higher = tighter spiral)
-  scatter: 0.55, // how far stars stray off the arm line (0 = razor-thin arms)
-  coreBias: 0.6, // <1 packs stars toward the core, 1 = uniform spread
+  // ── spiral shape ──
+  arms: 3,
+  winding: 5.6, // higher = tighter wrap
+  scatter: 0.5, // how far stars stray off the arm line
+  coreBias: 0.7, // <1 packs stars toward the core
 
   // ── population (all scaled by the `intensity` prop) ──
-  starCount: 1500, // points making up the arms + core
-  sparkleCount: 38, // 4-point sparkles seeded along the arms
-  heroStarCount: 8, // oversized breathing highlight stars
-  coreFraction: 0.28, // stars inside this radius fraction get warm/bright colors
+  starCount: 2000,
+  sparkleCount: 26,
+  heroStarCount: 6,
+  coreFraction: 0.22, // stars inside this radius fraction get warm/bright colors
 
   // ── motion ──
-  rotationSpeed: 0.02, // radians per second (positive = counterclockwise-ish)
-  twinkleAmount: 0.3, // 0 = steady stars, 0.5 = strong flicker
+  rotationSpeed: 0.015, // radians per second
+  twinkleAmount: 0.3,
 
-  // ── the two star trails peeling off the lower edge ──
+  // ── loose field stars scattered outside the disc ──
+  fieldCount: 90,
+
+  // ── star trails peeling off the disc (off: the mockup has none here) ──
   trails: {
-    enabled: true, // set false to show the disc alone
-    counts: [120, 70], // particles per trail
+    enabled: false,
+    counts: [120, 70],
   },
 }
 
 // palette — cores/highlights first array, arm body second
-const BRIGHT = ['#eef0ff', '#fff3d8', '#dcd2ff']
-const DEEP = ['#7c8ce0', '#5d6fd4', '#9aa8f2', '#b9a7ee']
+const BRIGHT = ['#fff6e2', '#eef0ff', '#ffe9c9', '#dcd2ff']
+const DEEP = ['#8f9be8', '#6d7ddb', '#a8b3f5', '#c2b0f2']
 // ═══════════════════════════════════════════════════════
 
 const TWO_PI = Math.PI * 2
@@ -127,10 +122,10 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
     let discStars = []
     let discSparkles = []
     let heroStars = []
+    let fieldStars = []
     let trails = []
 
     // pick a spiral-arm position in flat disc space
-    // frac ∈ (0,1] is the fractional radius; returns { r, theta }
     function armPoint(frac, armIndex, fuzz) {
       const armAngle = armIndex * (TWO_PI / C.arms)
       const spread = fuzz * (0.9 - frac * C.scatter) // arms tighten with radius
@@ -157,11 +152,26 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
         discStars.push({
           r,
           theta,
-          size: (inner ? 1.7 : 1.2) * (0.5 + Math.random() * 1.1),
-          alpha: inner ? 0.7 + Math.random() * 0.3 : 0.3 + Math.random() * 0.6,
-          tw: 0.6 + Math.random() * 1.6, // twinkle frequency
+          size: (inner ? 1.6 : 1.05) * (0.5 + Math.random() * 1.1),
+          alpha: inner ? 0.75 + Math.random() * 0.25 : 0.25 + Math.random() * 0.55,
+          tw: 0.6 + Math.random() * 1.6,
           phase: Math.random() * TWO_PI,
           color: inner ? pick(BRIGHT) : Math.random() < 0.22 ? pick(BRIGHT) : pick(DEEP),
+        })
+      }
+
+      // loose stars in the surrounding sky, so the disc doesn't float in a void
+      const nf = Math.round(C.fieldCount * intensity)
+      fieldStars = []
+      for (let i = 0; i < nf; i++) {
+        fieldStars.push({
+          x: Math.random(),
+          y: Math.random(),
+          size: 0.5 + Math.random() * 1.3,
+          alpha: 0.2 + Math.random() * 0.5,
+          tw: 0.4 + Math.random() * 1.4,
+          phase: Math.random() * TWO_PI,
+          color: Math.random() < 0.4 ? pick(BRIGHT) : pick(DEEP),
         })
       }
 
@@ -169,7 +179,7 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
       const ns = Math.round(C.sparkleCount * intensity)
       discSparkles = []
       for (let i = 0; i < ns; i++) {
-        const frac = 0.15 + Math.pow(Math.random(), 0.7) * 0.85
+        const frac = 0.2 + Math.pow(Math.random(), 0.7) * 0.8
         const { r, theta } = armPoint(frac, i % C.arms, (Math.random() - 0.5) * 1.3)
         discSparkles.push({
           r,
@@ -200,8 +210,8 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
       const particles = []
       for (let i = 0; i < count; i++) {
         particles.push({
-          s: Math.random(), // position along the curve, 0 → 1
-          lane: randn() * 0.6, // sideways offset across the trail
+          s: Math.random(),
+          lane: randn() * 0.6,
           drift: (Math.random() - 0.5) * 0.05,
           speed: speed * (0.65 + Math.random() * 0.7),
           size: 0.5 + Math.random() * 1.2,
@@ -220,8 +230,6 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
         return
       }
       const { cx, cy, R } = galaxy
-      // two bezier curves from the disc's lower edge to below the section;
-      // each has 4 control points: start, two pulls, end
       trails = [
         makeTrail(
           [
@@ -281,23 +289,36 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
       ctx.scale(1, C.squash)
       // wide violet halo
       let g = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 1.05)
-      g.addColorStop(0, 'rgba(140, 130, 240, 0.34)')
-      g.addColorStop(0.5, 'rgba(90, 90, 200, 0.14)')
+      g.addColorStop(0, 'rgba(150, 140, 245, 0.32)')
+      g.addColorStop(0.5, 'rgba(95, 95, 205, 0.13)')
       g.addColorStop(1, 'rgba(90, 90, 200, 0)')
       ctx.fillStyle = g
       ctx.beginPath()
       ctx.arc(0, 0, R * 1.05, 0, TWO_PI)
       ctx.fill()
-      // warm core
-      g = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 0.3)
-      g.addColorStop(0, 'rgba(255, 242, 214, 0.95)')
-      g.addColorStop(0.35, 'rgba(255, 226, 190, 0.4)')
+      // warm core — hotter and tighter than before, like the mockup's bulge
+      g = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 0.26)
+      g.addColorStop(0, 'rgba(255, 248, 228, 1)')
+      g.addColorStop(0.28, 'rgba(255, 229, 190, 0.55)')
       g.addColorStop(1, 'rgba(255, 226, 190, 0)')
       ctx.fillStyle = g
       ctx.beginPath()
-      ctx.arc(0, 0, R * 0.3, 0, TWO_PI)
+      ctx.arc(0, 0, R * 0.26, 0, TWO_PI)
       ctx.fill()
       ctx.restore()
+    }
+
+    function drawFieldStars(t) {
+      for (const s of fieldStars) {
+        const x = s.x * W
+        const y = s.y * H
+        ctx.globalAlpha = s.alpha * (0.65 + 0.35 * Math.sin(t * s.tw + s.phase))
+        ctx.fillStyle = s.color
+        ctx.beginPath()
+        ctx.arc(x, y, s.size, 0, TWO_PI)
+        ctx.fill()
+      }
+      ctx.globalAlpha = 1
     }
 
     function drawStars(t) {
@@ -342,7 +363,7 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
       ctx.lineCap = 'round'
       for (const tr of trails) {
         for (const p of tr.particles) {
-          p.s += p.speed * (0.45 + p.s) * dt // accelerate while falling
+          p.s += p.speed * (0.45 + p.s) * dt
           if (p.s > 1) {
             p.s -= 1
             p.lane = randn() * 0.6
@@ -354,7 +375,6 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
           const wobble = Math.sin(t * 0.6 + p.phase + p.s * 5) * 0.22
           const off = (p.lane + wobble) * tr.width * taper
 
-          // draw a short streak between s-δ and s
           const ds = Math.min(0.02, 0.006 + p.speed * 0.02)
           const s0 = Math.max(0, p.s - ds)
           const a1 = bezPoint(tr.pts, p.s)
@@ -379,6 +399,7 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
     function draw(t, dt = 0) {
       ctx.clearRect(0, 0, W, H) // transparent — section gradient shows through
       ctx.globalCompositeOperation = 'lighter' // additive star glow
+      drawFieldStars(t)
       drawGlows()
       drawStars(t)
       drawTrails(t, dt)

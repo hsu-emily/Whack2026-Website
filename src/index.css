@@ -647,6 +647,8 @@ h2 {
   justify-content: start;
   gap: 18px;
   margin-top: 2rem;
+  width: 120vw;
+  margin-left: calc(50% - 50vw + 288px);
 }
 
 .track-card {
