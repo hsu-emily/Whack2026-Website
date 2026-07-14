@@ -666,14 +666,14 @@ h2 {
 
 .track-name {
   /*font-family: 'Great Vibes';*/
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-bottom: 8px;
 }
 
 .track-desc {
-  font-size: 0.8rem;
+  font-size: 1rem;
   opacity: 0.55;
   line-height: 1.5;
 }
