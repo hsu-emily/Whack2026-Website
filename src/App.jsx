@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import './index.css'
-import whaleJump from './assets/whale_jump_temp.png'
+import whaleJump from './assets/whale_jump.png'
+import whaleSleep from './assets/whale_sleep.png'
+import pillow from './assets/pillow.png'
 import GalaxyStream from './components/GalaxyStream'
-import yellowStar from './assets/yellow_star.png'
+import Star from './components/Star'
 import Cloud from './components/Cloud'
 import Schedule from './components/Schedule'
 import WishingWell from './components/WishingWell'
@@ -61,15 +63,21 @@ function App() {
   return (
     <>
       {/* ── Floating Scrolling Star ── */}
-      <img 
-        src={yellowStar} 
-        alt="floating star" 
+      <div 
         className="scrolling-star"
         style={{
+          position: 'fixed',
           left: `${leftPosition}vw`,
-          top: `${topPosition}vh`
+          top: `${topPosition}vh`,
+          transform: 'translate(-50%, -50%)',
+          width: '240px',  // Provides enough clipping margins for 3D bloom trails
+          height: '240px', 
+          pointerEvents: 'none',
+          zIndex: 100,
         }}
-      />
+      >
+        < Star />
+      </div>
       {/* ── Nav ── */}
       <nav>
         <a href="#hero" className="nav-logo">WHACK 2026</a>
@@ -271,13 +279,20 @@ function App() {
 
       {/* ── Section 8 · Register CTA ── */}
       <section id="register" className="section section-8">
-        <div className="section-inner centered">
-          <h2>Ready to build?</h2>
-          <p className="section-lead">
-            Applications for WHACK 2026 open August 15. Spots are limited —
-            get on the list and be first to know.
-          </p>
-          <a href="mailto:hello@whack.ucsc.edu" className="btn-white">Apply for WHACK 2026</a>
+        <div className="section-inner register-inner">
+          <div className="register-content">
+            <h2>Ready to build?</h2>
+            <p className="section-lead">
+              Applications for WHACK 2026 open August 15. Spots are limited —
+              get on the list and be first to know.
+            </p>
+            <a href="mailto:hello@whack.ucsc.edu" className="btn-white">Apply for WHACK 2026</a>
+          </div>
+
+          <div className="register-illustration" aria-hidden="true">
+            <img src={pillow} alt="" className="register-pillow" />
+            <img src={whaleSleep} alt="Sleeping Whale" className="register-whale" />
+          </div>
         </div>
       </section>
 

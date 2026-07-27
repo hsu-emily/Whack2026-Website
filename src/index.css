@@ -735,6 +735,71 @@ h2 {
 .section-8 {
   color: white;
   background: linear-gradient(180deg, #0B1535 0%, #030C20 100%);
+  position: relative;
+  overflow: visible;
+  z-index: 2;
+}
+
+.register-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.register-content {
+  flex: 1;
+}
+
+.register-illustration {
+  position: relative;
+  width: 62%;
+  max-width: 780px;
+  flex-shrink: 0;
+  margin-right: -4%;
+}
+
+.register-pillow {
+  position: relative;
+  width: 85%;
+  height: auto;
+  object-fit: contain;
+  z-index: 1;
+  display: block;
+  opacity: 0.95;
+  animation: pillowBob 6s ease-in-out infinite;
+}
+
+.register-whale {
+  position: absolute;
+  top: -12%;
+  left: 22%;
+  width: 85%;
+  height: auto;
+  object-fit: contain;
+  z-index: 2;
+  animation: whaleBob 4.5s ease-in-out -1.2s infinite;
+}
+
+@keyframes pillowBob {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-3.5deg);
+  }
+}
+@keyframes whaleBob {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(0deg);
+  }
 }
 
 .btn-white {
@@ -748,7 +813,7 @@ h2 {
   text-decoration: none;
   transition: opacity 0.2s;
 }
-.btn-white:hover { opacity: 0.88; }
+.btn-white:hover { opacity: 0.88;}
 
 footer {
   text-align: center;
@@ -771,6 +836,7 @@ footer {
 }
 
 /* ── Responsive ─────────────────────────────── */
+
 @media (max-width: 680px) {
   nav { padding: 14px 20px; }
   .nav-links { display: none; }
@@ -782,12 +848,11 @@ footer {
   .hero-inner { flex-direction: column; align-items: flex-start; gap: 28px; }
   .hero-whale { width: 60%; }
 
-  /* Schedule: stack tabs under the glass on small screens */
   .schedule-stage { flex-direction: column; gap: 12px; }
   .day-tab-left, .day-tab-right { align-self: center; margin-top: 0; order: 3; }
   .hourglass-frame { order: 1; height: 300px; width: 220px; }
   .day-event { grid-template-columns: 74px 1fr; gap: 14px; }
 
-  /* fewer/softer clouds on mobile to save perf */
   .cloud-layer > *:nth-child(n+3) { display: none; }
+
 }
