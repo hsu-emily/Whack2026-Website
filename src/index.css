@@ -638,7 +638,13 @@ h2 {
 }
 
 /* ── Section 5 – Tracks ─────────────────────── */
-.section-5 { color: white; }
+/* paints its own slice of the day→night ramp so it chains with its neighbors:
+   picks up #4B3DBF where Schedule ends, hands off #2E3390 where Sponsors starts.
+   The galaxy canvas is transparent and draws additively over this. */
+.section-5 {
+  color: white;
+  background: linear-gradient(180deg, #4B3DBF 0%, #2E3390 100%);
+}
 
 /* the canvas is absolutely positioned inside the section, so the section
    itself must be a positioning context and clip any overdraw */
@@ -759,6 +765,71 @@ h2 {
 .section-8 {
   color: white;
   background: linear-gradient(180deg, #0B1535 0%, #030C20 100%);
+  position: relative;
+  overflow: visible;
+  z-index: 2;
+}
+
+.register-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.register-content {
+  flex: 1;
+}
+
+.register-illustration {
+  position: relative;
+  width: 62%;
+  max-width: 780px;
+  flex-shrink: 0;
+  margin-right: -4%;
+}
+
+.register-pillow {
+  position: relative;
+  width: 85%;
+  height: auto;
+  object-fit: contain;
+  z-index: 1;
+  display: block;
+  opacity: 0.95;
+  animation: pillowBob 6s ease-in-out infinite;
+}
+
+.register-whale {
+  position: absolute;
+  top: -12%;
+  left: 22%;
+  width: 85%;
+  height: auto;
+  object-fit: contain;
+  z-index: 2;
+  animation: whaleBob 4.5s ease-in-out -1.2s infinite;
+}
+
+@keyframes pillowBob {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-3.5deg);
+  }
+}
+@keyframes whaleBob {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(0deg);
+  }
 }
 
 .btn-white {
@@ -772,7 +843,7 @@ h2 {
   text-decoration: none;
   transition: opacity 0.2s;
 }
-.btn-white:hover { opacity: 0.88; }
+.btn-white:hover { opacity: 0.88;}
 
 footer {
   text-align: center;
@@ -795,6 +866,7 @@ footer {
 }
 
 /* ── Responsive ─────────────────────────────── */
+
 @media (max-width: 680px) {
   nav { padding: 14px 20px; }
   .nav-links { display: none; }
@@ -814,6 +886,6 @@ footer {
   .day-col-left, .day-col-right { margin-top: 0; justify-self: center; }
   .day-col.compact-hidden { display: none; }
 
-  /* fewer/softer clouds on mobile to save perf */
   .cloud-layer > *:nth-child(n+3) { display: none; }
+
 }
