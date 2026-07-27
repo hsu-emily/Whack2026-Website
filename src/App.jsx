@@ -5,6 +5,7 @@ import GalaxyStream from './components/GalaxyStream'
 import yellowStar from './assets/yellow_star.png'
 import Cloud from './components/Cloud'
 import Schedule from './components/Schedule'
+import WishingWell from './components/WishingWell'
 
 function App() {
   const heroRef = useRef(null)
@@ -212,16 +213,11 @@ function App() {
       <section id="sponsors" className="section section-6">
         <div className="section-inner centered">
           <h1>Sponsors</h1>
-          <p className="section-lead">
-            WHACK is made possible by industry partners who believe in the next
-            generation of builders. Interested in sponsoring?{' '}
-            <a href="mailto:sponsor@whack.ucsc.edu" style={{ color: 'white' }}>Reach out →</a>
-          </p>
           <div className="sponsor-tiers">
             <div className="sponsor-tier-label">Platinum</div>
             <div className="sponsor-row">
-              <span className="sponsor-pill lg">Anthropic</span>
-              <span className="sponsor-pill lg">GitHub</span>
+              <span className="sponsor-pill">Anthropic</span>
+              <span className="sponsor-pill">GitHub</span>
             </div>
             <div className="sponsor-tier-label">Gold</div>
             <div className="sponsor-row">
@@ -237,7 +233,14 @@ function App() {
               <span className="sponsor-pill">Linear</span>
             </div>
           </div>
+        <div className="well-wrap" style={{ width: '100%', height: '520px', position: 'relative' }}>
+            <WishingWell />
         </div>
+        </div>
+        <p className="section-lead">
+            Interested in sponsoring?{' '}
+            <a href="mailto:sponsor@whack.ucsc.edu" style={{ color: 'white' }}>Reach out →</a>
+        </p>
       </section>
 
       {/* ── Section 7 · FAQ ── */}

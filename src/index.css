@@ -704,7 +704,7 @@ h2 {
 }
 
 .sponsor-pill {
-  background: rgba(255, 255, 255, 0.08);
+  /*background: rgba(255, 255, 255, 0.08);*/
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 100px;
   padding: 11px 26px;
@@ -712,12 +712,7 @@ h2 {
   font-weight: 600;
 }
 
-.sponsor-pill.lg {
-  font-size: 1rem;
-  padding: 13px 32px;
-  background: rgba(255, 255, 255, 0.11);
-  border-color: rgba(255, 255, 255, 0.18);
-}
+/*add tiers later if needed*/
 
 /* ── Section 7 – FAQ ────────────────────────── */
 .section-7 {
