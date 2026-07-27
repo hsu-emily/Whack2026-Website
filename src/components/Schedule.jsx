@@ -4,10 +4,9 @@ import Hourglass from './Hourglass';
 /**
  * Schedule — "Wish upon a Whale" schedule section.
  *
- * A glowing 3D hourglass anchors the section; script heading above,
- * "day 1" / "day 2" flanking the glass. Selecting a day flows its events
- * into the panel below and fills the hourglass to reflect where that day
- * sits in the weekend.
+ * A glowing 3D hourglass anchors the center; "day 1" and its itinerary sit
+ * to the left, "day 2" and its itinerary to the right. Scrolling pours the
+ * water from the top bulb into the bottom.
  */
 
 const DAYS = {
@@ -35,11 +34,35 @@ const DAYS = {
   },
 };
 
+function DayColumn({ side, day, hiddenWhenCompact }) {
+  return (
+    <div className={`day-col day-col-${side}${hiddenWhenCompact ? ' compact-hidden' : ''}`}>
+      <div className="day-col-head">
+        <span className="day-col-label">{day.label}</span>
+        <span className="day-col-date">{day.date}</span>
+      </div>
+      <ul className="day-col-events">
+        {day.events.map((e) => (
+          <li className="day-col-event" key={e.time}>
+            <span className="day-col-time">{e.time}</span>
+            <span className="day-col-body">
+              <span className="day-col-title">{e.title}</span>
+              <span className="day-col-desc">{e.desc}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function Schedule() {
-  const [day, setDay] = useState(1);
   const [pour, setPour] = useState(0);
+  // Small screens collapse the flanking itineraries into a day toggle below
+  // the glass; `day` picks which itinerary shows there. On wide screens both
+  // columns render and the toggle is hidden, so this state has no effect.
+  const [day, setDay] = useState(1);
   const stageRef = useRef(null);
-  const active = DAYS[day];
 
   // Scroll-driven pour: as the hourglass travels up through the viewport,
   // water drips from the top bulb into the bottom. 0 = just entered view,
@@ -67,47 +90,32 @@ export default function Schedule() {
   }, []);
 
   return (
-    <>
-      <div className="schedule-stage" ref={stageRef}>
-        <button
-          className={`day-tab day-tab-left ${day === 1 ? 'is-active' : ''}`}
-          onClick={() => setDay(1)}
-        >
-          day 1
-        </button>
+    <div className="schedule-stage" ref={stageRef}>
+      <DayColumn side="left" day={DAYS[1]} hiddenWhenCompact={day !== 1} />
 
-        <div className="hourglass-frame">
-          <Hourglass
-            progress={pour}
-            style={{ pointerEvents: 'none' }}
-          />
-        </div>
-
-        <button
-          className={`day-tab day-tab-right ${day === 2 ? 'is-active' : ''}`}
-          onClick={() => setDay(2)}
-        >
-          day 2
-        </button>
+      <div className="hourglass-frame">
+        <Hourglass
+          progress={pour}
+          style={{ pointerEvents: 'none' }}
+        />
       </div>
 
-      <div className="day-panel" key={day}>
-        <div className="day-panel-head">
-          <span className="day-panel-label">{active.label}</span>
-          <span className="day-panel-date">{active.date}</span>
-        </div>
-        <ul className="day-events">
-          {active.events.map((e) => (
-            <li className="day-event" key={e.time}>
-              <span className="day-event-time">{e.time}</span>
-              <span className="day-event-body">
-                <span className="day-event-title">{e.title}</span>
-                <span className="day-event-desc">{e.desc}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
+      {/* only visible on small screens, below the glass */}
+      <div className="day-toggle" role="tablist" aria-label="Schedule day">
+        {[1, 2].map((n) => (
+          <button
+            key={n}
+            role="tab"
+            aria-selected={day === n}
+            className={`day-toggle-btn ${day === n ? 'is-active' : ''}`}
+            onClick={() => setDay(n)}
+          >
+            {DAYS[n].label}
+          </button>
+        ))}
       </div>
-    </>
+
+      <DayColumn side="right" day={DAYS[2]} hiddenWhenCompact={day !== 2} />
+    </div>
   );
 }
