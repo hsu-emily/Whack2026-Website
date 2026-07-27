@@ -62,7 +62,7 @@ function App() {
   return (
     <>
       {/* ── Floating Scrolling Star ── */}
-      <div 
+      <div
         className="scrolling-star"
         style={{
           position: 'fixed',
@@ -107,41 +107,81 @@ function App() {
         {/* thin cloud wisps up top — squashed + extra-fuzzy so they read as sky streaks */}
         <div className="cloud-layer cloud-layer-top" aria-hidden="true">
           <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '2%', top: '12%' }}>
-            <Cloud colors={['#ffffff', '#eef4ff', '#dbe8ff']} width={340} grain={0.08} fuzziness={54} opacity={0.55}
+            <Cloud colors={['#ffffff', '#eef4ff', '#dbe8ff']} width={425} grain={0.4} fuzziness={54} opacity={0.55}
               drift driftSpeed={17} style={{ transform: 'scaleY(0.55)', transformOrigin: '50% 50%' }} />
           </div>
           <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '18%', top: '30%' }}>
-            <Cloud colors={['#ffffff', '#f0f5ff', '#d5e6ff']} width={240} grain={0.08} fuzziness={56} opacity={0.4}
+            <Cloud colors={['#ffffff', '#f0f5ff', '#d5e6ff']} width={300} grain={0.4} fuzziness={56} opacity={0.4}
               drift driftSpeed={21} style={{ transform: 'scaleY(0.5)', transformOrigin: '50% 50%' }} />
           </div>
           <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '4%', top: '20%' }}>
-            <Cloud colors={['#ffffff', '#f3ecff', '#e2d6ff']} width={280} grain={0.08} fuzziness={54} opacity={0.5}
+            <Cloud colors={['#ffffff', '#f3ecff', '#e2d6ff']} width={350} grain={0.4} fuzziness={54} opacity={0.5}
               drift driftSpeed={14} style={{ transform: 'scaleY(0.55)', transformOrigin: '50% 50%' }} />
           </div>
           <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '22%', top: '8%' }}>
-            <Cloud colors={['#ffffff', '#f6efff', '#e8dcff']} width={200} grain={0.08} fuzziness={56} opacity={0.38}
+            <Cloud colors={['#ffffff', '#f6efff', '#e8dcff']} width={250} grain={0.4} fuzziness={56} opacity={0.38}
               drift driftSpeed={19} style={{ transform: 'scaleY(0.5)', transformOrigin: '50% 50%' }} />
+          </div>
+          {/* mid-sky wisps filling out the sides */}
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '8%', top: '46%' }}>
+            <Cloud colors={['#ffffff', '#f0f5ff', '#d9e6ff']} width={325} grain={0.4} fuzziness={55} opacity={0.42}
+              drift driftSpeed={20} style={{ transform: 'scaleY(0.52)', transformOrigin: '50% 50%' }} />
+          </div>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '10%', top: '42%' }}>
+            <Cloud colors={['#ffffff', '#f4edff', '#e3d6ff']} width={300} grain={0.4} fuzziness={56} opacity={0.4}
+              drift driftSpeed={16} style={{ transform: 'scaleY(0.52)', transformOrigin: '50% 50%' }} />
+          </div>
+          {/* extra wisps that only appear on wide screens */}
+          <div className="cloud-drift cloud-left cloud-xl" style={{ position: 'absolute', left: '38%', top: '5%' }}>
+            <Cloud colors={['#ffffff', '#f0f5ff', '#dbe8ff']} width={375} grain={0.42} fuzziness={55} opacity={0.42}
+              drift driftSpeed={24} style={{ transform: 'scaleY(0.5)', transformOrigin: '50% 50%' }} />
+          </div>
+          <div className="cloud-drift cloud-right cloud-xl" style={{ position: 'absolute', right: '38%', top: '32%' }}>
+            <Cloud colors={['#ffffff', '#f3ecff', '#dfd2ff']} width={287} grain={0.42} fuzziness={57} opacity={0.36}
+              drift driftSpeed={18} style={{ transform: 'scaleY(0.5)', transformOrigin: '50% 50%' }} />
           </div>
         </div>
 
         {/* back + mid cloud bank — sits BEHIND the whale */}
         <div className="cloud-bank" aria-hidden="true">
           <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '-14%', bottom: '-2%' }}>
-            <Cloud colors={['#ffffff', '#eaf1ff', '#cddffb']} width={760} grain={0.08} fuzziness={56} opacity={0.75}
+            <Cloud colors={['#ffffff', '#eaf1ff', '#cddffb']} width={950} grain={0.4} fuzziness={56} opacity={0.75}
               drift driftSpeed={22} style={{ transform: 'scaleY(0.62)', transformOrigin: '50% 100%' }} />
           </div>
           <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '-14%', bottom: '-2%' }}>
-            <Cloud colors={['#ffffff', '#f1eaff', '#d7cbfb']} width={740} grain={0.08} fuzziness={56} opacity={0.75}
+            <Cloud colors={['#ffffff', '#f1eaff', '#d7cbfb']} width={925} grain={0.4} fuzziness={56} opacity={0.75}
               drift driftSpeed={20} style={{ transform: 'scaleY(0.62)', transformOrigin: '50% 100%' }} />
           </div>
           {/* offset puffs filling the gap between back and front layers */}
           <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '22%', bottom: '2%' }}>
-            <Cloud colors={['#ffffff', '#fff2f9', '#ffdcef']} width={440} grain={0.08} fuzziness={54} opacity={0.8}
+            <Cloud colors={['#ffffff', '#fff2f9', '#ffdcef']} width={550} grain={0.4} fuzziness={54} opacity={0.85}
               drift driftSpeed={21} style={{ transform: 'scaleY(0.6)', transformOrigin: '50% 100%' }} />
           </div>
           <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '20%', bottom: '0%' }}>
-            <Cloud colors={['#ffffff', '#eef6ff', '#cfe6ff']} width={460} grain={0.08} fuzziness={54} opacity={0.8}
+            <Cloud colors={['#ffffff', '#eef6ff', '#cfe6ff']} width={575} grain={0.4} fuzziness={54} opacity={0.85}
               drift driftSpeed={23} style={{ transform: 'scaleY(0.6)', transformOrigin: '50% 100%' }} />
+          </div>
+          {/* dense fillers so no sky shows through the bed */}
+          <div className="cloud-drift cloud-center" style={{ position: 'absolute', left: '50%', bottom: '-6%' }}>
+            <Cloud colors={['#ffffff', '#f0f4ff', '#d6e2ff']} width={700} grain={0.4} fuzziness={55} opacity={0.8}
+              drift driftSpeed={25} style={{ transform: 'scaleY(0.6)', transformOrigin: '50% 100%' }} />
+          </div>
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '4%', bottom: '8%' }}>
+            <Cloud colors={['#ffffff', '#f4eefe', '#e2d3fb']} width={500} grain={0.4} fuzziness={55} opacity={0.7}
+              drift driftSpeed={19} style={{ transform: 'scaleY(0.58)', transformOrigin: '50% 100%' }} />
+          </div>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '32%', bottom: '7%' }}>
+            <Cloud colors={['#ffffff', '#fdf0f8', '#f4d9ec']} width={475} grain={0.4} fuzziness={55} opacity={0.7}
+              drift driftSpeed={24} style={{ transform: 'scaleY(0.58)', transformOrigin: '50% 100%' }} />
+          </div>
+          {/* extra bank puffs that only appear on wide screens */}
+          <div className="cloud-drift cloud-left cloud-xl" style={{ position: 'absolute', left: '6%', bottom: '16%' }}>
+            <Cloud colors={['#ffffff', '#f2f6ff', '#d8e4ff']} width={475} grain={0.42} fuzziness={55} opacity={0.6}
+              drift driftSpeed={26} style={{ transform: 'scaleY(0.58)', transformOrigin: '50% 100%' }} />
+          </div>
+          <div className="cloud-drift cloud-right cloud-xl" style={{ position: 'absolute', right: '4%', bottom: '20%' }}>
+            <Cloud colors={['#ffffff', '#f6f0ff', '#e0d4ff']} width={450} grain={0.42} fuzziness={55} opacity={0.55}
+              drift driftSpeed={20} style={{ transform: 'scaleY(0.58)', transformOrigin: '50% 100%' }} />
           </div>
         </div>
 
@@ -151,24 +191,36 @@ function App() {
           </div>
           <div className="title-text">
             <span className="title-kicker">Whack 2026</span>
-            <span className="eyebrow">November 20-22, 2026 · Wellesley College</span>
             <h1>Wish upon<br />a Whale</h1>
+            <span className="title-date">November 20-22, 2026 · Wellesley College</span>
           </div>
         </div>
 
         {/* front cloud bank — sits IN FRONT of the whale so it rises out of the clouds */}
         <div className="cloud-bank cloud-bank-front" aria-hidden="true">
           <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '2%', bottom: '-8%' }}>
-            <Cloud colors={['#ffffff', '#ffeef7', '#ffd3ea']} width={580} grain={0.08} fuzziness={52} opacity={0.88}
+            <Cloud colors={['#ffffff', '#ffeef7', '#ffd3ea']} width={725} grain={0.4} fuzziness={52} opacity={0.88}
               drift driftSpeed={18} style={{ transform: 'scaleY(0.58)', transformOrigin: '50% 100%' }} />
           </div>
           <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '0%', bottom: '-10%' }}>
-            <Cloud colors={['#ffffff', '#eaf4ff', '#c6e2ff']} width={620} grain={0.08} fuzziness={52} opacity={0.88}
+            <Cloud colors={['#ffffff', '#eaf4ff', '#c6e2ff']} width={775} grain={0.4} fuzziness={52} opacity={0.88}
               drift driftSpeed={16} style={{ transform: 'scaleY(0.58)', transformOrigin: '50% 100%' }} />
           </div>
           <div className="cloud-drift cloud-center" style={{ position: 'absolute', left: '50%', bottom: '-14%' }}>
-            <Cloud colors={['#ffffff', '#f7fbff', '#e4effd']} width={780} grain={0.06} fuzziness={50} opacity={0.95}
+            <Cloud colors={['#ffffff', '#f7fbff', '#e4effd']} width={975} grain={0.35} fuzziness={50} opacity={0.95}
               drift driftSpeed={24} style={{ transform: 'scaleY(0.6)', transformOrigin: '50% 100%' }} />
+          </div>
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '18%', bottom: '-11%' }}>
+            <Cloud colors={['#ffffff', '#fdf2f9', '#f3dcef']} width={625} grain={0.4} fuzziness={53} opacity={0.9}
+              drift driftSpeed={21} style={{ transform: 'scaleY(0.58)', transformOrigin: '50% 100%' }} />
+          </div>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '24%', bottom: '-12%' }}>
+            <Cloud colors={['#ffffff', '#eef4ff', '#d3e4ff']} width={600} grain={0.4} fuzziness={53} opacity={0.9}
+              drift driftSpeed={19} style={{ transform: 'scaleY(0.58)', transformOrigin: '50% 100%' }} />
+          </div>
+          <div className="cloud-drift cloud-left cloud-xl" style={{ position: 'absolute', left: '38%', bottom: '-8%' }}>
+            <Cloud colors={['#ffffff', '#f6f9ff', '#e2ecff']} width={525} grain={0.42} fuzziness={53} opacity={0.85}
+              drift driftSpeed={23} style={{ transform: 'scaleY(0.58)', transformOrigin: '50% 100%' }} />
           </div>
         </div>
       </section>

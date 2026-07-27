@@ -142,22 +142,26 @@ nav {
   margin-bottom: 1rem;
 }
 
+/* Great Vibes is a single-weight script — keep it at its true 400 weight
+   (faux-bolding thickens the strokes and kills the elegance) */
 h1 {
   font-family: 'Great Vibes', cursive;
-  font-size: clamp(2.6rem, 6vw, 5rem);
-  font-weight: 800;
-  letter-spacing: -0.025em;
+  font-size: clamp(2.8rem, 6.5vw, 5.4rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
   line-height: 1.08;
   margin-bottom: 1.2rem;
+  text-shadow: 0 0 22px rgba(190, 215, 255, 0.25);
 }
 
 h2 {
   font-family: 'Great Vibes', cursive;
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
   line-height: 1.15;
   margin-bottom: 1rem;
+  text-shadow: 0 0 18px rgba(190, 215, 255, 0.25);
 }
 
 .section-lead {
@@ -263,6 +267,11 @@ h2 {
 }
 .cloud-layer > * { pointer-events: none; }
 
+/* extra clouds fade in as the screen widens — sparse on laptops, lush on
+   big desktops, hidden on mobile (which also trims via nth-child below) */
+.cloud-xl { display: none; }
+@media (min-width: 1280px) { .cloud-xl { display: block; } }
+
 /* dense pastel cloud bank hugging the bottom of the hero.
    Sits above the whale but below the title text/buttons (which are z-index 2). */
 .cloud-bank {
@@ -346,6 +355,17 @@ h2 {
   letter-spacing: -0.01em;
   color: #1a1c3a;
   margin-bottom: 0.35rem;
+}
+
+/* date line under the script title, bold + dark like the mockup */
+.title-date {
+  display: block;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  letter-spacing: -0.01em;
+  color: #1a1c3a;
+  margin-top: 0.4rem;
 }
 
 .title-whale {
@@ -479,17 +499,21 @@ h2 {
   overflow: hidden;
   background: linear-gradient(180deg, #B08CFF 0%, #7A5CFF 52%, #4B3DBF 100%);
 }
-.section-4 .section-inner { position: relative; z-index: 2; }
+.section-4 .section-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1150px; /* wider than other sections so the itineraries fit beside the glass */
+}
 
-/* Hourglass centerpiece flanked by day selectors */
+/* Hourglass centerpiece flanked by the two day itineraries */
 .schedule-stage {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: center;
-  gap: clamp(8px, 3vw, 40px);
+  gap: clamp(16px, 3vw, 44px);
   width: 100%;
-  margin: 0.5rem auto 2.5rem;
+  margin: 0.5rem auto 1rem;
 }
 
 .hourglass-frame {
@@ -525,90 +549,93 @@ h2 {
           mask-image: radial-gradient(ellipse 60% 58% at 50% 50%, #000 60%, transparent 95%);
 }
 
-.day-tab {
+/* Flanking day itineraries — "day 1" upper-left, "day 2" lower-right,
+   staggered like the mockup */
+.day-col { text-align: left; min-width: 0; }
+.day-col-left  { justify-self: end; margin-top: -3rem; }
+.day-col-right { justify-self: start; margin-top: 4rem; }
+
+.day-col-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.day-col-label {
   font-family: 'Great Vibes', cursive;
-  font-size: clamp(2rem, 4.5vw, 3.2rem);
-  color: rgba(255, 255, 255, 0.9);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 6px 10px;
-  letter-spacing: 0.01em;
-  transition: transform 0.25s cubic-bezier(.22,1,.36,1), text-shadow 0.25s, opacity 0.25s;
-  text-shadow: 0 0 18px rgba(150, 200, 255, 0.3);
-  opacity: 0.62;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  line-height: 1;
+  text-shadow: 0 0 18px rgba(150, 200, 255, 0.35);
   white-space: nowrap;
 }
 
-.day-tab:hover { opacity: 0.9; }
-
-.day-tab.is-active {
-  opacity: 1;
-  transform: scale(1.12);
-  text-shadow: 0 0 26px rgba(190, 225, 255, 0.85), 0 0 6px rgba(255, 255, 255, 0.6);
+.day-col-date {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  white-space: nowrap;
 }
 
-.day-tab-left  { transform-origin: right center; }
-.day-tab-right { transform-origin: left center; align-self: flex-start; margin-top: 6.5rem; }
-.day-tab-left  { align-self: flex-start; margin-top: 3rem; }
-
-/* Event panel that swaps per day */
-.day-panel {
-  max-width: 660px;
-  margin: 0 auto;
-  text-align: left;
-  animation: day-fade 0.45s cubic-bezier(.22,1,.36,1);
+.day-col-events {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  max-width: 320px;
 }
+
+.day-col-event {
+  display: grid;
+  grid-template-columns: 66px 1fr;
+  gap: 12px;
+}
+
+.day-col-time {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+  padding-top: 2px;
+  white-space: nowrap;
+}
+
+.day-col-body { display: flex; flex-direction: column; gap: 2px; }
+.day-col-title { font-size: 0.95rem; font-weight: 600; }
+.day-col-desc  { font-size: 0.78rem; opacity: 0.55; line-height: 1.5; }
 
 @keyframes day-fade {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.day-panel-head {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  margin-bottom: 18px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-}
+/* day toggle — only shown on small screens, below the hourglass */
+.day-toggle { display: none; }
 
-.day-panel-label {
+.day-toggle-btn {
   font-family: 'Great Vibes', cursive;
-  font-size: 2.4rem;
-  line-height: 1;
-}
-
-.day-panel-date {
-  font-size: 0.95rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 14px;
   opacity: 0.55;
+  text-shadow: 0 0 16px rgba(150, 200, 255, 0.3);
+  transition: opacity 0.25s, transform 0.25s cubic-bezier(.22,1,.36,1), text-shadow 0.25s;
+  white-space: nowrap;
 }
 
-.day-events { list-style: none; display: flex; flex-direction: column; }
+.day-toggle-btn:hover { opacity: 0.85; }
 
-.day-event {
-  display: grid;
-  grid-template-columns: 108px 1fr;
-  gap: 22px;
-  padding: 18px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+.day-toggle-btn.is-active {
+  opacity: 1;
+  transform: scale(1.12);
+  text-shadow: 0 0 24px rgba(190, 225, 255, 0.85), 0 0 6px rgba(255, 255, 255, 0.6);
 }
-.day-event:last-child { border-bottom: none; }
-
-.day-event-time {
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  opacity: 0.6;
-  padding-top: 3px;
-}
-
-.day-event-body { display: flex; flex-direction: column; gap: 4px; }
-.day-event-title { font-size: 1.25rem; font-weight: 600; }
-.day-event-desc  { font-size: 1.02rem; opacity: 0.6; line-height: 1.55; }
 
 /* ── Section 5 – Tracks ─────────────────────── */
 /* paints its own slice of the day→night ramp so it chains with its neighbors:
@@ -851,10 +878,13 @@ footer {
   .hero-inner { flex-direction: column; align-items: flex-start; gap: 28px; }
   .hero-whale { width: 60%; }
 
-  .schedule-stage { flex-direction: column; gap: 12px; }
-  .day-tab-left, .day-tab-right { align-self: center; margin-top: 0; order: 3; }
-  .hourglass-frame { order: 1; height: 300px; width: 220px; }
-  .day-event { grid-template-columns: 74px 1fr; gap: 14px; }
+  /* Schedule: hourglass on top, day toggle below it, one itinerary at a time */
+  .schedule-stage { grid-template-columns: 1fr; justify-items: center; gap: 18px; }
+  .hourglass-frame { order: -1; height: 300px; width: 220px; }
+  .day-toggle { display: flex; gap: 28px; justify-content: center; }
+  .day-col { order: 1; animation: day-fade 0.45s cubic-bezier(.22,1,.36,1); }
+  .day-col-left, .day-col-right { margin-top: 0; justify-self: center; }
+  .day-col.compact-hidden { display: none; }
 
   .cloud-layer > *:nth-child(n+3) { display: none; }
 

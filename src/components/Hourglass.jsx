@@ -27,6 +27,7 @@ export default function Hourglass({
   endDate,
   progress,
   onProgress,
+  showStar = true,
   className,
   style,
   background = null,
@@ -34,10 +35,15 @@ export default function Hourglass({
   const mountRef = useRef(null);
   const goalRef = useRef({ start: null, end: null });
   const progressRef = useRef(progress ?? null);
+  const showStarRef = useRef(showStar);
 
   useEffect(() => {
     progressRef.current = progress ?? null;
   }, [progress]);
+
+  useEffect(() => {
+    showStarRef.current = showStar;
+  }, [showStar]);
 
   // Keep the goal ref in sync with props so the animation loop always reads the latest values.
   useEffect(() => {
@@ -407,7 +413,7 @@ export default function Hourglass({
       starMeshGeo,
       new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
-        emissive: 0xff9be0,
+        emissive: 0xffd75e,
         emissiveIntensity: 4.5,
         metalness: 0.4,
         roughness: 0.1,
@@ -421,9 +427,9 @@ export default function Hourglass({
     haloCanvas.width = haloCanvas.height = 128;
     const hctx = haloCanvas.getContext('2d');
     const hgrad = hctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-    hgrad.addColorStop(0, 'rgba(255, 220, 245, 1)');
-    hgrad.addColorStop(0.3, 'rgba(255, 155, 224, 0.55)');
-    hgrad.addColorStop(1, 'rgba(255, 155, 224, 0)');
+    hgrad.addColorStop(0, 'rgba(255, 246, 218, 1)');
+    hgrad.addColorStop(0.3, 'rgba(255, 220, 120, 0.55)');
+    hgrad.addColorStop(1, 'rgba(255, 220, 120, 0)');
     hctx.fillStyle = hgrad;
     hctx.fillRect(0, 0, 128, 128);
     const halo = new THREE.Sprite(
@@ -437,7 +443,7 @@ export default function Hourglass({
     );
     halo.scale.setScalar(1.6);
     star.add(halo);
-    const starLight = new THREE.PointLight(0xff9be0, 2.0, 3, 2);
+    const starLight = new THREE.PointLight(0xffe27a, 2.0, 3, 2);
     star.add(starLight);
     milestoneGroup.add(star);
 
@@ -509,6 +515,8 @@ export default function Hourglass({
     const clock = new THREE.Clock();
     let raf = 0;
     const moonRadius = 0.32;
+    // when the wishing star lands in the glass; null = not arrived yet
+    let starArrivalT = null;
 
     const animate = () => {
       const t = clock.getElapsedTime();
@@ -648,14 +656,36 @@ export default function Hourglass({
       }
       splashGeo.attributes.position.needsUpdate = true;
 
-      // Star: stays floating in the top bulb with a gentle bob.
-      star.position.y = 1.2 + Math.sin(t * 1.1) * 0.06;
-      star.rotation.y = t * 0.6;
-      star.rotation.z = Math.sin(t * 0.8) * 0.15;
-      const pulse = 0.85 + Math.sin(t * 2.2) * 0.15;
-      star.material.emissiveIntensity = (4.0 + progress * 3.0) * pulse;
-      halo.scale.setScalar((1.4 + progress * 0.6) * pulse);
-      starLight.intensity = (1.8 + progress * 2.0) * pulse;
+      // Star: hidden until the wishing star lands in the glass, then pops in
+      // with a fast decaying spin and stays floating in the top bulb.
+      if (!showStarRef.current) {
+        star.visible = false;
+        starArrivalT = null;
+      } else {
+        if (!star.visible) starArrivalT = t; // just landed
+        star.visible = true;
+
+        star.position.y = 1.2 + Math.sin(t * 1.1) * 0.06;
+        star.rotation.z = Math.sin(t * 0.8) * 0.15;
+
+        const sinceArrival = starArrivalT === null ? Infinity : t - starArrivalT;
+        if (sinceArrival < 1.6) {
+          // arrival flourish: ~3 extra turns easing out, scale pops with overshoot
+          const k = sinceArrival / 1.6;
+          const ease = 1 - Math.pow(1 - k, 3);
+          star.rotation.y = t * 0.6 + ease * Math.PI * 6;
+          const s = Math.max(0.001, ease * (1 + 0.25 * Math.sin(k * Math.PI)));
+          star.scale.setScalar(s);
+        } else {
+          star.rotation.y = t * 0.6 + Math.PI * 6;
+          star.scale.setScalar(1);
+        }
+
+        const pulse = 0.85 + Math.sin(t * 2.2) * 0.15;
+        star.material.emissiveIntensity = (4.0 + progress * 3.0) * pulse;
+        halo.scale.setScalar((1.4 + progress * 0.6) * pulse);
+        starLight.intensity = (1.8 + progress * 2.0) * pulse;
+      }
 
       // Moon.
       const moonPulse = 0.9 + Math.sin(t * 1.2) * 0.1;
