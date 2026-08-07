@@ -7,7 +7,7 @@ import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
 import Cloud from './components/Cloud'
 import Schedule from './components/Schedule'
-import WishingWell from './components/WishingWell'
+//import WishingWell from './components/WishingWell'
 
 function App() {
   const heroRef = useRef(null)
@@ -293,9 +293,9 @@ function App() {
               <span className="sponsor-pill">Linear</span>
             </div>
           </div>
-        <div className="well-wrap" style={{ width: '90%', height: '800px', position: 'relative' }}>
+        {/*<div className="well-wrap" style={{ width: '90%', height: '800px', position: 'relative' }}>
             <WishingWell />
-        </div>
+        </div>*/}
         </div>
         <p className="section-lead">
             Interested in sponsoring?{' '}
