@@ -87,7 +87,7 @@ function App() {
           <li><a href="#sponsors">Sponsors</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
-        <a href="#register" className="nav-register">Register →</a>
+        <a href="#register" className="nav-register">Register</a>
       </nav>
 
       {/* ── Section 1 · Hero ── */}

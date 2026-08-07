@@ -91,7 +91,7 @@ nav {
 }
 
 .nav-links a {
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 500;
   color: #1a0a2e;
   text-decoration: none;
@@ -106,7 +106,7 @@ nav {
   border: 1px solid rgba(26, 10, 46, 0.2);
   border-radius: 8px;
   padding: 8px 20px;
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #1a0a2e;
   text-decoration: none;
@@ -349,7 +349,7 @@ h2 {
 
 .title-text {
   position: absolute;
-  left: 72%;
+  left: 74%;
   top: 80%;
   transform: translate(-50%, -50%);
   z-index: 4;
@@ -387,7 +387,7 @@ h2 {
   font-family: 'DM Sans', system-ui, sans-serif;
   font-weight: 700;
   font-size: clamp(1rem, 2vw, 1.35rem);
-  letter-spacing: 0.18em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #1a1c3a;
   opacity: 0.9;
