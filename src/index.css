@@ -195,7 +195,7 @@ h2 {
   );
 }
 .section-1 .eyebrow { opacity: 0.5; }
-.section-1 .section-lead { opacity: 0.7; color: #2a2c4a; }
+.section-1 .section-lead { opacity: 0.7; color: #2a2c4a; position: relative; z-index: 2; }
 
 /* dreamy cloud framing — sits behind hero content */
 .section-1 { --part: 0; }
@@ -311,7 +311,7 @@ h2 {
 /* schedule clouds sit above the glass's lower half but below text */
 .cloud-layer-bottom { z-index: 1; }
 
-.section-1 .section-inner { position: relative; z-index: 2; }
+.section-1 .section-inner { position: relative; }
 
 .title-inner {
   display: flex;
@@ -322,6 +322,7 @@ h2 {
 
 .title-whale-wrap {
   position: relative;
+  z-index: 2;           
   width: 62%;
   max-width: 780px;
   flex-shrink: 0;
@@ -346,15 +347,38 @@ h2 {
   50%      { transform: scale(1.12) rotate(2deg); opacity: 1; }
 }
 
+.title-text {
+  position: absolute;
+  left: 72%;
+  top: 80%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  text-align: center;
+  width: max-content;
+  max-width: 90%;
+}
+
 /* plain "Whack 2026" kicker above the script title (the "math"/sans text) */
 .title-kicker {
   display: block;
   font-family: 'DM Sans', system-ui, sans-serif;
   font-weight: 800;
   font-size: clamp(1.4rem, 3vw, 2.2rem);
-  letter-spacing: -0.01em;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
   color: #1a1c3a;
-  margin-bottom: 0.35rem;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+}
+
+.theme-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(6rem, 9vw, 12rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.08;
+  margin-bottom: 1.2rem;
+  text-shadow: 0 0 22px rgba(190, 215, 255, 0.25);
 }
 
 /* date line under the script title, bold + dark like the mockup */
@@ -363,9 +387,11 @@ h2 {
   font-family: 'DM Sans', system-ui, sans-serif;
   font-weight: 700;
   font-size: clamp(1rem, 2vw, 1.35rem);
-  letter-spacing: -0.01em;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: #1a1c3a;
-  margin-top: 0.4rem;
+  opacity: 0.9;
+  margin-top: -0.8rem;
 }
 
 .title-whale {
@@ -398,8 +424,6 @@ h2 {
   .whale-arc { transition: none; animation: none; }
   .title-whale-wrap { animation: none; }
 }
-
-/*.title-text { flex: 1; }*/
 
 .hero-actions {
   display: flex;
@@ -870,7 +894,11 @@ footer {
   .section { padding: 100px 24px 64px; }
   h1 { font-size: 2.2rem; }
   h2 { font-size: 1.6rem; }
-  .title-inner { flex-direction: column; text-align: center; gap: 24px; }
+  /*.title-inner { flex-direction: column; text-align: center; gap: 24px; }*/
+  .title-inner {
+    position: relative;
+    justify-content: center;   /* was implicit flex-start */
+  }
   .title-whale-wrap { width: 92%; max-width: 380px; margin: 0; }
   .hero-inner { flex-direction: column; align-items: flex-start; gap: 28px; }
   .hero-whale { width: 60%; }

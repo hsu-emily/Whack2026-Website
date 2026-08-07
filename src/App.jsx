@@ -191,8 +191,8 @@ function App() {
             <img src={whaleJump} alt="whale logo" className="title-whale whale-arc" />
           </div>
           <div className="title-text">
-            <span className="title-kicker">Whack 2026</span>
-            <h1>Wish upon<br />a Whale</h1>
+            <span className="title-kicker">WHACK 2026</span>
+            <div className="theme-title">Wish upon<br/>a Whale</div>
             <span className="title-date">November 20-22, 2026 · Wellesley College</span>
           </div>
         </div>
