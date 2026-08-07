@@ -293,7 +293,7 @@ function App() {
               <span className="sponsor-pill">Linear</span>
             </div>
           </div>
-        <div className="well-wrap" style={{ width: '100%', height: '520px', position: 'relative' }}>
+        <div className="well-wrap" style={{ width: '90%', height: '800px', position: 'relative' }}>
             <WishingWell />
         </div>
         </div>

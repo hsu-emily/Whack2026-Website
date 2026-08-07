@@ -48,13 +48,13 @@ const CONFIG = {
 
   // ── population (all scaled by the `intensity` prop) ──
   starCount: 1500, // points making up the arms + core
-  sparkleCount: 38, // 4-point sparkles seeded along the arms
+  sparkleCount: 60, // 4-point sparkles seeded along the arms
   heroStarCount: 8, // oversized breathing highlight stars
   coreFraction: 0.28, // stars inside this radius fraction get warm/bright colors
 
   // ── motion ──
   rotationSpeed: 0.02, // radians per second (positive = counterclockwise-ish)
-  twinkleAmount: 0.3, // 0 = steady stars, 0.5 = strong flicker
+  twinkleAmount: 0.55, // 0 = steady stars, 0.5 = strong flicker
 
   // ── the two star trails peeling off the lower edge ──
   trails: {
@@ -159,7 +159,7 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
           theta,
           size: (inner ? 1.7 : 1.2) * (0.5 + Math.random() * 1.1),
           alpha: inner ? 0.7 + Math.random() * 0.3 : 0.3 + Math.random() * 0.6,
-          tw: 0.6 + Math.random() * 1.6, // twinkle frequency
+          tw: 1.4 + Math.random() * 3.2, // twinkle frequency
           phase: Math.random() * TWO_PI,
           color: inner ? pick(BRIGHT) : Math.random() < 0.22 ? pick(BRIGHT) : pick(DEEP),
         })
@@ -302,7 +302,7 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
 
     function drawStars(t) {
       const rot = t * C.rotationSpeed
-      for (const s of discStars) {
+      /*for (const s of discStars) {
         const p = discXY(s.r, s.theta, rot)
         ctx.globalAlpha =
           s.alpha * (1 - C.twinkleAmount + C.twinkleAmount * Math.sin(t * s.tw + s.phase))
@@ -310,8 +310,22 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
         ctx.beginPath()
         ctx.arc(p.x, p.y, s.size, 0, TWO_PI)
         ctx.fill()
+      }*/
+     for (const s of discStars) {
+        const p = discXY(s.r, s.theta, rot)
+        // sharpen the sine into brief bright "glints" instead of a smooth breathe
+        const wave = 0.5 + 0.5 * Math.sin(t * s.tw + s.phase)
+        const glint = wave * wave * wave * wave
+        ctx.globalAlpha = Math.min(
+          1,
+          s.alpha * (1 - C.twinkleAmount + C.twinkleAmount * (0.3 + 1.6 * glint))
+        )
+        ctx.fillStyle = s.color
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, s.size * (1 + 0.5 * glint), 0, TWO_PI)
+        ctx.fill()
       }
-      ctx.globalAlpha = 1
+      ctx.globalAlpha = 1   // ← add this line back
 
       for (const h of heroStars) {
         const p = discXY(h.r, h.theta, rot)

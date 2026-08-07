@@ -1,51 +1,53 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 /**
- * WishingWell — a glass basin fed by a single stream of stars from a galaxy.
+ * WishingWell — a well built from glassy bricks, fed by a stream of stars
+ * pouring in from the top of the frame.
  *
- * Visual siblings:
- *   · The basin uses the Hourglass's glass recipe (transmission MeshPhysicalMaterial
- *     + additive BackSide rim shell) and the same metal for its accents.
- *   · The galaxy mirrors GalaxyStream's CONFIG: 4 arms, winding 4.6, scatter 0.55,
- *     coreBias 0.6, warm core / violet halo, and the same BRIGHT/DEEP palette —
- *     so the 2D galaxy in Tracks and this 3D one read as the same object.
- *   · Stream particles use the trail rules from GalaxyStream: 30% BRIGHT / 70% DEEP
- *     colors, fade-in near the source, and acceleration as they fall. Every path
- *     funnels through one shared corridor so it reads as a single ribbon of stars.
+ * There is no galaxy in here: this component is meant to be layered as the
+ * BACKGROUND of a section that sits below the GalaxyStream section, so the
+ * stars appear to spill out of that galaxy, cross this section (behind the
+ * section's own text), and land in the well at the bottom.
+ *
+ * Intended usage (section content overlays the stars):
+ *
+ *   <section id="sponsors" className="section section-6 well-section">
+ *     <WishingWell className="well-canvas" sourceX={0.62} />
+ *     <div className="section-inner centered">…pills, headings…</div>
+ *   </section>
+ *
+ *   .well-section { position: relative; }
+ *   .well-canvas  { position: absolute; inset: 0; }
+ *   .well-section .section-inner { position: relative; z-index: 1; }
+ *
+ * The canvas ignores pointer events, so links and pills above it stay clickable.
+ * Fixed camera — no zoom, no orbit. The only moving parts are the star stream,
+ * the ripples/splashes it makes, and the occasional wish star.
  *
  * Props:
+ *   sourceX        number      0–1: where (horizontally) the stream enters at the
+ *                              top of the frame. Match it to where GalaxyStream's
+ *                              trails exit the section above (~0.6–0.7). Default 0.62.
  *   streamDensity  number      0–1. How heavy the star stream is. Default 1.
  *   onStarLanded   () => void  Called when a big wish star splashes down.
  *   className      string      Passed to the root wrapper div.
  *   style          object      Passed to the root wrapper div.
  *   background     string | null  CSS background. null = transparent (default).
- *
- * The component fills its parent container. Give the parent an explicit size.
  */
 
-// Same palette as GalaxyStream.
+// Same palette as GalaxyStream — the stream stars are "its" stars.
 const BRIGHT = [0xeef0ff, 0xfff3d8, 0xdcd2ff];
 const DEEP = [0x7c8ce0, 0x5d6fd4, 0x9aa8f2, 0xb9a7ee];
 const pick = (arr) => arr[(Math.random() * arr.length) | 0];
 
-// Same spiral parameters as GalaxyStream's CONFIG.
-const GALAXY = {
-  arms: 4,
-  winding: 4.6,
-  scatter: 0.55,
-  coreBias: 0.6,
-  coreFraction: 0.28,
-  radius: 1.6, // local units
-  rotationSpeed: 0.02,
-};
-
 export default function WishingWell({
+  sourceX = 0.62,
   streamDensity = 1,
   onStarLanded,
   className,
@@ -54,12 +56,15 @@ export default function WishingWell({
 }) {
   const mountRef = useRef(null);
   const densityRef = useRef(streamDensity);
+  const sourceXRef = useRef(sourceX);
   const onStarLandedRef = useRef(onStarLanded);
 
   useEffect(() => {
     densityRef.current = THREE.MathUtils.clamp(streamDensity, 0, 1);
   }, [streamDensity]);
-
+  useEffect(() => {
+    sourceXRef.current = THREE.MathUtils.clamp(sourceX, 0, 1);
+  }, [sourceX]);
   useEffect(() => {
     onStarLandedRef.current = onStarLanded;
   }, [onStarLanded]);
@@ -79,7 +84,7 @@ export default function WishingWell({
     renderer.toneMappingExposure = 1.1;
     mount.appendChild(renderer.domElement);
 
-    // --- Scene / camera ---
+    // --- Scene / fixed camera (no controls) ---
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x05082a, 0.02);
 
@@ -89,26 +94,19 @@ export default function WishingWell({
       0.1,
       100
     );
-    camera.position.set(0, 1.4, 8);
+    camera.position.set(0, 1.2, 7.4);
+    camera.lookAt(0, 2.2, 0); // well sits low in frame, sky above for stream + overlaid text
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.06;
-    controls.minDistance = 4;
-    controls.maxDistance = 14;
-    controls.target.set(0.6, 1.0, 0);
-    controls.enablePan = false;
-
-    // --- Lights (same trio as the Hourglass) ---
+    // --- Lights (Hourglass trio + pool glow) ---
     scene.add(new THREE.AmbientLight(0x4a5fb0, 0.6));
     const keyLight = new THREE.PointLight(0x9ffcff, 2.5, 20, 1.6);
     keyLight.position.set(2.5, 2.5, 3);
     scene.add(keyLight);
     const rimLight = new THREE.PointLight(0xb388ff, 2.0, 20, 1.6);
-    rimLight.position.set(-2.5, 0, 2);
+    rimLight.position.set(-2.5, 0.5, 2);
     scene.add(rimLight);
     const poolLight = new THREE.PointLight(0x5fc8ff, 1.4, 5, 2);
-    poolLight.position.set(0, 0.5, 0);
+    poolLight.position.set(0, 1.0, 0);
     scene.add(poolLight);
 
     // --- Backdrop starfield (identical to the Hourglass) ---
@@ -162,111 +160,124 @@ export default function WishingWell({
       [0.6, 'rgba(170, 220, 255, 0.7)'],
       [1, 'rgba(120, 200, 255, 0)'],
     ]);
-    // Four-point "anime" sparkle, same shape GalaxyStream draws.
-    const sparkleTexture = (() => {
-      const c = document.createElement('canvas');
-      c.width = c.height = 64;
-      const g = c.getContext('2d');
-      const r = 30, k = r * 0.16;
-      g.translate(32, 32);
-      g.fillStyle = 'rgba(255, 246, 224, 1)';
-      g.beginPath();
-      g.moveTo(0, -r);
-      g.quadraticCurveTo(k, -k, r, 0);
-      g.quadraticCurveTo(k, k, 0, r);
-      g.quadraticCurveTo(-k, k, -r, 0);
-      g.quadraticCurveTo(-k, -k, 0, -r);
-      g.fill();
-      const tex = new THREE.CanvasTexture(c);
-      tex.colorSpace = THREE.SRGBColorSpace;
-      return tex;
-    })();
 
-    // --- Root group ---
+    // --- Root group (the well) ---
     const root = new THREE.Group();
     scene.add(root);
 
-    // ══════════════════════ THE WELL ══════════════════════
-    // Glass recipe copied from the Hourglass.
-    const glassMat = new THREE.MeshPhysicalMaterial({
-      color: 0xa0e8ff,
-      metalness: 0.0,
-      roughness: 0.05,
-      transmission: 0.95,
-      thickness: 0.4,
-      ior: 1.45,
-      transparent: true,
-      opacity: 0.55,
+    // ══════════════════════ STONE-BRICK WELL ══════════════════════
+    // Solid moonlit stone in the Hourglass family: same blue-metal tones as its
+    // caps and posts, with a faint inner emissive so the whole well feels lit
+    // from the water. No transmission — a well should read as solid.
+    const stoneMat = new THREE.MeshPhysicalMaterial({
+      color: 0x7fb4e6,
+      metalness: 0.5,
+      roughness: 0.32,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.05,
-      side: THREE.DoubleSide,
-      envMapIntensity: 1.2,
+      clearcoatRoughness: 0.15,
+      emissive: 0x0d2b55,
+      emissiveIntensity: 0.35,
     });
 
-    // Basin profile: foot → outer bowl wall → rolled lip → inner wall → floor.
-    const basinProfile = [
-      [0.0, -1.0], [1.1, -1.0], [1.28, -0.94], [1.36, -0.75], [1.4, -0.4],
-      [1.44, 0.0], [1.5, 0.12], [1.46, 0.2], [1.3, 0.16], [1.24, 0.04],
-      [1.2, -0.35], [1.16, -0.62], [0.0, -0.66],
-    ].map(([x, y]) => new THREE.Vector2(x, y));
+    // Flush masonry: bricks sit exactly on the wall radius with near-zero jitter,
+    // and a soft fillet keeps every edge rounded (the hourglass has no hard corners).
+    const wallRadius = 1.6;
+    const courses = 5;
+    const perCourse = 16;
+    const courseHeight = 0.33;
+    const wallBottom = -1.1;
+    const wallTop = wallBottom + (courses - 1) * courseHeight + 0.16; // top face of last course
+    const brickGeo = new RoundedBoxGeometry(0.6, 0.31, 0.24, 3, 0.04);
+    const bricks = new THREE.InstancedMesh(brickGeo, stoneMat, courses * perCourse);
+    {
+      const m4 = new THREE.Matrix4();
+      const q = new THREE.Quaternion();
+      const e = new THREE.Euler();
+      const p = new THREE.Vector3();
+      const s = new THREE.Vector3(1, 1, 1);
+      const tint = new THREE.Color();
+      let idx = 0;
+      for (let c = 0; c < courses; c++) {
+        const y = wallBottom + c * courseHeight;
+        const bond = (c % 2) * (Math.PI / perCourse); // running-bond half-step offset
+        for (let i = 0; i < perCourse; i++) {
+          const a = bond + (i / perCourse) * Math.PI * 2;
+          p.set(Math.cos(a) * wallRadius, y, Math.sin(a) * wallRadius);
+          e.set(0, -a - Math.PI / 2, 0); // long axis along the wall tangent, perfectly flush
+          q.setFromEuler(e);
+          m4.compose(p, q, s);
+          bricks.setMatrixAt(idx, m4);
+          // Very gentle per-brick tint drift so the wall isn't a flat color.
+          tint.setHSL(0.57 + Math.random() * 0.025, 0.45, 0.66 + Math.random() * 0.06);
+          bricks.setColorAt(idx, tint);
+          idx++;
+        }
+      }
+      bricks.instanceMatrix.needsUpdate = true;
+      if (bricks.instanceColor) bricks.instanceColor.needsUpdate = true;
+    }
+    root.add(bricks);
 
-    const basin = new THREE.Mesh(new THREE.LatheGeometry(basinProfile, 96), glassMat);
-    root.add(basin);
+    // Coping: a course of wide, flat capstones laid across the top of the wall —
+    // a real well rim, not a ring. They overhang the bricks slightly on both sides.
+    const copingCount = 12;
+    const copingGeo = new RoundedBoxGeometry(0.86, 0.15, 0.46, 3, 0.05);
+    const coping = new THREE.InstancedMesh(copingGeo, stoneMat, copingCount);
+    {
+      const m4 = new THREE.Matrix4();
+      const q = new THREE.Quaternion();
+      const e = new THREE.Euler();
+      const p = new THREE.Vector3();
+      const s = new THREE.Vector3(1, 1, 1);
+      const tint = new THREE.Color();
+      for (let i = 0; i < copingCount; i++) {
+        const a = (i / copingCount) * Math.PI * 2 + Math.PI / copingCount;
+        p.set(Math.cos(a) * wallRadius, wallTop + 0.08, Math.sin(a) * wallRadius);
+        e.set(0, -a - Math.PI / 2, 0);
+        q.setFromEuler(e);
+        m4.compose(p, q, s);
+        coping.setMatrixAt(i, m4);
+        tint.setHSL(0.57 + Math.random() * 0.02, 0.42, 0.7 + Math.random() * 0.05);
+        coping.setColorAt(i, tint);
+      }
+      coping.instanceMatrix.needsUpdate = true;
+      if (coping.instanceColor) coping.instanceColor.needsUpdate = true;
+    }
+    root.add(coping);
 
-    // Additive back-side shell for that glowing glass edge (same trick as the Hourglass rim).
-    const basinRim = new THREE.Mesh(
-      new THREE.LatheGeometry(basinProfile, 96),
+    // Solid stone plinth the well stands on — two soft-edged tiers.
+    const plinth = new THREE.Mesh(
+      new THREE.CylinderGeometry(wallRadius + 0.22, wallRadius + 0.34, 0.2, 64),
+      stoneMat
+    );
+    plinth.position.y = wallBottom - 0.24;
+    root.add(plinth);
+    const plinthLower = new THREE.Mesh(
+      new THREE.CylinderGeometry(wallRadius + 0.38, wallRadius + 0.46, 0.14, 64),
+      stoneMat
+    );
+    plinthLower.position.y = wallBottom - 0.4;
+    root.add(plinthLower);
+
+    // Whisper of light lining the inside of the shaft, so the interior reads as
+    // lit by the water rather than pitch black.
+    const innerGlow = new THREE.Mesh(
+      new THREE.CylinderGeometry(wallRadius - 0.2, wallRadius - 0.2, courses * courseHeight, 48, 1, true),
       new THREE.MeshBasicMaterial({
         color: 0x9ffcff,
         transparent: true,
-        opacity: 0.08,
-        side: THREE.BackSide,
+        opacity: 0.045,
+        side: THREE.DoubleSide,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
       })
     );
-    basinRim.scale.setScalar(1.02);
-    root.add(basinRim);
+    innerGlow.position.y = wallBottom + (courses * courseHeight) / 2 - courseHeight / 2;
+    root.add(innerGlow);
 
-    // Metal accents in the Hourglass cap material.
-    const capMat = new THREE.MeshPhysicalMaterial({
-      color: 0x88c8ff,
-      metalness: 0.85,
-      roughness: 0.25,
-      clearcoat: 1.0,
-    });
-    const baseRing = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.28, 1.36, 0.14, 64),
-      capMat
-    );
-    baseRing.position.y = -1.02;
-    root.add(baseRing);
-    const lipRing = new THREE.Mesh(
-      new THREE.TorusGeometry(1.48, 0.045, 12, 96),
-      capMat
-    );
-    lipRing.rotation.x = -Math.PI / 2;
-    lipRing.position.y = 0.16;
-    root.add(lipRing);
-
-    // Faint cyan glow tracing the lip.
-    const lipGlow = new THREE.Mesh(
-      new THREE.TorusGeometry(1.48, 0.06, 12, 96),
-      new THREE.MeshBasicMaterial({
-        color: 0x9ffcff,
-        transparent: true,
-        opacity: 0.35,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      })
-    );
-    lipGlow.rotation.x = -Math.PI / 2;
-    lipGlow.position.y = 0.16;
-    root.add(lipGlow);
-
-    // --- Water (the Hourglass liquid material) ---
-    const waterY = 0.0;
-    const poolRadius = 1.18;
+    // --- Water inside the well (Hourglass liquid material) ---
+    const waterY = wallTop - 0.28;
+    const poolRadius = wallRadius - 0.24;
     const water = new THREE.Mesh(
       new THREE.CircleGeometry(poolRadius, 64),
       new THREE.MeshPhysicalMaterial({
@@ -290,144 +301,26 @@ export default function WishingWell({
     water.position.y = waterY;
     root.add(water);
 
-    // ══════════════════════ THE GALAXY ══════════════════════
-    // A 3D twin of GalaxyStream: same arms/winding/scatter/palette, tilted the same way.
-    const galaxy = new THREE.Group();
-    galaxy.position.set(2.4, 3.9, -1.0);
-    galaxy.rotation.set(1.05, 0, -0.45); // tip the disc toward the viewer, tilt like the 2D one
-    root.add(galaxy);
-
-    // Disc spins as a unit; spawn math adds disc.rotation.y so the stream tracks the arms.
-    const disc = new THREE.Group();
-    galaxy.add(disc);
-
-    // (frac, armIndex, fuzz) → flat disc-space point, same formula as GalaxyStream.
-    const armPoint = (target, frac, armIndex, fuzz) => {
-      const armAngle = armIndex * ((Math.PI * 2) / GALAXY.arms);
-      const spread = fuzz * (0.9 - frac * GALAXY.scatter);
-      const theta = armAngle + frac * GALAXY.winding + spread;
-      const r = frac * GALAXY.radius;
-      target.set(
-        Math.cos(theta) * r,
-        (Math.random() - 0.5) * 0.06,
-        Math.sin(theta) * r
-      );
-      return target;
-    };
-
-    const galaxyCount = 900;
-    const galaxyGeo = new THREE.BufferGeometry();
-    {
-      const pos = new Float32Array(galaxyCount * 3);
-      const col = new Float32Array(galaxyCount * 3);
-      const v = new THREE.Vector3();
-      const c = new THREE.Color();
-      for (let i = 0; i < galaxyCount; i++) {
-        const frac = Math.pow(Math.random(), GALAXY.coreBias);
-        armPoint(v, frac, i % GALAXY.arms, Math.random() - 0.5);
-        pos[i * 3] = v.x;
-        pos[i * 3 + 1] = v.y;
-        pos[i * 3 + 2] = v.z;
-        // Same color rule as GalaxyStream: warm/bright core, mostly-DEEP arms.
-        const inner = frac < GALAXY.coreFraction;
-        c.setHex(inner ? pick(BRIGHT) : Math.random() < 0.22 ? pick(BRIGHT) : pick(DEEP));
-        const dim = inner ? 1 : 0.55 + Math.random() * 0.45;
-        col[i * 3] = c.r * dim;
-        col[i * 3 + 1] = c.g * dim;
-        col[i * 3 + 2] = c.b * dim;
-      }
-      galaxyGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-      galaxyGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    }
-    const galaxyPoints = new THREE.Points(
-      galaxyGeo,
-      new THREE.PointsMaterial({
-        size: 0.05,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.95,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        map: softStarTexture,
-        sizeAttenuation: true,
-      })
-    );
-    disc.add(galaxyPoints);
-
-    // Four-point sparkles seeded along the arms.
-    const sparkleCount = 14;
-    const sparkleGeo = new THREE.BufferGeometry();
-    const sparklePos = new Float32Array(sparkleCount * 3);
-    const sparkleCol = new Float32Array(sparkleCount * 3);
-    const sparklePhase = [];
-    {
-      const v = new THREE.Vector3();
-      const c = new THREE.Color();
-      for (let i = 0; i < sparkleCount; i++) {
-        const frac = 0.15 + Math.pow(Math.random(), 0.7) * 0.85;
-        armPoint(v, frac, i % GALAXY.arms, (Math.random() - 0.5) * 1.3);
-        sparklePos[i * 3] = v.x;
-        sparklePos[i * 3 + 1] = v.y;
-        sparklePos[i * 3 + 2] = v.z;
-        c.setHex(pick(BRIGHT));
-        sparkleCol[i * 3] = c.r;
-        sparkleCol[i * 3 + 1] = c.g;
-        sparkleCol[i * 3 + 2] = c.b;
-        sparklePhase.push({ tw: 0.4 + Math.random() * 1.1, phase: Math.random() * Math.PI * 2, c: c.clone() });
-      }
-      sparkleGeo.setAttribute('position', new THREE.BufferAttribute(sparklePos, 3));
-      sparkleGeo.setAttribute('color', new THREE.BufferAttribute(sparkleCol, 3));
-    }
-    const sparkles = new THREE.Points(
-      sparkleGeo,
-      new THREE.PointsMaterial({
-        size: 0.22,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.9,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        map: sparkleTexture,
-        sizeAttenuation: true,
-      })
-    );
-    disc.add(sparkles);
-
-    // Warm core + wide violet halo, straight from GalaxyStream's drawGlows.
-    const coreSprite = new THREE.Sprite(
-      new THREE.SpriteMaterial({
-        map: makeRadialTexture([
-          [0, 'rgba(255, 242, 214, 0.95)'],
-          [0.35, 'rgba(255, 226, 190, 0.4)'],
-          [1, 'rgba(255, 226, 190, 0)'],
-        ], 128),
-        transparent: true,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      })
-    );
-    coreSprite.scale.set(1.2, 0.85, 1);
-    galaxy.add(coreSprite);
-    const haloSprite = new THREE.Sprite(
-      new THREE.SpriteMaterial({
-        map: makeRadialTexture([
-          [0, 'rgba(140, 130, 240, 0.34)'],
-          [0.5, 'rgba(90, 90, 200, 0.14)'],
-          [1, 'rgba(90, 90, 200, 0)'],
-        ], 128),
-        transparent: true,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      })
-    );
-    haloSprite.scale.set(3.8, 2.6, 1);
-    galaxy.add(haloSprite);
-
     // ══════════════════════ THE STREAM ══════════════════════
-    // One ribbon of stars: every particle spawns on a spiral arm, then funnels
-    // through a shared corridor point on its way down to the pool — so all the
-    // arcs overlap into a single flow, like the trails in GalaxyStream.
-    const corridor = new THREE.Vector3(2.5, 1.7, -0.3);
+    // Stars enter at the top edge of the frame (screen-space sourceX), so they
+    // visually continue whatever is above this section — the GalaxyStream trails.
+    const sourcePoint = new THREE.Vector3();
+    const corridor = new THREE.Vector3();
+    const updateSource = () => {
+      // Unproject a point just above the top of the viewport onto the z=0 plane.
+      const ndcX = sourceXRef.current * 2 - 1;
+      sourcePoint.set(ndcX, 1.12, 0.5).unproject(camera);
+      const dir = sourcePoint.sub(camera.position).normalize();
+      const t = -camera.position.z / dir.z;
+      sourcePoint.copy(camera.position).addScaledVector(dir, t);
+      // Corridor: midway down, bowed outward so the ribbon falls in a graceful arc.
+      corridor.set(
+        sourcePoint.x + (sourcePoint.x >= 0 ? 0.9 : -0.9),
+        (sourcePoint.y + waterY) * 0.55,
+        0
+      );
+    };
+    updateSource();
 
     const streamCount = 150;
     const streamGeo = new THREE.BufferGeometry();
@@ -448,37 +341,24 @@ export default function WishingWell({
         sizeAttenuation: true,
       })
     );
-    root.add(stream);
+    scene.add(stream);
 
     const tmpV = new THREE.Vector3();
-    let discRotation = 0;
-
-    // Spawn on a lower-arm point (frac 0.35–1) of the *currently rotated* disc.
-    const spawnFromArm = (target) => {
-      const frac = 0.35 + Math.pow(Math.random(), 0.7) * 0.65;
-      const armIndex = (Math.random() * GALAXY.arms) | 0;
-      armPoint(target, frac, armIndex, Math.random() - 0.5);
-      target.applyAxisAngle(new THREE.Vector3(0, 1, 0), discRotation);
-      galaxy.localToWorld(target);
-      root.worldToLocal(target);
-      return target;
-    };
-
     const particles = [];
     const spawnParticle = (p) => {
-      spawnFromArm(p.a);
-      const a = Math.random() * Math.PI * 2;
-      const r = Math.sqrt(Math.random()) * (poolRadius - 0.2);
-      p.b.set(Math.cos(a) * r, waterY, Math.sin(a) * r);
-      // Funnel: pull the control point strongly toward the shared corridor.
-      p.c.lerpVectors(p.a, p.b, 0.5);
-      p.c.lerp(corridor, 0.7);
-      p.c.x += (Math.random() - 0.5) * 0.3;
-      p.c.y += (Math.random() - 0.5) * 0.3;
+      p.a.copy(sourcePoint);
+      p.a.x += (Math.random() - 0.5) * 0.5;
+      p.a.z += (Math.random() - 0.5) * 0.4;
+      const ang = Math.random() * Math.PI * 2;
+      const r = Math.sqrt(Math.random()) * (poolRadius - 0.25);
+      p.b.set(Math.cos(ang) * r, waterY, Math.sin(ang) * r);
+      p.c.copy(corridor);
+      p.c.x += (Math.random() - 0.5) * 0.35;
+      p.c.y += (Math.random() - 0.5) * 0.35;
       p.c.z += (Math.random() - 0.5) * 0.3;
       p.t = 0;
-      p.speed = 0.26 + Math.random() * 0.18;
-      // Trail color rule from GalaxyStream: 30% BRIGHT, 70% DEEP.
+      p.speed = 0.24 + Math.random() * 0.16;
+      // Same color rule as GalaxyStream's trails: 30% BRIGHT, 70% DEEP.
       p.color.setHex(Math.random() < 0.3 ? pick(BRIGHT) : pick(DEEP));
       p.twinkle = Math.random() * Math.PI * 2;
     };
@@ -493,7 +373,7 @@ export default function WishingWell({
         twinkle: 0,
       };
       spawnParticle(p);
-      p.t = Math.random(); // pre-fill so it starts as a flowing ribbon, not a first drip
+      p.t = Math.random(); // pre-fill so it starts as a flowing ribbon
       particles.push(p);
     }
 
@@ -507,7 +387,7 @@ export default function WishingWell({
       return out;
     };
 
-    // --- Ripple rings (same system as the Hourglass) ---
+    // --- Ripple rings (Hourglass system) ---
     const rippleCount = 14;
     const rippleGeo = new THREE.RingGeometry(0.85, 1.0, 48);
     const ripples = [];
@@ -535,7 +415,7 @@ export default function WishingWell({
       r.maxRadius = maxRadius;
     };
 
-    // --- Splash particles (same system as the Hourglass) ---
+    // --- Splash particles (Hourglass system) ---
     const splashCount = 60;
     const splashGeo = new THREE.BufferGeometry();
     const splashPos = new Float32Array(splashCount * 3);
@@ -573,7 +453,7 @@ export default function WishingWell({
       splashGeo.attributes.position.needsUpdate = true;
     };
 
-    // --- Wish stars: the Hourglass's rounded star, in the galaxy's warm BRIGHT tone ---
+    // --- Wish stars (Hourglass rounded star, warm BRIGHT gold) ---
     const starShape = new THREE.Shape();
     {
       const spikes = 5, outerR = 0.3, innerR = 0.15;
@@ -603,13 +483,13 @@ export default function WishingWell({
     starMeshGeo.center();
 
     const wishStars = [];
-    const wishCount = 3;
+    const wishCount = 2;
     for (let i = 0; i < wishCount; i++) {
       const mesh = new THREE.Mesh(
         starMeshGeo,
         new THREE.MeshPhysicalMaterial({
           color: 0xffffff,
-          emissive: 0xfff3d8, // BRIGHT warm gold — matches the galaxy's core stars
+          emissive: 0xfff3d8,
           emissiveIntensity: 3.5,
           metalness: 0.4,
           roughness: 0.1,
@@ -618,13 +498,13 @@ export default function WishingWell({
           opacity: 1,
         })
       );
-      mesh.scale.setScalar(0.45);
+      mesh.scale.setScalar(0.5);
       mesh.visible = false;
-      root.add(mesh);
+      scene.add(mesh);
       wishStars.push({
         mesh,
         phase: 'idle',
-        age: -(4 + i * 6 + Math.random() * 4), // stagger arrivals
+        age: -(5 + i * 8 + Math.random() * 4),
         a: new THREE.Vector3(),
         b: new THREE.Vector3(),
         c: new THREE.Vector3(),
@@ -634,13 +514,13 @@ export default function WishingWell({
       });
     }
     const launchWishStar = (w) => {
-      spawnFromArm(w.a);
-      const a = Math.random() * Math.PI * 2;
+      w.a.copy(sourcePoint);
+      w.a.x += (Math.random() - 0.5) * 0.4;
+      const ang = Math.random() * Math.PI * 2;
       const r = Math.sqrt(Math.random()) * (poolRadius - 0.4);
-      w.b.set(Math.cos(a) * r, waterY, Math.sin(a) * r);
-      w.c.lerpVectors(w.a, w.b, 0.5);
-      w.c.lerp(corridor, 0.7); // rides the same corridor as the stardust
-      w.fallDuration = 2.6 + Math.random() * 1.2;
+      w.b.set(Math.cos(ang) * r, waterY, Math.sin(ang) * r);
+      w.c.copy(corridor); // rides the same corridor as the stardust
+      w.fallDuration = 2.8 + Math.random() * 1.2;
       w.floatDuration = 3.5 + Math.random() * 2;
       w.spin = (Math.random() - 0.5) * 2;
       w.phase = 'falling';
@@ -669,29 +549,17 @@ export default function WishingWell({
     const tick = (t, dt) => {
       const density = densityRef.current;
 
-      // Galaxy spins as one disc; the twinkle matches GalaxyStream's rhythm.
-      discRotation = t * GALAXY.rotationSpeed * 6; // a touch faster than the 2D one so motion reads in 3D
-      disc.rotation.y = discRotation;
-      coreSprite.material.opacity = 0.85 + Math.sin(t * 1.4) * 0.15;
-      const scol = sparkleGeo.attributes.color;
-      for (let i = 0; i < sparkleCount; i++) {
-        const sp = sparklePhase[i];
-        const a = 0.25 + 0.75 * Math.abs(Math.sin(t * sp.tw + sp.phase));
-        scol.setXYZ(i, sp.c.r * a, sp.c.g * a, sp.c.b * a);
-      }
-      scol.needsUpdate = true;
-
-      // Stream: accelerate down the arc (trail rule), fade in near the galaxy.
+      // Stream: accelerate down the arc, fade in near the top of the frame.
       const activeCount = Math.floor(streamCount * density);
       for (let i = 0; i < streamCount; i++) {
         const p = particles[i];
         if (i >= activeCount) {
-          streamPos[i * 3 + 1] = -50; // park inactive particles out of sight
+          streamPos[i * 3 + 1] = -50;
           continue;
         }
         p.t += p.speed * (0.45 + p.t) * dt;
         if (p.t >= 1) {
-          spawnRipple(p.b.x, p.b.z, 0.22 + Math.random() * 0.18);
+          spawnRipple(p.b.x, p.b.z, 0.2 + Math.random() * 0.18);
           if (Math.random() < 0.25) spawnSplash(p.b.x, p.b.z, 2);
           spawnParticle(p);
         }
@@ -699,7 +567,7 @@ export default function WishingWell({
         streamPos[i * 3] = tmpV.x;
         streamPos[i * 3 + 1] = tmpV.y;
         streamPos[i * 3 + 2] = tmpV.z;
-        const fadeIn = Math.min(1, p.t / 0.1);
+        const fadeIn = Math.min(1, p.t / 0.08);
         const tw = (0.72 + Math.sin(t * 7 + p.twinkle) * 0.28) * fadeIn;
         streamCol[i * 3] = p.color.r * tw;
         streamCol[i * 3 + 1] = p.color.g * tw;
@@ -718,22 +586,21 @@ export default function WishingWell({
         const m = w.mesh;
         if (w.phase === 'falling') {
           const k = Math.min(w.age / w.fallDuration, 1);
-          const eased = k * k * (3 - 2 * k); // smoothstep: drifts free, then commits
+          const eased = k * k * (3 - 2 * k);
           bezier(m.position, w.a, w.c, w.b, eased);
           m.rotation.y += w.spin * dt * 2;
           m.rotation.z = Math.sin(t * 2 + w.spin) * 0.3;
           if (k >= 1) {
             spawnSplash(m.position.x, m.position.z, 10);
-            spawnRipple(m.position.x, m.position.z, 0.9);
-            spawnRipple(m.position.x, m.position.z, 0.6, 0.15);
-            spawnRipple(m.position.x, m.position.z, 0.35, 0.3);
+            spawnRipple(m.position.x, m.position.z, 1.05);
+            spawnRipple(m.position.x, m.position.z, 0.7, 0.15);
+            spawnRipple(m.position.x, m.position.z, 0.4, 0.3);
             w.phase = 'floating';
             w.age = 0;
             onStarLandedRef.current?.();
           }
           continue;
         }
-        // Floating: bob, hold, then dissolve into the water.
         const k = Math.min(w.age / w.floatDuration, 1);
         m.position.y = waterY + 0.1 + Math.sin(t * 2.2 + w.spin * 5) * 0.03;
         m.rotation.y += w.spin * dt * 0.4;
@@ -742,10 +609,10 @@ export default function WishingWell({
         m.material.opacity = fade;
         m.material.emissiveIntensity = 3.5 * (0.85 + Math.sin(t * 3) * 0.15) * fade;
         if (k >= 1) {
-          spawnRipple(m.position.x, m.position.z, 0.4);
+          spawnRipple(m.position.x, m.position.z, 0.35);
           m.visible = false;
           w.phase = 'idle';
-          w.age = -(6 + Math.random() * 8);
+          w.age = -(8 + Math.random() * 10);
         }
       }
 
@@ -783,37 +650,32 @@ export default function WishingWell({
       }
       splashGeo.attributes.position.needsUpdate = true;
 
-      // Water shimmer + lip pulse + gentle sway (Hourglass rhythm).
+      // The only ambient motion: water shimmer and the Hourglass's gentle sway.
       water.material.emissiveIntensity = 0.24 + Math.sin(t * 1.8) * 0.07;
       poolLight.intensity = 1.3 + Math.sin(t * 1.8) * 0.3;
-      lipGlow.material.opacity = 0.28 + Math.sin(t * 2.4) * 0.12;
-      root.rotation.y = Math.sin(t * 0.25) * 0.05;
+      root.rotation.y = Math.sin(t * 0.25) * 0.04;
       root.position.y = Math.sin(t * 0.6) * 0.03;
     };
 
-    const clockTick = () => {
+    const renderFrame = () => {
       const t = clock.getElapsedTime();
       const dt = Math.min(clock.getDelta(), 0.05);
       tick(t, dt);
-      controls.update();
       composer.render();
     };
 
     const animate = () => {
-      if (visible) clockTick(); // pause the whole pipeline when scrolled offscreen
+      if (visible) renderFrame(); // pause the whole pipeline when scrolled offscreen
       raf = requestAnimationFrame(animate);
     };
 
     if (reducedMotion) {
-      tick(2, 0.016); // settle particles into a visible ribbon, render one static frame
-      for (let i = 0; i < 60; i++) tick(2 + i * 0.05, 0.05);
-      controls.update();
-      composer.render();
+      for (let i = 0; i < 60; i++) tick(i * 0.05, 0.05); // settle the ribbon
+      composer.render(); // single static frame
     } else {
       animate();
     }
 
-    // --- Visibility: don't burn GPU while offscreen (same idea as GalaxyStream) ---
     const io = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
     });
@@ -826,8 +688,10 @@ export default function WishingWell({
       const h = mount.clientHeight;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      camera.lookAt(0, 2.2, 0);
       renderer.setSize(w, h);
       composer.setSize(w, h);
+      updateSource(); // keep the stream entering at the same screen fraction
       if (reducedMotion) composer.render();
     };
     const resizeObserver = new ResizeObserver(onResize);
@@ -838,7 +702,6 @@ export default function WishingWell({
       cancelAnimationFrame(raf);
       io.disconnect();
       resizeObserver.disconnect();
-      controls.dispose();
       renderer.dispose();
       composer.dispose?.();
       scene.traverse((obj) => {
@@ -858,7 +721,7 @@ export default function WishingWell({
         mount.removeChild(renderer.domElement);
       }
     };
-  }, []); // Setup once. Density and callbacks are read from refs so prop changes take effect live.
+  }, []); // Setup once. Density/sourceX/callbacks are read from refs so prop changes apply live.
 
   return (
     <div
@@ -870,6 +733,7 @@ export default function WishingWell({
         height: '100%',
         background: background ?? 'transparent',
         overflow: 'hidden',
+        pointerEvents: 'none', // background layer: never block links/pills above it
         ...style,
       }}
     />
