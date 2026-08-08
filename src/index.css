@@ -178,9 +178,11 @@ h2 {
 .section-1 {
   color: #1a1c3a;
   position: relative;
-  /* let the cloud bank spill past the hero's bottom edge into the next
-     section instead of clipping in a hard line (body hides x-overflow) */
-  overflow: visible;
+  /* clip sideways so wide clouds can't cause horizontal scroll/jitter, but
+     keep the vertical spill so the bank still bleeds into the next section.
+     overflow-x: clip + overflow-y: visible does exactly that. */
+  overflow-x: clip;
+  overflow-y: visible;
   z-index: 2;
   /* twilight sky that hands off cleanly into the body's day→night ramp:
      starts on the body's pastel lavender top and eases into its next stops,
@@ -279,7 +281,7 @@ h2 {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 62%;
+  height: 74%;
   z-index: 1;
   pointer-events: none;
 }
@@ -288,19 +290,29 @@ h2 {
 
 /* front bank renders above the whale/title layer (z-index 2) so the whale
    reads as rising out from between the cloud layers */
-.cloud-bank-front { z-index: 3; height: 48%; }
+.cloud-bank-front { z-index: 3; height: 58%; }
+
+/* front cloud band — a FULL-HEIGHT layer (so children positioned by `top`
+   map directly to a % of the hero) stacked above the back bank. Lets the band
+   sit mid-screen with the whale rising above it, matching the reference. */
+.cloud-bank-top {
+  z-index: 4;
+  top: 0;
+  height: 100%;
+}
 
 /* clouds ease apart + dim slightly as you scroll the hero (--part: 0→1).
-   They part just a little and stay mostly visible rather than vanishing. */
+   They part just a little and stay mostly visible rather than vanishing.
+   Transforms use translate3d to stay on the compositor and avoid flicker. */
 .cloud-drift {
-  will-change: transform, opacity;
   transition: opacity 0.3s ease;
   opacity: calc(1 - var(--part) * 0.35);
+  backface-visibility: hidden;
 }
-.cloud-left  { transform: translateX(calc(var(--part) * -16vw)); }
-.cloud-right { transform: translateX(calc(var(--part) *  16vw)); }
-/* dense front cloud sinks a touch as you scroll */
-.cloud-center { transform: translateX(-50%) translateY(calc(var(--part) * 14vh)); }
+.cloud-left  { transform: translate3d(calc(var(--part) * -12vw), 0, 0); }
+.cloud-right { transform: translate3d(calc(var(--part) *  12vw), 0, 0); }
+/* dense front cloud sinks a touch as you scroll (keeps its -50% centering) */
+.cloud-center { transform: translate3d(-50%, calc(var(--part) * 12vh), 0); }
 
 @media (prefers-reduced-motion: reduce) {
   .cloud-left, .cloud-right { transform: none; }
@@ -311,7 +323,17 @@ h2 {
 /* schedule clouds sit above the glass's lower half but below text */
 .cloud-layer-bottom { z-index: 1; }
 
-.section-1 .section-inner { position: relative; }
+/* Keep .section-inner as a z-index:auto passthrough (NOT its own stacking
+   context) so its children's z-index compete directly against the cloud
+   layers at the section level. This lets the text sit above the clouds while
+   the whale sits below the front V. */
+.section-1 .section-inner { position: relative; z-index: auto; }
+
+/* text ALWAYS on top — above the frontmost cloud layer (V is z-index 4) */
+.section-1 .title-text { position: relative; z-index: 6; }
+
+/* whale sits BELOW the front V (z-index 4) so it rises out from the clouds */
+.section-1 .title-whale-wrap { position: relative; z-index: 2; }
 
 .title-inner {
   display: flex;
@@ -521,12 +543,15 @@ h2 {
   color: white;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(180deg, #B08CFF 0%, #7A5CFF 52%, #4B3DBF 100%);
+  /* deeper, more saturated indigo twilight (matches the reference) — still
+     starts on the hero's #B08CFF and lands on #4B3DBF so the chain is seamless,
+     but the mid-tones lean richer blue-violet instead of bright periwinkle */
+  background: linear-gradient(180deg, #B08CFF 0%, #8B6FEE 30%, #6A54D8 62%, #4B3DBF 100%);
 }
 .section-4 .section-inner {
   position: relative;
   z-index: 2;
-  max-width: 1150px; /* wider than other sections so the itineraries fit beside the glass */
+  max-width: 1320px; /* wider than other sections so the itineraries fit beside the glass */
 }
 
 /* Hourglass centerpiece flanked by the two day itineraries */
@@ -542,9 +567,13 @@ h2 {
 
 .hourglass-frame {
   position: relative;
-  width: clamp(240px, 34vw, 380px);
-  height: clamp(360px, 50vw, 560px);
+  /* the art layers are square (2048×2048), so the frame is too */
+  width: clamp(400px, 40vw, 600px);
+  aspect-ratio: 1 / 1;
   flex-shrink: 0;
+  /* the art has generous transparent padding, so pull the neighbouring
+     itineraries back in rather than letting the empty margin push them out */
+  margin: -6% -7%;
 }
 
 /* soft dreamy glow behind the glass — oversized and heavily feathered so it
@@ -566,11 +595,68 @@ h2 {
   z-index: 0;
 }
 
-/* feather the WebGL canvas edges so the starfield/scene fades into the page
-   instead of ending in a hard rectangle */
-.hourglass-frame canvas {
-  -webkit-mask-image: radial-gradient(ellipse 60% 58% at 50% 50%, #000 60%, transparent 95%);
-          mask-image: radial-gradient(ellipse 60% 58% at 50% 50%, #000 60%, transparent 95%);
+/* ── Layered PNG hourglass ──
+   All nine art layers are pre-registered square canvases, so each one simply
+   fills the frame and stacks by z-index. Layer 1 is frontmost, 9 backmost. */
+.hourglass-png {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* slow rock left-and-right, pivoting on the base so it reads as the whole
+     glass tipping rather than sliding */
+  transform-origin: 50% 88%;
+  animation: hg-wobble 8s ease-in-out infinite;
+  z-index: 1;
+}
+
+.hg-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.hg-frontpillars  { z-index: 9; }
+.hg-glass         { z-index: 8; }
+.hg-star          { z-index: 7; transition: opacity 0.6s ease; }
+.hg-topbubble     { z-index: 6; }
+.hg-moon          { z-index: 5; }
+.hg-bottombubble  { z-index: 4; }
+.hg-backpillars   { z-index: 3; }
+.hg-case          { z-index: 2; }
+.hg-backglow      { z-index: 1; }
+
+@keyframes hg-wobble {
+  0%, 100% { transform: rotate(-1.6deg) translateX(-0.5%); }
+  50%      { transform: rotate(1.6deg) translateX(0.5%); }
+}
+
+/* the two bubble layers breathe so the glass feels alive */
+.hg-topbubble    { animation: hg-bubble 7s ease-in-out infinite; }
+.hg-bottombubble { animation: hg-bubble 9s ease-in-out infinite reverse; }
+
+@keyframes hg-bubble {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.94; }
+  50%      { transform: translateY(-0.6%) scale(1.012); opacity: 1; }
+}
+
+/* the glow behind everything pulses slowly */
+.hg-backglow { animation: hg-glow 6s ease-in-out infinite; }
+
+@keyframes hg-glow {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hourglass-png,
+  .hg-topbubble,
+  .hg-bottombubble,
+  .hg-backglow { animation: none; }
 }
 
 /* Flanking day itineraries — "day 1" upper-left, "day 2" lower-right,
@@ -590,14 +676,14 @@ h2 {
 
 .day-col-label {
   font-family: 'Great Vibes', cursive;
-  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-size: clamp(1.7rem, 3.2vw, 2.3rem);
   line-height: 1;
   text-shadow: 0 0 18px rgba(150, 200, 255, 0.35);
   white-space: nowrap;
 }
 
 .day-col-date {
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0.55;
@@ -608,18 +694,18 @@ h2 {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 13px;
-  max-width: 320px;
+  gap: 11px;
+  max-width: 300px;
 }
 
 .day-col-event {
   display: grid;
-  grid-template-columns: 66px 1fr;
-  gap: 12px;
+  grid-template-columns: 60px 1fr;
+  gap: 10px;
 }
 
 .day-col-time {
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   opacity: 0.6;
@@ -628,8 +714,8 @@ h2 {
 }
 
 .day-col-body { display: flex; flex-direction: column; gap: 2px; }
-.day-col-title { font-size: 0.95rem; font-weight: 600; }
-.day-col-desc  { font-size: 0.78rem; opacity: 0.55; line-height: 1.5; }
+.day-col-title { font-size: 0.85rem; font-weight: 600; }
+.day-col-desc  { font-size: 0.72rem; opacity: 0.55; line-height: 1.45; }
 
 @keyframes day-fade {
   from { opacity: 0; transform: translateY(10px); }
@@ -905,12 +991,30 @@ footer {
 
   /* Schedule: hourglass on top, day toggle below it, one itinerary at a time */
   .schedule-stage { grid-template-columns: 1fr; justify-items: center; gap: 18px; }
-  .hourglass-frame { order: -1; height: 300px; width: 220px; }
+  .hourglass-frame { order: -1; width: min(420px, 96vw); margin: -8% 0; }
   .day-toggle { display: flex; gap: 28px; justify-content: center; }
   .day-col { order: 1; animation: day-fade 0.45s cubic-bezier(.22,1,.36,1); }
   .day-col-left, .day-col-right { margin-top: 0; justify-self: center; }
   .day-col.compact-hidden { display: none; }
 
-  .cloud-layer > *:nth-child(n+3) { display: none; }
+  /* phones: keep the band continuous with fewer clouds. Drop the two INNER
+     band clouds (children 2 & 3) and let the two wide OUTER ones (1 & 4)
+     overlap across the middle so the band still reads unbroken. */
+  .cloud-bank-top > .cloud-drift:nth-child(2),
+  .cloud-bank-top > .cloud-drift:nth-child(3) { display: none; }
+  .cloud-bank-top > .cloud-drift:nth-child(1) { left: -18% !important; }
+  .cloud-bank-top > .cloud-drift:nth-child(4) { right: -18% !important; }
+}
 
+/* Schedule: the glass is wide enough that flanking both sides only works on
+   real desktop widths. Below that, fall back to the same stacked layout the
+   phone breakpoint uses — glass on top, toggle, one itinerary beneath it. */
+@media (min-width: 681px) and (max-width: 1150px) {
+  .schedule-stage { grid-template-columns: 1fr; justify-items: center; gap: 18px; }
+  .hourglass-frame { order: -1; width: min(520px, 78vw); margin: -7% 0; }
+  .day-toggle { display: flex; gap: 28px; justify-content: center; }
+  .day-col { order: 1; animation: day-fade 0.45s cubic-bezier(.22,1,.36,1); }
+  .day-col-left, .day-col-right { margin-top: 0; justify-self: center; }
+  .day-col.compact-hidden { display: none; }
+  .day-col-events { max-width: 420px; }
 }
