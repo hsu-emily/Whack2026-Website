@@ -254,8 +254,8 @@ function App() {
             </div>
           </div>
           <div className="sponsors-illustration" aria-hidden="true">
-      <img src={wishingWell} alt="" className="sponsors-well" />
-    </div>
+            <img src={wishingWell} alt="" className="sponsors-well" />
+          </div>
         {/*<div className="well-wrap" style={{ width: '90%', height: '800px', position: 'relative' }}>
             <WishingWell />
         </div>*/}
