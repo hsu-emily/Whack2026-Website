@@ -329,8 +329,10 @@ h2 {
    the whale sits below the front V. */
 .section-1 .section-inner { position: relative; z-index: auto; }
 
-/* text ALWAYS on top — above the frontmost cloud layer (V is z-index 4) */
-.section-1 .title-text { position: relative; z-index: 6; }
+/* text ALWAYS on top — above the frontmost cloud layer (V is z-index 4).
+   Keep position:absolute so the base .title-text placement (left/top/transform)
+   still applies — a relative override here shoves the text off-screen. */
+.section-1 .title-text { position: absolute; z-index: 6; }
 
 /* whale sits BELOW the front V (z-index 4) so it rises out from the clouds */
 .section-1 .title-whale-wrap { position: relative; z-index: 2; }
