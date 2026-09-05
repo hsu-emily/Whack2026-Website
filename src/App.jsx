@@ -233,7 +233,7 @@ function App() {
       <section id="sponsors" className="section section-6">
         <div className="section-inner centered">
           <h1>Sponsors</h1>
-          <div className="sponsor-tiers">
+          {/*/* <div className="sponsor-tiers">
             <div className="sponsor-tier-label">Platinum</div>
             <div className="sponsor-row">
               <span className="sponsor-pill">Anthropic</span>
@@ -252,7 +252,7 @@ function App() {
               <span className="sponsor-pill">Notion</span>
               <span className="sponsor-pill">Linear</span>
             </div>
-          </div>
+          </div>*/}
           <div className="sponsors-illustration" aria-hidden="true">
             <img src={wishingWell} alt="" className="sponsors-well" />
           </div>
@@ -262,7 +262,7 @@ function App() {
         </div>
         <p className="section-lead">
             Interested in sponsoring?{' '}
-            <a href="mailto:sponsor@whack.ucsc.edu" style={{ color: 'white' }}>Reach out →</a>
+            <a href="mailto:sponsor@whack.ucsc.edu" style={{ color: 'white' }}>Reach out!</a>
         </p>
       </section>
 
