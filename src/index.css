@@ -886,55 +886,122 @@ h2 {
   background: linear-gradient(180deg, #192C67 0%, #0B1535 100%);
 }
 
-.faq { max-width: 640px; }
+/* ── Waves FAQ ────────────────────────────────
+   Hand-painted coastline built from 6 Procreate layers (src/assets/wave),
+   stacked bottom → top: Layer1 is a flat deep-water fill, each layer
+   above it is mostly opaque with a growing, lacier transparent cutout,
+   so the stack reads as one graded shoreline with foam tendrils reaching
+   furthest at the top layer. Every layer sways gently; the FAQ list
+   sits directly on top of the artwork, over a dark scrim for legibility. */
+.section-7 { overflow: hidden; }
 
-.faq-item {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.faq-item:last-child { border-bottom: none; }
-
-.faq-q {
+.waves-faq {
+  position: relative;
   width: 100%;
+  max-width: 1100px;
+  display: grid;
+}
+
+/* every direct child shares the same grid cell, stacking art → scrim →
+   list; the row's height follows the taller of the image or the list */
+.waves-art,
+.waves-scrim,
+.waves-list {
+  grid-area: 1 / 1;
+}
+
+.waves-art {
+  align-self: start;
+  width: 100%;
+  aspect-ratio: 2916 / 1640;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.waves-art-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.waves-scrim {
+  align-self: start;
+  width: 100%;
+  aspect-ratio: 2916 / 1640;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(4, 7, 18, 0.2) 0%, rgba(4, 7, 18, 0.4) 55%, rgba(4, 7, 18, 0.55) 100%);
+}
+
+.waves-list {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 5% 20px;
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 14px;
-  padding: 22px 0;
-  background: none;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.wave-q-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 0;
+}
+.wave-q-row:last-child { border-bottom: none; }
+
+.wave-q-btn {
+  display: block;
+  width: 100%;
   border: none;
-  color: inherit;
-  font-family: inherit;
-  font-size: 1.25rem;
-  font-weight: 600;
-  text-align: left;
+  background: none;
+  margin: 0;
+  padding: 0;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.faq-q:hover { opacity: 0.8; }
-
-.faq-icon {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  opacity: 0.7;
-  transition: transform 0.25s ease;
+.wave-q {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(2, 4, 12, 0.85), 0 0 16px rgba(180, 210, 255, 0.3);
+  transition: text-shadow 0.3s ease;
+}
+.wave-q-row.is-open .wave-q,
+.wave-q-btn:hover .wave-q {
+  text-shadow: 0 2px 6px rgba(2, 4, 12, 0.9), 0 0 22px rgba(200, 222, 255, 0.6);
 }
 
-.faq-item.open .faq-icon { transform: rotate(90deg); }
+/* grid-rows 0fr → 1fr trick: animates height without measuring content */
+.wave-answer-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s ease;
+}
+.wave-q-row.is-open .wave-answer-wrap {
+  grid-template-rows: 1fr;
+}
 
-.faq-a {
-  font-size: 0.95rem;
-  opacity: 0.55;
+.wave-answer-inner { overflow: hidden; }
+
+.wave-a {
+  margin-top: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(4, 7, 18, 0.55);
+  font-size: 0.88rem;
   line-height: 1.65;
-  padding: 0 0 22px;
-}
-
-.faq-footer {
-  margin-top: 40px;
-  font-size: 0.9rem;
-  opacity: 0.7;
+  color: rgba(230, 236, 255, 0.72);
+  max-width: 560px;
 }
 
 /* ── Section 8 – Final CTA ──────────────────── */

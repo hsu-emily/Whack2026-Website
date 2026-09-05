@@ -9,21 +9,11 @@ import Star from './components/Star'
 import Cloud from './components/Cloud'
 import Schedule from './components/Schedule'
 //import WishingWell from './components/WishingWell'
+import Waves from './components/Waves'
 
 function App() {
   const heroRef = useRef(null)
   const [scrollProgress, setScrollProgress] = useState(0)
-  const [openFaqs, setOpenFaqs] = useState(() => new Set())
-
-  const toggleFaq = (index) => {
-    setOpenFaqs((prev) => {
-      const next = new Set(prev)
-      if (next.has(index)) next.delete(index)
-      else next.add(index)
-      return next
-    })
-  }
-
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight
@@ -280,39 +270,22 @@ function App() {
       <section id="faq" className="section section-7">
         <div className="section-inner">
           <h1>Frequently Asked Questions</h1>
-          <div className="faq">
-            {[
-              { q: 'Who can participate?', a: 'WHACK is open to all current college and university students. As long as you are enrolled in a degree-seeking program, you can attend.' },
-              { q: 'Do I need a team?', a: "You can apply solo or with a team of up to 4. We also have a team-forming event on Friday evening to help you mingle and find teammates. Once you're in, you can also check out our discord to meet people in advance!" },
-              { q: 'Is it free to attend?', a: 'Everything is free! (Including registration, meals, snacks, swag, and workshop access).' },
-              { q: 'Does WHACK reimburse travel?', a: "We unfortunately do not reimburse travel." },
-              { q: 'Where can I stay?', a: "We'll have designated sleeing areas in the Tishman Commons of the Lulu Chow Wang Center, where WHACK will be hosted."},
-              { q: 'Will there be food?', a: "We'll provide three meals on Saturday and two meals on Sunday (breakfast and lunch)."},
-              { q: "What if I've never hacked before?", a: 'You can still attend! We welcome beginners, especially first-time hackers. If you find yourself struggling, we have beginner-friendly workshops and a dedicated mentorship team to help you with any questions.' },
-            ].map((item, index) => {
-              const isOpen = openFaqs.has(index)
-              return (
-                <div className={`faq-item${isOpen ? ' open' : ''}`} key={item.q}>
-                  <button
-                    type="button"
-                    className="faq-q"
-                    onClick={() => toggleFaq(index)}
-                    aria-expanded={isOpen}
-                  >
-                    <svg className="faq-icon" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M7 5l11 7-11 7z" fill="currentColor" />
-                    </svg>
-                    <span>{item.q}</span>
-                  </button>
-                  {isOpen && <div className="faq-a">{item.a}</div>}
-                </div>
-              )
-            })}
-          <p className="faq-footer">
-            If you still have questions, email us at XXX!
+          <p className="section-lead">
+            Here are the most common questions we get. Still curious?{' '}
+            <a href="mailto:hello@whack.ucsc.edu" style={{ color: 'white' }}>Email us →</a>
           </p>
-          </div>
         </div>
+        <Waves
+          items={[
+            { q: 'Who can participate?', a: 'WHACK is open to all current college and university students. As long as you are enrolled in a degree-seeking program, you can attend.' },
+            { q: 'Do I need a team?', a: "You can apply solo or with a team of up to 4. We also have a team-forming event on Friday evening to help you mingle and find teammates. Once you're in, you can also check out our discord to meet people in advance!" },
+            { q: 'Is it free to attend?', a: 'Everything is free! (Including registration, meals, snacks, swag, and workshop access).' },
+            { q: 'Does WHACK reimburse travel?', a: "We unfortunately do not reimburse travel." },
+            { q: 'Where can I stay?', a: "We'll have designated sleeping areas in the Tishman Commons of the Lulu Chow Wang Center, where WHACK will be hosted." },
+            { q: 'Will there be food?', a: "We'll provide three meals on Saturday and two meals on Sunday (breakfast and lunch)." },
+            { q: "What if I've never hacked before?", a: 'You can still attend! We welcome beginners, especially first-time hackers. If you find yourself struggling, we have beginner-friendly workshops and a dedicated mentorship team to help you with any questions.' },
+          ]}
+        />
       </section>
 
       {/* ── Section 8 · Register CTA ── */}
