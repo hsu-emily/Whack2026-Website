@@ -1,3 +1,31 @@
+@font-face {
+  font-family: 'Great Vibes';
+  src: url('/fonts/GreatVibes-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Delius';
+  src: url('/fonts/Delius-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/fonts/DM_Sans/DMSans-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/fonts/DM_Sans/DMSans-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -9,7 +37,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Delius', cursive;
   background: linear-gradient(
     180deg,
     #F5E2FF 0%,
@@ -63,7 +91,7 @@ nav {
 }
 
 .nav-links a {
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 500;
   color: #1a0a2e;
   text-decoration: none;
@@ -78,7 +106,7 @@ nav {
   border: 1px solid rgba(26, 10, 46, 0.2);
   border-radius: 8px;
   padding: 8px 20px;
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #1a0a2e;
   text-decoration: none;
@@ -114,20 +142,26 @@ nav {
   margin-bottom: 1rem;
 }
 
+/* Great Vibes is a single-weight script — keep it at its true 400 weight
+   (faux-bolding thickens the strokes and kills the elegance) */
 h1 {
-  font-size: clamp(2.6rem, 6vw, 5rem);
-  font-weight: 800;
-  letter-spacing: -0.025em;
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(2.8rem, 6.5vw, 5.4rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
   line-height: 1.08;
   margin-bottom: 1.2rem;
+  text-shadow: 0 0 22px rgba(190, 215, 255, 0.25);
 }
 
 h2 {
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
   line-height: 1.15;
   margin-bottom: 1rem;
+  text-shadow: 0 0 18px rgba(190, 215, 255, 0.25);
 }
 
 .section-lead {
@@ -141,9 +175,277 @@ h2 {
 .centered .section-lead { margin-left: auto; margin-right: auto; }
 
 /* ── Section 1 – Hero ───────────────────────── */
-.section-1 { color: #1a0a2e; }
-.section-1 .eyebrow { opacity: 0.4; }
-.section-1 .section-lead { opacity: 0.6; }
+.section-1 {
+  color: #1a1c3a;
+  position: relative;
+  /* clip sideways so wide clouds can't cause horizontal scroll/jitter, but
+     keep the vertical spill so the bank still bleeds into the next section.
+     overflow-x: clip + overflow-y: visible does exactly that. */
+  overflow-x: clip;
+  overflow-y: visible;
+  z-index: 2;
+  /* twilight sky that hands off cleanly into the body's day→night ramp:
+     starts on the body's pastel lavender top and eases into its next stops,
+     so the hero and the rest of the page read as one continuous gradient. */
+  background: linear-gradient(
+    180deg,
+    #F5E2FF 0%,
+    #EAD6F6 22%,
+    #DCC6F2 46%,
+    #CDB0FF 72%,
+    #B08CFF 100%
+  );
+}
+.section-1 .eyebrow { opacity: 0.5; }
+.section-1 .section-lead { opacity: 0.7; color: #2a2c4a; position: relative; z-index: 2; }
+
+/* dreamy cloud framing — sits behind hero content */
+.section-1 { --part: 0; }
+
+/* big crescent moon glowing behind the whale */
+.hero-moon {
+  position: absolute;
+  top: 6%;
+  right: 12%;
+  width: clamp(220px, 30vw, 460px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #fffefb 0%, #fdf3ff 55%, #f3e6ff 78%, rgba(243,230,255,0) 100%);
+  /* carve the crescent with an offset mask */
+  -webkit-mask: radial-gradient(circle at 68% 42%, transparent 0 46%, #000 47%);
+          mask: radial-gradient(circle at 68% 42%, transparent 0 46%, #000 47%);
+  opacity: 0.9;
+  z-index: 0;
+  /* scroll lift + a slow drifting float, driven separately so both compose */
+  transform: translateY(calc(var(--part) * -60px));
+  transition: transform 0.12s linear;
+  animation:
+    moon-float 14s ease-in-out infinite,
+    moon-glow 6s ease-in-out infinite;
+}
+
+/* gentle drift — nudges the crescent around behind the whale */
+@keyframes moon-float {
+  0%, 100% { translate: 0 0; }
+  25%      { translate: -10px 8px; }
+  50%      { translate: 6px 14px; }
+  75%      { translate: 12px 4px; }
+}
+
+/* pulsing halo — the glow breathes in and out */
+@keyframes moon-glow {
+  0%, 100% { filter: drop-shadow(0 0 32px rgba(255, 250, 240, 0.65)); }
+  50%      { filter: drop-shadow(0 0 60px rgba(255, 246, 224, 0.95)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-moon { animation: none; filter: drop-shadow(0 0 40px rgba(255, 250, 240, 0.8)); }
+}
+
+/* scattered stars */
+.star-field { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+.sky-star {
+  position: absolute;
+  width: var(--s, 12px);
+  height: var(--s, 12px);
+  background: #ffffff;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85));
+  animation: star-twinkle 3.2s ease-in-out infinite;
+  opacity: 0.9;
+}
+.sky-star-y {
+  background: #ffe27a;
+  filter: drop-shadow(0 0 7px rgba(255, 220, 120, 0.9));
+  animation-duration: 4.1s;
+}
+
+.cloud-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.cloud-layer > * { pointer-events: none; }
+
+/* extra clouds fade in as the screen widens — sparse on laptops, lush on
+   big desktops, hidden on mobile (which also trims via nth-child below) */
+.cloud-xl { display: none; }
+@media (min-width: 1280px) { .cloud-xl { display: block; } }
+
+/* dense pastel cloud bank hugging the bottom of the hero.
+   Sits above the whale but below the title text/buttons (which are z-index 2). */
+.cloud-bank {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 74%;
+  z-index: 1;
+  pointer-events: none;
+}
+.cloud-bank > * { pointer-events: none; }
+.cloud-layer-top { z-index: 1; }
+
+/* front bank renders above the whale/title layer (z-index 2) so the whale
+   reads as rising out from between the cloud layers */
+.cloud-bank-front { z-index: 3; height: 58%; }
+
+/* front cloud band — a FULL-HEIGHT layer (so children positioned by `top`
+   map directly to a % of the hero) stacked above the back bank. Lets the band
+   sit mid-screen with the whale rising above it, matching the reference. */
+.cloud-bank-top {
+  z-index: 4;
+  top: 0;
+  height: 100%;
+}
+
+/* clouds ease apart + dim slightly as you scroll the hero (--part: 0→1).
+   They part just a little and stay mostly visible rather than vanishing.
+   Transforms use translate3d to stay on the compositor and avoid flicker. */
+.cloud-drift {
+  transition: opacity 0.3s ease;
+  opacity: calc(1 - var(--part) * 0.35);
+  backface-visibility: hidden;
+}
+.cloud-left  { transform: translate3d(calc(var(--part) * -12vw), 0, 0); }
+.cloud-right { transform: translate3d(calc(var(--part) *  12vw), 0, 0); }
+/* dense front cloud sinks a touch as you scroll (keeps its -50% centering) */
+.cloud-center { transform: translate3d(-50%, calc(var(--part) * 12vh), 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud-left, .cloud-right { transform: none; }
+  .cloud-center { transform: translateX(-50%); }
+  .cloud-drift { opacity: 0.95; }
+}
+
+/* schedule clouds sit above the glass's lower half but below text */
+.cloud-layer-bottom { z-index: 1; }
+
+/* Keep .section-inner as a z-index:auto passthrough (NOT its own stacking
+   context) so its children's z-index compete directly against the cloud
+   layers at the section level. This lets the text sit above the clouds while
+   the whale sits below the front V. */
+.section-1 .section-inner { position: relative; z-index: auto; }
+
+/* text ALWAYS on top — above the frontmost cloud layer (V is z-index 4) */
+.section-1 .title-text { position: relative; z-index: 6; }
+
+/* whale sits BELOW the front V (z-index 4) so it rises out from the clouds */
+.section-1 .title-whale-wrap { position: relative; z-index: 2; }
+
+.title-inner {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  max-width: 1200px; /* wider than other sections so the whale can go big */
+}
+
+.title-whale-wrap {
+  position: relative;
+  z-index: 2;           
+  width: 62%;
+  max-width: 780px;
+  flex-shrink: 0;
+  margin-left: -4%;    /* let the big whale bleed toward the edge */
+  margin-bottom: -12%; /* dip its belly into the front cloud bank */
+}
+
+/* twinkling star tucked behind the whale, like the mockup */
+.title-star {
+  position: absolute;
+  top: -8%;
+  right: 6%;
+  width: 26%;
+  height: auto;
+  filter: drop-shadow(0 0 22px rgba(255, 225, 140, 0.7));
+  animation: star-twinkle 3.4s ease-in-out infinite;
+  z-index: 3;
+}
+
+@keyframes star-twinkle {
+  0%, 100% { transform: scale(1) rotate(-4deg); opacity: 0.9; }
+  50%      { transform: scale(1.12) rotate(2deg); opacity: 1; }
+}
+
+.title-text {
+  position: absolute;
+  left: 74%;
+  top: 80%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  text-align: center;
+  width: max-content;
+  max-width: 90%;
+}
+
+/* plain "Whack 2026" kicker above the script title (the "math"/sans text) */
+.title-kicker {
+  display: block;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: #1a1c3a;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+}
+
+.theme-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(6rem, 9vw, 12rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.08;
+  margin-bottom: 1.2rem;
+  text-shadow: 0 0 22px rgba(190, 215, 255, 0.25);
+}
+
+/* date line under the script title, bold + dark like the mockup */
+.title-date {
+  display: block;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1a1c3a;
+  opacity: 0.9;
+  margin-top: -0.8rem;
+}
+
+.title-whale {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+}
+
+/* big scroll-driven arc: the whale sweeps up-and-over as you scroll the hero.
+   A gentle idle bob rides underneath so it's alive at rest. */
+.whale-arc {
+  transform-origin: 50% 60%;
+  transform:
+    translate(var(--whale-x, 0px), var(--whale-y, 0px))
+    rotate(var(--whale-rot, 0deg));
+  transition: transform 0.12s linear;
+}
+
+/* idle bob on the wrapper so it composes with the scroll arc on the img */
+.title-whale-wrap { animation: whale-bob 5s ease-in-out infinite; }
+
+@keyframes whale-bob {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whale-arc { transition: none; animation: none; }
+  .title-whale-wrap { animation: none; }
+}
 
 .hero-actions {
   display: flex;
@@ -234,79 +536,290 @@ h2 {
 }
 
 /* ── Section 4 – Schedule ───────────────────── */
-.section-4 { color: white; }
-
-.timeline {
-  display: flex;
-  flex-direction: column;
-  max-width: 640px;
+/* Each section paints its own slice of the day→night ramp, chained so the
+   colors match exactly at every boundary regardless of section height.
+   Hero ends on #B08CFF → schedule picks it up and deepens toward night. */
+.section-4 {
+  color: white;
+  position: relative;
+  overflow: hidden;
+  /* deeper, more saturated indigo twilight (matches the reference) — still
+     starts on the hero's #B08CFF and lands on #4B3DBF so the chain is seamless,
+     but the mid-tones lean richer blue-violet instead of bright periwinkle */
+  background: linear-gradient(180deg, #B08CFF 0%, #8B6FEE 30%, #6A54D8 62%, #4B3DBF 100%);
+}
+.section-4 .section-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1320px; /* wider than other sections so the itineraries fit beside the glass */
 }
 
-.timeline-item {
+/* Hourglass centerpiece flanked by the two day itineraries */
+.schedule-stage {
+  position: relative;
   display: grid;
-  grid-template-columns: 90px 1fr;
-  gap: 28px;
-  padding: 22px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(16px, 3vw, 44px);
+  width: 100%;
+  margin: 0.5rem auto 1rem;
 }
 
-.timeline-item:last-child { border-bottom: none; }
+.hourglass-frame {
+  position: relative;
+  /* the art layers are square (2048×2048), so the frame is too */
+  width: clamp(400px, 40vw, 600px);
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  /* the art has generous transparent padding, so pull the neighbouring
+     itineraries back in rather than letting the empty margin push them out */
+  margin: -6% -7%;
+}
 
-.timeline-time {
-  font-size: 0.76rem;
-  font-weight: 700;
+/* soft dreamy glow behind the glass — oversized and heavily feathered so it
+   melts into the section background instead of reading as its own shape */
+.hourglass-frame::before {
+  content: '';
+  position: absolute;
+  inset: -28% -45%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(200, 235, 255, 0.45) 0%,
+    rgba(150, 195, 255, 0.22) 30%,
+    rgba(130, 165, 255, 0.09) 55%,
+    rgba(120, 160, 255, 0) 78%
+  );
+  filter: blur(32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Layered PNG hourglass ──
+   All nine art layers are pre-registered square canvases, so each one simply
+   fills the frame and stacks by z-index. Layer 1 is frontmost, 9 backmost. */
+.hourglass-png {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* slow rock left-and-right, pivoting on the base so it reads as the whole
+     glass tipping rather than sliding */
+  transform-origin: 50% 88%;
+  animation: hg-wobble 8s ease-in-out infinite;
+  z-index: 1;
+}
+
+.hg-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.hg-frontpillars  { z-index: 9; }
+.hg-glass         { z-index: 8; }
+.hg-star          { z-index: 7; transition: opacity 0.6s ease; }
+.hg-topbubble     { z-index: 6; }
+.hg-moon          { z-index: 5; }
+.hg-bottombubble  { z-index: 4; }
+.hg-backpillars   { z-index: 3; }
+.hg-case          { z-index: 2; }
+.hg-backglow      { z-index: 1; }
+
+@keyframes hg-wobble {
+  0%, 100% { transform: rotate(-1.6deg) translateX(-0.5%); }
+  50%      { transform: rotate(1.6deg) translateX(0.5%); }
+}
+
+/* the two bubble layers breathe so the glass feels alive */
+.hg-topbubble    { animation: hg-bubble 7s ease-in-out infinite; }
+.hg-bottombubble { animation: hg-bubble 9s ease-in-out infinite reverse; }
+
+@keyframes hg-bubble {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.94; }
+  50%      { transform: translateY(-0.6%) scale(1.012); opacity: 1; }
+}
+
+/* the glow behind everything pulses slowly */
+.hg-backglow { animation: hg-glow 6s ease-in-out infinite; }
+
+@keyframes hg-glow {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hourglass-png,
+  .hg-topbubble,
+  .hg-bottombubble,
+  .hg-backglow { animation: none; }
+}
+
+/* Flanking day itineraries — "day 1" upper-left, "day 2" lower-right,
+   staggered like the mockup */
+.day-col { text-align: left; min-width: 0; }
+.day-col-left  { justify-self: end; margin-top: -3rem; }
+.day-col-right { justify-self: start; margin-top: 4rem; }
+
+.day-col-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.day-col-label {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(1.7rem, 3.2vw, 2.3rem);
+  line-height: 1;
+  text-shadow: 0 0 18px rgba(150, 200, 255, 0.35);
+  white-space: nowrap;
+}
+
+.day-col-date {
+  font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.45;
-  padding-top: 3px;
+  opacity: 0.55;
+  white-space: nowrap;
 }
 
-.timeline-content h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
-.timeline-content p  { font-size: 0.85rem; opacity: 0.55; line-height: 1.5; }
+.day-col-events {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  max-width: 300px;
+}
 
-/* ── Section 5 – Prizes ─────────────────────── */
-.section-5 { color: white; }
-
-.prizes {
+.day-col-event {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: 60px 1fr;
+  gap: 10px;
+}
+
+.day-col-time {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+  padding-top: 2px;
+  white-space: nowrap;
+}
+
+.day-col-body { display: flex; flex-direction: column; gap: 2px; }
+.day-col-title { font-size: 0.85rem; font-weight: 600; }
+.day-col-desc  { font-size: 0.72rem; opacity: 0.55; line-height: 1.45; }
+
+@keyframes day-fade {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* day toggle — only shown on small screens, below the hourglass */
+.day-toggle { display: none; }
+
+.day-toggle-btn {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 14px;
+  opacity: 0.55;
+  text-shadow: 0 0 16px rgba(150, 200, 255, 0.3);
+  transition: opacity 0.25s, transform 0.25s cubic-bezier(.22,1,.36,1), text-shadow 0.25s;
+  white-space: nowrap;
+}
+
+.day-toggle-btn:hover { opacity: 0.85; }
+
+.day-toggle-btn.is-active {
+  opacity: 1;
+  transform: scale(1.12);
+  text-shadow: 0 0 24px rgba(190, 225, 255, 0.85), 0 0 6px rgba(255, 255, 255, 0.6);
+}
+
+/* ── Section 5 – Tracks ─────────────────────── */
+/* paints its own slice of the day→night ramp so it chains with its neighbors:
+   picks up #4B3DBF where Schedule ends, hands off #2E3390 where Sponsors starts.
+   The galaxy canvas is transparent and draws additively over this. */
+.section-5 {
+  color: white;
+  background: linear-gradient(180deg, #4B3DBF 0%, #2E3390 100%);
+}
+
+/* the canvas is absolutely positioned inside the section, so the section
+   itself must be a positioning context and clip any overdraw */
+.galaxy-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.galaxy-section .galaxy-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* never intercepts clicks on cards/links */
+  z-index: 0;
+}
+
+/* keep the real content above the canvas */
+.galaxy-section .section-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.tracks {
+  display: grid;
+  grid-template-columns: minmax(0, 640px);
+  justify-content: start;
   gap: 18px;
   margin-top: 2rem;
+  width: 120vw;
+  margin-left: calc(50% - 50vw + 288px);
 }
 
-.prize-card {
+.track-card {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
   padding: 32px 26px;
-  text-align: center;
+  text-align: left;
 }
 
-.prize-card.first {
+.track-card.first {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 255, 255, 0.28);
 }
 
-.prize-rank {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  opacity: 0.45;
-  margin-bottom: 10px;
-}
-
-.prize-amount {
-  font-size: 2.2rem;
+.track-name {
+  /*font-family: 'Great Vibes';*/
+  font-size: 1.4rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-bottom: 8px;
 }
 
-.prize-desc { font-size: 0.84rem; opacity: 0.55; line-height: 1.5; }
+.track-desc {
+  font-size: 1rem;
+  opacity: 0.55;
+  line-height: 1.5;
+}
 
 /* ── Section 6 – Sponsors ───────────────────── */
-.section-6 { color: white; }
+.section-6 {
+  color: white;
+  background: linear-gradient(180deg, #2E3390 0%, #192C67 100%);
+}
 
 .sponsor-tiers { margin-top: 2.5rem; }
 .sponsor-tier-label {
@@ -328,7 +841,7 @@ h2 {
 }
 
 .sponsor-pill {
-  background: rgba(255, 255, 255, 0.08);
+  /*background: rgba(255, 255, 255, 0.08);*/
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 100px;
   padding: 11px 26px;
@@ -336,15 +849,13 @@ h2 {
   font-weight: 600;
 }
 
-.sponsor-pill.lg {
-  font-size: 1rem;
-  padding: 13px 32px;
-  background: rgba(255, 255, 255, 0.11);
-  border-color: rgba(255, 255, 255, 0.18);
-}
+/*add tiers later if needed*/
 
 /* ── Section 7 – FAQ ────────────────────────── */
-.section-7 { color: white; }
+.section-7 {
+  color: white;
+  background: linear-gradient(180deg, #192C67 0%, #0B1535 100%);
+}
 
 .faq { max-width: 640px; }
 
@@ -358,7 +869,75 @@ h2 {
 .faq-a { font-size: 0.86rem; opacity: 0.55; line-height: 1.65; }
 
 /* ── Section 8 – Final CTA ──────────────────── */
-.section-8 { color: white; }
+.section-8 {
+  color: white;
+  background: linear-gradient(180deg, #0B1535 0%, #030C20 100%);
+  position: relative;
+  overflow: visible;
+  z-index: 2;
+}
+
+.register-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.register-content {
+  flex: 1;
+}
+
+.register-illustration {
+  position: relative;
+  width: 62%;
+  max-width: 780px;
+  flex-shrink: 0;
+  margin-right: -4%;
+}
+
+.register-pillow {
+  position: relative;
+  width: 85%;
+  height: auto;
+  object-fit: contain;
+  z-index: 1;
+  display: block;
+  opacity: 0.95;
+  animation: pillowBob 6s ease-in-out infinite;
+}
+
+.register-whale {
+  position: absolute;
+  top: -12%;
+  left: 22%;
+  width: 85%;
+  height: auto;
+  object-fit: contain;
+  z-index: 2;
+  animation: whaleBob 4.5s ease-in-out -1.2s infinite;
+}
+
+@keyframes pillowBob {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-3.5deg);
+  }
+}
+@keyframes whaleBob {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(0deg);
+  }
+}
 
 .btn-white {
   display: inline-block;
@@ -371,24 +950,73 @@ h2 {
   text-decoration: none;
   transition: opacity 0.2s;
 }
-.btn-white:hover { opacity: 0.88; }
+.btn-white:hover { opacity: 0.88;}
 
 footer {
   text-align: center;
   padding: 28px 48px;
   font-size: 0.8rem;
-  opacity: 0.3;
-  color: white;
+  color: rgba(255, 255, 255, 0.3);
+  background: #030C20;
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
+/* ── Scrolling star ─────────────────────────────── */
+.scrolling-star {
+  position: fixed;
+  width: 100px;
+  height: auto;
+  z-index: 1000;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  will-change: left, top;
+}
+
 /* ── Responsive ─────────────────────────────── */
+
 @media (max-width: 680px) {
   nav { padding: 14px 20px; }
   .nav-links { display: none; }
   .section { padding: 100px 24px 64px; }
   h1 { font-size: 2.2rem; }
   h2 { font-size: 1.6rem; }
+  /*.title-inner { flex-direction: column; text-align: center; gap: 24px; }*/
+  .title-inner {
+    position: relative;
+    justify-content: center;   /* was implicit flex-start */
+  }
+  .title-whale-wrap { width: 92%; max-width: 380px; margin: 0; }
+  .hero-inner { flex-direction: column; align-items: flex-start; gap: 28px; }
+  .hero-whale { width: 60%; }
+
+  /* Schedule: hourglass on top, day toggle below it, one itinerary at a time */
+  .schedule-stage { grid-template-columns: 1fr; justify-items: center; gap: 18px; }
+  .hourglass-frame { order: -1; width: min(420px, 96vw); margin: -8% 0; }
+  .day-toggle { display: flex; gap: 28px; justify-content: center; }
+  .day-col { order: 1; animation: day-fade 0.45s cubic-bezier(.22,1,.36,1); }
+  .day-col-left, .day-col-right { margin-top: 0; justify-self: center; }
+  .day-col.compact-hidden { display: none; }
+
+  /* phones: keep the band continuous with fewer clouds. Drop the two INNER
+     band clouds (children 2 & 3) and let the two wide OUTER ones (1 & 4)
+     overlap across the middle so the band still reads unbroken. */
+  .cloud-bank-top > .cloud-drift:nth-child(2),
+  .cloud-bank-top > .cloud-drift:nth-child(3) { display: none; }
+  .cloud-bank-top > .cloud-drift:nth-child(1) { left: -18% !important; }
+  .cloud-bank-top > .cloud-drift:nth-child(4) { right: -18% !important; }
+}
+
+/* Schedule: the glass is wide enough that flanking both sides only works on
+   real desktop widths. Below that, fall back to the same stacked layout the
+   phone breakpoint uses — glass on top, toggle, one itinerary beneath it. */
+@media (min-width: 681px) and (max-width: 1150px) {
+  .schedule-stage { grid-template-columns: 1fr; justify-items: center; gap: 18px; }
+  .hourglass-frame { order: -1; width: min(520px, 78vw); margin: -7% 0; }
+  .day-toggle { display: flex; gap: 28px; justify-content: center; }
+  .day-col { order: 1; animation: day-fade 0.45s cubic-bezier(.22,1,.36,1); }
+  .day-col-left, .day-col-right { margin-top: 0; justify-self: center; }
+  .day-col.compact-hidden { display: none; }
+  .day-col-events { max-width: 420px; }
 }
 
 /* more */
