@@ -64,7 +64,7 @@ function App() {
   return (
     <>
       {/* ── Floating Scrolling Star ── */}
-      <div
+      {/* <div
         className="scrolling-star"
         style={{
           position: 'fixed',
@@ -78,7 +78,7 @@ function App() {
         }}
       >
         < Star />
-      </div>
+      </div> */}
       {/* ── Nav ── */}
       <nav>
         <a href="#hero" className="nav-logo">WHACK 2026</a>
