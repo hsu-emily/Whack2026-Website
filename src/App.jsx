@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './index.css'
 import whaleJump from './assets/logo.png'
+import wishingWell from './assets/wishing_well.png'
 import whaleSleep from './assets/logo_sleep.png'
 import pillow from './assets/pillow.png'
 import GalaxyStream from './components/GalaxyStream'
