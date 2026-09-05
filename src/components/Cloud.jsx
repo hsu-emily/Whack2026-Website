@@ -152,10 +152,6 @@ export default function Cloud({
         transition: "transform .4s cubic-bezier(.22,1,.36,1), filter .4s",
         filter: hover && hovered ? "brightness(1.12)" : undefined,
         animation: drift ? `cloud-drift-${uid} ${driftSpeed}s ease-in-out infinite` : undefined,
-        // give each cloud its own compositing context so its (static) SVG
-        // filter rasterizes independently — reduces sibling repaint flicker
-        // without clipping the soft filter edges the way `contain` would
-        isolation: "isolate",
         ...style,
       }}
     >
@@ -182,7 +178,7 @@ export default function Cloud({
 
           {/* soft airbrushed edge + optional grain, all clipped to the shape */}
           <filter id={`${uid}-core`} x="-30%" y="-30%" width="160%" height="160%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.013" numOctaves="3" seed={s} result="warp" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.013" numOctaves="4" seed={s} result="warp" />
             <feDisplacementMap in="SourceGraphic" in2="warp" scale={fuzziness} xChannelSelector="R" yChannelSelector="G" result="shape" />
             {grain > 0 && (
               <>
