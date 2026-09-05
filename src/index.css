@@ -890,12 +890,52 @@ h2 {
 
 .faq-item {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 22px 0;
 }
 
 .faq-item:last-child { border-bottom: none; }
-.faq-q { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
-.faq-a { font-size: 0.86rem; opacity: 0.55; line-height: 1.65; }
+
+.faq-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 22px 0;
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.faq-q:hover { opacity: 0.8; }
+
+.faq-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  opacity: 0.7;
+  transition: transform 0.25s ease;
+}
+
+.faq-item.open .faq-icon { transform: rotate(90deg); }
+
+.faq-a {
+  font-size: 0.95rem;
+  opacity: 0.55;
+  line-height: 1.65;
+  padding: 0 0 22px;
+}
+
+.faq-footer {
+  margin-top: 40px;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
 
 /* ── Section 8 – Final CTA ──────────────────── */
 .section-8 {
