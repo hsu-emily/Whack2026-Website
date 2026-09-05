@@ -851,6 +851,33 @@ h2 {
   font-weight: 600;
 }
 
+.sponsors-illustration {
+  position: relative;
+  width: 62%;
+  max-width: 780px;
+  margin: 3rem auto 0;
+  display: flex;
+  justify-content: center;
+}
+
+.sponsors-well {
+  width: 85%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  /* Sideways bob animation */
+  animation: wellBob 5s ease-in-out infinite;
+}
+
+@keyframes wellBob {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) translateX(10px) rotate(3deg);
+  }
+}
+
 /*add tiers later if needed*/
 
 /* ── Section 7 – FAQ ────────────────────────── */
