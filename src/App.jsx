@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './index.css'
-import whaleJump from './assets/whale_jump.png'
-import whaleSleep from './assets/whale_sleep.png'
+import whaleJump from './assets/logo.png'
+import whaleSleep from './assets/logo_sleep.png'
 import pillow from './assets/pillow.png'
 import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
@@ -89,7 +89,6 @@ function App() {
         </ul>
         <a href="#register" className="nav-register">Register</a>
       </nav>
-      <img src={logo} className="welcome-logo"></img>
 
       {/* ── Section 1 · Hero ── */}
       <section id="hero" className="section section-1" ref={heroRef}>
