@@ -350,8 +350,33 @@ h2 {
   width: 62%;
   max-width: 780px;
   flex-shrink: 0;
-  margin-left: -4%;    /* let the big whale bleed toward the edge */
+  margin-left: -15%;    /* let the big whale bleed toward the edge */
   margin-bottom: -12%; /* dip its belly into the front cloud bank */
+}
+
+/* ── Hero Turtle ────────────────────────── */
+.hero-turtle {
+  position: absolute;
+  width: 500px; /* Adjust scale relative to jumping whale */
+  height: auto;
+  top: -120px;   /* Positions turtle floating near top-right of whale */
+  right: -825px; 
+  z-index: 3;
+  pointer-events: none;
+  object-fit: contain;
+  
+  /* Continuous bobbing and gentle tilting animation */
+  animation: turtleFloat 7.5s ease-in-out infinite;
+}
+
+/* Floating animation: rises, shifts horizontally, and tilts back & forth */
+@keyframes turtleFloat {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-5px) translateX(5px) rotate(4deg);
+  }
 }
 
 /* twinkling star tucked behind the whale, like the mockup */
@@ -373,7 +398,7 @@ h2 {
 
 .title-text {
   position: absolute;
-  left: 74%;
+  left: 62%;
   top: 80%;
   transform: translate(-50%, -50%);
   z-index: 4;
