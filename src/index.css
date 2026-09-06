@@ -359,8 +359,8 @@ h2 {
   position: absolute;
   width: 500px; /* Adjust scale relative to jumping whale */
   height: auto;
-  top: -120px;   /* Positions turtle floating near top-right of whale */
-  right: -825px; 
+  top: -27%;   /* Positions turtle floating near top-right of whale */
+  right: -110%; 
   z-index: 3;
   pointer-events: none;
   object-fit: contain;
