@@ -1147,8 +1147,9 @@ h2 {
 
 .register-pillow {
   position: relative;
-  width: 85%;
+  width: 60%;
   height: auto;
+  left:5%;
   object-fit: contain;
   z-index: 1;
   display: block;

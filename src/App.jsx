@@ -196,7 +196,6 @@ function App() {
         <div className="section-inner title-inner">
           <div className="title-whale-wrap">
             <img src={whaleJump} alt="whale logo" className="title-whale whale-arc" />
-            <img src={turtle} alt="" className="hero-turtle" aria-hidden="true" />
           </div>
           <div className="title-text">
             <span className="title-kicker">WHACK 2026</span>
