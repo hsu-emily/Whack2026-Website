@@ -4,7 +4,6 @@ import whaleJump from './assets/logo.png'
 import turtle from './assets/turtle.png'
 import wishingWell from './assets/wishing_well.png'
 import whaleSleep from './assets/logo_sleep.png'
-import mermaid from './assets/mermaid.png'
 import pillow from './assets/pillow.png'
 import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
@@ -305,8 +304,7 @@ function App() {
 
           <div className="register-illustration" aria-hidden="true">
             <img src={pillow} alt="" className="register-pillow" />
-            {/* <img src={whaleSleep} alt="Sleeping Whale" className="register-whale" /> */}
-            <img src={mermaid} alt="" className="register-mermaid"/>
+            <img src={whaleSleep} alt="Sleeping Whale" className="register-whale" />
           </div>
         </div>
       </section>
