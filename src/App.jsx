@@ -301,10 +301,9 @@ function App() {
       <section id="register" className="section section-8">
         <div className="section-inner register-inner">
           <div className="register-content">
-            <h2>Ready to build?</h2>
+            <h1>Register Below</h1>
             <p className="section-lead">
-              Applications for WHACK 2026 open August 15. Spots are limited —
-              get on the list and be first to know.
+              Registration for WHACK 2026 is open! Use the Google Form below to sign up.
             </p>
             <a href="mailto:hello@whack.ucsc.edu" className="btn-white">Apply for WHACK 2026</a>
           </div>
