@@ -410,8 +410,10 @@ h2 {
    the whale sits below the front V. */
 .section-1 .section-inner { position: relative; z-index: auto; }
 
-/* text ALWAYS on top — above the frontmost cloud layer (V is z-index 4) */
-.section-1 .title-text { position: relative; z-index: 6; }
+/* text ALWAYS on top — above the frontmost cloud layer (V is z-index 4).
+   Keep position:absolute so the base .title-text placement (left/top/transform)
+   still applies — a relative override here shoves the text off-screen. */
+.section-1 .title-text { position: absolute; z-index: 6; }
 
 /* whale sits BELOW the front V (z-index 4) so it rises out from the clouds */
 .section-1 .title-whale-wrap { position: relative; z-index: 2; }
@@ -429,9 +431,34 @@ h2 {
   width: 62%;
   max-width: 780px;
   flex-shrink: 0;
-  margin-left: -4%;    /* let the big whale bleed toward the edge */
+  margin-left: -15%;   /* let the big whale bleed toward the edge */
   margin-top: -4%;     /* lift the whale a touch so its head clears the cloud tops */
   margin-bottom: 0;
+}
+
+/* ── Hero Turtle ────────────────────────── */
+.hero-turtle {
+  position: absolute;
+  width: 500px; /* Adjust scale relative to jumping whale */
+  height: auto;
+  top: -27%;   /* Positions turtle floating near top-right of whale */
+  right: -110%; 
+  z-index: 3;
+  pointer-events: none;
+  object-fit: contain;
+  
+  /* Continuous bobbing and gentle tilting animation */
+  animation: turtleFloat 7.5s ease-in-out infinite;
+}
+
+/* Floating animation: rises, shifts horizontally, and tilts back & forth */
+@keyframes turtleFloat {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-5px) translateX(5px) rotate(4deg);
+  }
 }
 
 /* twinkling star tucked behind the whale, like the mockup */
@@ -453,7 +480,7 @@ h2 {
 
 .title-text {
   position: absolute;
-  left: 74%;
+  left: 62%;
   top: 80%;
   transform: translate(-50%, -50%);
   z-index: 4;
@@ -931,6 +958,33 @@ h2 {
   font-weight: 600;
 }
 
+.sponsors-illustration {
+  position: relative;
+  width: 62%;
+  max-width: 780px;
+  margin: 3rem auto 0;
+  display: flex;
+  justify-content: center;
+}
+
+.sponsors-well {
+  width: 120%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  /* Sideways bob animation */
+  animation: wellBob 5s ease-in-out infinite;
+}
+
+@keyframes wellBob {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) translateX(10px) rotate(3deg);
+  }
+}
+
 /*add tiers later if needed*/
 
 /* ── Section 7 – FAQ ────────────────────────── */
@@ -939,16 +993,123 @@ h2 {
   background: transparent;
 }
 
-.faq { max-width: 640px; }
+/* ── Waves FAQ ────────────────────────────────
+   Hand-painted coastline built from 6 Procreate layers (src/assets/wave),
+   stacked bottom → top: Layer1 is a flat deep-water fill, each layer
+   above it is mostly opaque with a growing, lacier transparent cutout,
+   so the stack reads as one graded shoreline with foam tendrils reaching
+   furthest at the top layer. Every layer sways gently; the FAQ list
+   sits directly on top of the artwork, over a dark scrim for legibility. */
+.section-7 { overflow: hidden; }
 
-.faq-item {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 22px 0;
+.waves-faq {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  display: grid;
 }
 
-.faq-item:last-child { border-bottom: none; }
-.faq-q { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
-.faq-a { font-size: 0.86rem; opacity: 0.55; line-height: 1.65; }
+/* every direct child shares the same grid cell, stacking art → scrim →
+   list; the row's height follows the taller of the image or the list */
+.waves-art,
+.waves-scrim,
+.waves-list {
+  grid-area: 1 / 1;
+}
+
+.waves-art {
+  align-self: start;
+  width: 100%;
+  aspect-ratio: 2916 / 1640;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.waves-art-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.waves-scrim {
+  align-self: start;
+  width: 100%;
+  aspect-ratio: 2916 / 1640;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(4, 7, 18, 0.2) 0%, rgba(4, 7, 18, 0.4) 55%, rgba(4, 7, 18, 0.55) 100%);
+}
+
+.waves-list {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 5% 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.wave-q-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 0;
+}
+.wave-q-row:last-child { border-bottom: none; }
+
+.wave-q-btn {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wave-q {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(2, 4, 12, 0.85), 0 0 16px rgba(180, 210, 255, 0.3);
+  transition: text-shadow 0.3s ease;
+}
+.wave-q-row.is-open .wave-q,
+.wave-q-btn:hover .wave-q {
+  text-shadow: 0 2px 6px rgba(2, 4, 12, 0.9), 0 0 22px rgba(200, 222, 255, 0.6);
+}
+
+/* grid-rows 0fr → 1fr trick: animates height without measuring content */
+.wave-answer-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s ease;
+}
+.wave-q-row.is-open .wave-answer-wrap {
+  grid-template-rows: 1fr;
+}
+
+.wave-answer-inner { overflow: hidden; }
+
+.wave-a {
+  margin-top: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(4, 7, 18, 0.55);
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: rgba(230, 236, 255, 0.72);
+  max-width: 560px;
+}
 
 /* ── Section 8 – Final CTA ──────────────────── */
 .section-8 {
@@ -979,12 +1140,15 @@ h2 {
   width: 62%;
   max-width: 780px;
   flex-shrink: 0;
-  margin-right: -4%;
+  margin-right: -10%;
+  margin-top:-25%;
 }
 
-.register-pillow {
-  position: relative;
-  width: 85%;
+.register-mermaid {
+  position: absolute;
+  top: -5%;
+  left: -5%;
+  width: 60%;
   height: auto;
   object-fit: contain;
   z-index: 1;
@@ -993,15 +1157,15 @@ h2 {
   animation: pillowBob 6s ease-in-out infinite;
 }
 
-.register-whale {
-  position: absolute;
-  top: -12%;
-  left: 22%;
-  width: 85%;
+.register-pillow {
+  position: relative;
+  width: 50%;
   height: auto;
   object-fit: contain;
-  z-index: 2;
-  animation: whaleBob 4.5s ease-in-out -1.2s infinite;
+  z-index: 1;
+  display: block;
+  opacity: 0.95;
+  animation: pillowBob 6s ease-in-out infinite;
 }
 
 @keyframes pillowBob {
@@ -1010,14 +1174,6 @@ h2 {
   }
   50% {
     transform: translateY(-10px) rotate(-3.5deg);
-  }
-}
-@keyframes whaleBob {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-20px) rotate(0deg);
   }
 }
 

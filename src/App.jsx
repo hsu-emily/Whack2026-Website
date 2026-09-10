@@ -3,13 +3,17 @@ import StarrySky from '@gura_ame/starry-sky'
 import '@gura_ame/starry-sky/dist/StarrySky.css'
 import './index.css'
 import whaleJump from './assets/logo.png'
+import turtle from './assets/turtle.png'
+import wishingWell from './assets/wishing_well.png'
 import whaleSleep from './assets/logo_sleep.png'
+import mermaid from './assets/mermaid.png'
 import pillow from './assets/pillow.png'
 import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
 import Cloud from './components/Cloud'
 import Schedule from './components/Schedule'
 //import WishingWell from './components/WishingWell'
+import Waves from './components/Waves'
 
 // StarrySky regenerates every star whenever this prop changes identity, and App
 // re-renders on every scroll tick — so this MUST be a stable module-level
@@ -20,7 +24,6 @@ function App() {
   const heroRef = useRef(null)
   const navRef = useRef(null)
   const [scrollProgress, setScrollProgress] = useState(0)
-
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight
@@ -103,7 +106,7 @@ function App() {
   return (
     <>
       {/* ── Floating Scrolling Star ── */}
-      <div
+      {/* <div
         className="scrolling-star"
         style={{
           position: 'fixed',
@@ -117,7 +120,7 @@ function App() {
         }}
       >
         < Star />
-      </div>
+      </div> */}
       {/* ── Nav ── */}
       <nav ref={navRef}>
         <a href="#hero" className="nav-logo">WHACK 2026</a>
@@ -194,6 +197,7 @@ function App() {
         <div className="section-inner title-inner">
           <div className="title-whale-wrap">
             <img src={whaleJump} alt="whale logo" className="title-whale whale-arc" />
+            <img src={turtle} alt="" className="hero-turtle" aria-hidden="true" />
           </div>
           <div className="title-text">
             <span className="title-kicker">WHACK 2026</span>
@@ -259,6 +263,9 @@ function App() {
               <span className="sponsor-pill">Linear</span>
             </div>
           </div>
+          <div className="sponsors-illustration" aria-hidden="true">
+            <img src={wishingWell} alt="" className="sponsors-well" />
+          </div>
         {/*<div className="well-wrap" style={{ width: '90%', height: '800px', position: 'relative' }}>
             <WishingWell />
         </div>*/}
@@ -277,22 +284,18 @@ function App() {
             Here are the most common questions we get. Still curious?{' '}
             <a href="mailto:hello@whack.ucsc.edu" style={{ color: 'white' }}>Email us →</a>
           </p>
-          <div className="faq">
-            {[
-              { q: 'Who can participate?', a: 'WHACK is open to all current college and university students. No matter your major, background, or experience level — everyone is welcome.' },
-              { q: 'Do I need a team?', a: "You can apply solo or with a team of up to 4. If you are flying solo, we'll have a team-forming event Friday evening so you won't be alone for long." },
-              { q: 'Is it free to attend?', a: 'Yes! Registration, meals, snacks, swag, and workshop access are all completely free. We also provide travel reimbursements for qualifying applicants.' },
-              { q: 'What should I bring?', a: 'Laptop, chargers, any hardware you plan to use, and a sleeping bag if you want to crash on-site. We handle the rest.' },
-              { q: 'Are beginners welcome?', a: 'Absolutely. We have beginner-friendly workshops and a dedicated mentorship team to help you get unstuck and ship something you are proud of.' },
-              { q: 'When do applications open?', a: 'Applications open January 15, 2026. Decisions are rolling, so apply early for the best chance of acceptance.' },
-            ].map((item) => (
-              <div className="faq-item" key={item.q}>
-                <div className="faq-q">{item.q}</div>
-                <div className="faq-a">{item.a}</div>
-              </div>
-            ))}
-          </div>
         </div>
+        <Waves
+          items={[
+            { q: 'Who can participate?', a: 'WHACK is open to all current college and university students. As long as you are enrolled in a degree-seeking program, you can attend.' },
+            { q: 'Do I need a team?', a: "You can apply solo or with a team of up to 4. We also have a team-forming event on Friday evening to help you mingle and find teammates. Once you're in, you can also check out our discord to meet people in advance!" },
+            { q: 'Is it free to attend?', a: 'Everything is free! (Including registration, meals, snacks, swag, and workshop access).' },
+            { q: 'Does WHACK reimburse travel?', a: "We unfortunately do not reimburse travel." },
+            { q: 'Where can I stay?', a: "We'll have designated sleeping areas in the Tishman Commons of the Lulu Chow Wang Center, where WHACK will be hosted." },
+            { q: 'Will there be food?', a: "We'll provide three meals on Saturday and two meals on Sunday (breakfast and lunch)." },
+            { q: "What if I've never hacked before?", a: 'You can still attend! We welcome beginners, especially first-time hackers. If you find yourself struggling, we have beginner-friendly workshops and a dedicated mentorship team to help you with any questions.' },
+          ]}
+        />
       </section>
 
       {/* ── Section 8 · Register CTA ── */}
@@ -309,7 +312,8 @@ function App() {
 
           <div className="register-illustration" aria-hidden="true">
             <img src={pillow} alt="" className="register-pillow" />
-            <img src={whaleSleep} alt="Sleeping Whale" className="register-whale" />
+            {/* <img src={whaleSleep} alt="Sleeping Whale" className="register-whale" /> */}
+            <img src={mermaid} alt="" className="register-mermaid"/>
           </div>
         </div>
       </section>
