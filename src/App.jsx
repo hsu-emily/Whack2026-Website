@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import StarrySky from '@gura_ame/starry-sky'
+import '@gura_ame/starry-sky/dist/StarrySky.css'
 import './index.css'
 import whaleJump from './assets/logo.png'
 import whaleSleep from './assets/logo_sleep.png'
@@ -9,8 +11,14 @@ import Cloud from './components/Cloud'
 import Schedule from './components/Schedule'
 //import WishingWell from './components/WishingWell'
 
+// StarrySky regenerates every star whenever this prop changes identity, and App
+// re-renders on every scroll tick — so this MUST be a stable module-level
+// constant, never an inline array literal, or the sky reshuffles as you scroll.
+const METEOR_INTERVAL = [4000, 10000]
+
 function App() {
   const heroRef = useRef(null)
+  const navRef = useRef(null)
   const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
@@ -24,6 +32,37 @@ function App() {
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Drive the full-page sky gradient (body::before): give it the document's
+  // height and slide it up by the scroll offset, so the six colour stops
+  // stretch across the entire scroll rather than repeating per viewport.
+  useEffect(() => {
+    let raf = 0
+    const apply = () => {
+      raf = 0
+      const docH = document.documentElement.scrollHeight
+      document.body.style.setProperty('--doc-h', docH + 'px')
+      document.body.style.setProperty('--sky-shift', window.scrollY + 'px')
+
+      // The ramp's first stop (#F5E2FF → #192C67) runs over the top 17% of the
+      // page. Nav text stays dark while the viewport top is in the paler
+      // ~40% of that stretch, then flips to light as the sky turns navy.
+      const paleZone = docH * 0.17 * 0.42
+      navRef.current?.classList.toggle('nav-on-light', window.scrollY < paleZone)
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(apply) }
+    apply()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    const ro = new ResizeObserver(onScroll)
+    ro.observe(document.body)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      ro.disconnect()
+    }
   }, [])
 
   const leftPosition = 85 - 280 * scrollProgress * (1 - scrollProgress)
@@ -42,12 +81,13 @@ function App() {
       hero.style.setProperty('--part', p.toFixed(3))
 
       // big scroll-driven whale arc: sweeps up-and-over along a parabola.
-      const arcX = p * 320                    // px: drifts right across the hero
-      const arcY = -Math.sin(p * Math.PI) * 220 // px: rises to a peak mid-scroll, comes back down
-      const arcRot = Math.sin(p * Math.PI) * 16 - p * 8 // tilts up then noses over
+      const arcX = p * 40                    // px: drifts right across the hero
+      const arcY = -Math.sin(p * Math.PI) * 80 // px: rises to a peak mid-scroll, comes back down
+      const arcRot = Math.sin(p * Math.PI) * 6 - p * 3 // tilts up then noses over
       hero.style.setProperty('--whale-x', arcX.toFixed(1) + 'px')
       hero.style.setProperty('--whale-y', arcY.toFixed(1) + 'px')
       hero.style.setProperty('--whale-rot', arcRot.toFixed(2) + 'deg')
+
     }
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
     update()
@@ -79,7 +119,7 @@ function App() {
         < Star />
       </div>
       {/* ── Nav ── */}
-      <nav>
+      <nav ref={navRef}>
         <a href="#hero" className="nav-logo">WHACK 2026</a>
         <ul className="nav-links">
           <li><a href="#schedule">Schedule</a></li>
@@ -90,50 +130,64 @@ function App() {
         <a href="#register" className="nav-register">Register</a>
       </nav>
 
+      {/* ── Sky band: hero + schedule share ONE star field ──
+          .sky-stars is an absolutely-positioned frame spanning both sections;
+          inside it the field is position:fixed so the stars stay perfectly
+          still while the page scrolls past, and the frame's mask fades it
+          out at the bottom of the schedule. Moon/forest are off:
+          the hero has its own crescent moon and clouds. */}
+      <div className="sky-band">
+        <div className="sky-stars" aria-hidden="true">
+          <div className="sky-stars-field">
+            <StarrySky starCount={300} meteorInterval={METEOR_INTERVAL} showMoon={false} showForest={false} />
+          </div>
+        </div>
+
       {/* ── Section 1 · Hero ── */}
       <section id="hero" className="section section-1" ref={heroRef}>
         {/* big crescent moon behind everything */}
         <div className="hero-moon" aria-hidden="true" />
 
-        {/* scattered stars */}
-        <div className="star-field" aria-hidden="true">
-          <span className="sky-star sky-star-y" style={{ left: '58%', top: '22%', '--s': '18px' }} />
-          <span className="sky-star" style={{ left: '68%', top: '14%', '--s': '13px' }} />
-          <span className="sky-star sky-star-y" style={{ left: '82%', top: '34%', '--s': '15px' }} />
-          <span className="sky-star" style={{ left: '20%', top: '52%', '--s': '11px' }} />
-          <span className="sky-star sky-star-y" style={{ left: '14%', top: '40%', '--s': '13px' }} />
-          <span className="sky-star" style={{ left: '76%', top: '58%', '--s': '10px' }} />
-        </div>
-
-        {/* upper-sky clouds — just 3 large, well-spread puffs. A few big opaque
-            clouds read as a full sky far cheaper than many small ones. */}
+        {/* upper-sky wisps — two thin white streaks, each cut off by the screen
+            edge (left one bleeds off the left, right one off the right). Both
+            slide slightly RIGHT as you scroll (see .cloud-nudge-right). */}
         <div className="cloud-layer cloud-layer-top" aria-hidden="true">
-          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '-6%', top: '11%' }}>
-            <Cloud colors={['#ffffff', '#dbe8ff', '#a9c6f5']} width="clamp(320px, 40vw, 700px)" grain={0.38} fuzziness={46} opacity={0.9}
-              drift driftSpeed={17} style={{ transform: 'scaleY(0.66)', transformOrigin: '50% 50%' }} />
+          <div className="cloud-drift cloud-nudge-right" style={{ position: 'absolute', left: '-14%', top: '14%' }}>
+            <Cloud src="cloud-wisp.png" width="clamp(320px, 36vw, 640px)" opacity={0.95} drift driftSpeed={17} />
           </div>
-          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '-6%', top: '16%' }}>
-            <Cloud colors={['#ffffff', '#ffe0f0', '#f2a9cf']} width="clamp(280px, 36vw, 640px)" grain={0.38} fuzziness={46} opacity={0.88}
-              drift driftSpeed={14} style={{ transform: 'scaleY(0.66)', transformOrigin: '50% 50%' }} />
+          <div className="cloud-drift cloud-nudge-right" style={{ position: 'absolute', right: '-12%', top: '7%' }}>
+            <Cloud src="cloud-wisp.png" width="clamp(260px, 28vw, 520px)" opacity={0.95} drift driftSpeed={14} />
           </div>
-          {/* wide-screen only: one extra to fill the upper middle */}
-          <div className="cloud-drift cloud-right cloud-xl" style={{ position: 'absolute', right: '38%', top: '5%' }}>
-            <Cloud colors={['#ffffff', '#ece0ff', '#c6abee']} width="clamp(240px, 28vw, 520px)" grain={0.4} fuzziness={47} opacity={0.8}
-              drift driftSpeed={20} style={{ transform: 'scaleY(0.62)', transformOrigin: '50% 50%' }} />
+          {/* mid-sky pair under the whale: white puff bleeding off the left,
+              big blue cloud bleeding off the right */}
+          <div className="cloud-drift" style={{ position: 'absolute', left: '-8%', top: '42%' }}>
+            <Cloud src="cloud-white.png" width="clamp(360px, 42vw, 760px)" drift driftSpeed={19} />
+          </div>
+          <div className="cloud-drift" style={{ position: 'absolute', right: '-10%', top: '38%' }}>
+            <Cloud src="cloud-big.png" width="clamp(640px, 76vw, 1400px)" drift driftSpeed={21} />
           </div>
         </div>
 
-        {/* back cloud bank — sits BEHIND the whale. Two wide opaque clouds that
-            overlap across the base so no sky shows through, with NO center cloud
-            (the single center cloud lives in the front V below). */}
-        <div className="cloud-bank" aria-hidden="true">
-          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '-16%', bottom: '-4%' }}>
-            <Cloud colors={['#ffffff', '#eaf1ff', '#cddffb']} width="clamp(720px, 88vw, 1600px)" grain={0.38} fuzziness={44} opacity={0.9}
-              drift driftSpeed={22} style={{ transform: 'scaleY(0.78)', transformOrigin: '50% 100%' }} />
+        {/* FRONT layer — above the whale, below the title text. Flipped big
+            cloud on the left, overlapping the white cloud behind the whale. */}
+        <div className="cloud-layer cloud-layer-front" aria-hidden="true">
+          <div className="cloud-drift" style={{ position: 'absolute', left: '-12%', top: '48%' }}>
+            <Cloud src="cloud-big.png" flip width="clamp(560px, 66vw, 1200px)" drift driftSpeed={23} />
           </div>
-          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '-16%', bottom: '-4%' }}>
-            <Cloud colors={['#ffffff', '#f1eaff', '#d7cbfb']} width="clamp(720px, 86vw, 1560px)" grain={0.38} fuzziness={44} opacity={0.9}
-              drift driftSpeed={20} style={{ transform: 'scaleY(0.78)', transformOrigin: '50% 100%' }} />
+        </div>
+
+        {/* TOPMOST cloud layer — two side clouds forming the lowest band,
+            above every other cloud but still below the title text. */}
+        <div className="cloud-layer cloud-layer-frontmost" aria-hidden="true">
+          {/* centered wide cloud, rendered first so it sits UNDER the two side clouds */}
+          <div className="cloud-drift" style={{ position: 'absolute', left: '50%', top: '60%', transform: 'translateX(-50%)' }}>
+            <Cloud src="cloud.png" width="clamp(560px, 64vw, 1200px)" drift driftSpeed={20} />
+          </div>
+          <div className="cloud-drift" style={{ position: 'absolute', left: '-26%', top: '58%' }}>
+            <Cloud src="cloud-side.png" flip width="clamp(540px, 62vw, 1140px)" drift driftSpeed={18} />
+          </div>
+          <div className="cloud-drift" style={{ position: 'absolute', right: '-22%', top: '56%' }}>
+            <Cloud src="cloud-side.png" width="clamp(540px, 62vw, 1140px)" drift driftSpeed={24} />
           </div>
         </div>
 
@@ -148,63 +202,16 @@ function App() {
           </div>
         </div>
 
-        {/* front cloud BAND — a single continuous puffy strip across the MIDDLE
-            of the hero (positioned by `top`, ~half-way down) that the whale
-            rises out of. Clouds sit at the SAME height and overlap edge-to-edge
-            so the top edge reads as one unbroken, billowy line (reference img). */}
-        <div className="cloud-bank cloud-bank-top" aria-hidden="true">
-          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '-16%', top: '50%' }}>
-            <Cloud colors={['#ffffff', '#eef4ff', '#cbdcf7']} width="clamp(560px, 64vw, 1180px)" grain={0.38} fuzziness={44} opacity={1}
-              drift driftSpeed={20} style={{ transform: 'scaleY(0.66)', transformOrigin: '50% 50%' }} />
-          </div>
-          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '18%', top: '50%' }}>
-            <Cloud colors={['#ffffff', '#f3edff', '#d8cbf5']} width="clamp(520px, 60vw, 1120px)" grain={0.38} fuzziness={44} opacity={1}
-              drift driftSpeed={22} style={{ transform: 'scaleY(0.66)', transformOrigin: '50% 50%' }} />
-          </div>
-          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '16%', top: '50%' }}>
-            <Cloud colors={['#ffffff', '#eef4ff', '#cfe0fa']} width="clamp(520px, 60vw, 1120px)" grain={0.38} fuzziness={44} opacity={1}
-              drift driftSpeed={21} style={{ transform: 'scaleY(0.66)', transformOrigin: '50% 50%' }} />
-          </div>
-          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '-16%', top: '50%' }}>
-            <Cloud colors={['#ffffff', '#f3edff', '#d5cbf5']} width="clamp(560px, 64vw, 1180px)" grain={0.38} fuzziness={44} opacity={1}
-              drift driftSpeed={19} style={{ transform: 'scaleY(0.66)', transformOrigin: '50% 50%' }} />
-          </div>
-        </div>
       </section>
 
       {/* ── Section 4 · Schedule ── */}
       <section id="schedule" className="section section-4">
-        {/* cloud bed the hourglass rests in — arranged in a V: high at the
-            outer edges, dipping to the center so the glass sits in the trough.
-            Cool white-gray so they read as cloud rather than tinted sky. */}
-        <div className="cloud-layer cloud-layer-bottom" aria-hidden="true">
-          {/* far left — top of the V arm, riding high up the edge */}
-          <Cloud colors={['#ffffff', '#f4f6f9', '#c8d0dc']} width="clamp(600px, 72vw, 1320px)" grain={0.4} fuzziness={44} opacity={0.9}
-            drift driftSpeed={22}
-            style={{ position: 'absolute', left: '-16%', bottom: '30%', transform: 'scaleY(0.72)', transformOrigin: '50% 100%' }} />
-          {/* far right — top of the V arm */}
-          <Cloud colors={['#ffffff', '#f2f5f8', '#c3ccd9']} width="clamp(560px, 66vw, 1240px)" grain={0.4} fuzziness={44} opacity={0.9}
-            drift driftSpeed={19}
-            style={{ position: 'absolute', right: '-14%', bottom: '32%', transform: 'scaleY(0.7)', transformOrigin: '50% 100%' }} />
-          {/* mid-left — dropping steeply toward the trough */}
-          <Cloud colors={['#ffffff', '#f5f7fa', '#ccd4e0']} width="clamp(480px, 56vw, 1040px)" grain={0.4} fuzziness={44} opacity={0.92}
-            drift driftSpeed={17}
-            style={{ position: 'absolute', left: '-4%', bottom: '6%', transform: 'scaleY(0.7)', transformOrigin: '50% 100%' }} />
-          {/* mid-right — dropping steeply toward the trough */}
-          <Cloud colors={['#ffffff', '#f3f6f9', '#c9d1de']} width="clamp(450px, 52vw, 980px)" grain={0.4} fuzziness={44} opacity={0.92}
-            drift driftSpeed={20}
-            style={{ position: 'absolute', right: '-2%', bottom: '8%', transform: 'scaleY(0.7)', transformOrigin: '50% 100%' }} />
-          {/* valley floor — dead center, the glass rests in this dip */}
-          <Cloud colors={['#ffffff', '#f6f8fa', '#d2d9e4']} width="clamp(520px, 60vw, 1120px)" grain={0.36} fuzziness={42} opacity={0.95}
-            drift driftSpeed={16}
-            style={{ position: 'absolute', left: '50%', bottom: '-16%', transform: 'translateX(-50%) scaleY(0.72)', transformOrigin: '50% 100%' }} />
-        </div>
-
         <div className="section-inner centered">
           <h1>The Schedule</h1>
           <Schedule />
         </div>
       </section>
+      </div>{/* /sky-band */}
 
       {/* ── Section 5 · Tracks ── */}
       <section id="tracks" className="section section-5 galaxy-section">
