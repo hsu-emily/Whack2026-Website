@@ -651,7 +651,8 @@ h2 {
 .section-4 {
   color: white;
   position: relative;
-  overflow: hidden;
+  /* Let the hourglass glow fade past the section boundary into Tracks. */
+  overflow: visible;
   /* deeper, more saturated indigo twilight (matches the reference) — still
      starts on the hero's #B08CFF and lands on #4B3DBF so the chain is seamless,
      but the mid-tones lean richer blue-violet instead of bright periwinkle */

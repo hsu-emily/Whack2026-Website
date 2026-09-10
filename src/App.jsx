@@ -155,18 +155,18 @@ function App() {
             edge (left one bleeds off the left, right one off the right). Both
             slide slightly RIGHT as you scroll (see .cloud-nudge-right). */}
         <div className="cloud-layer cloud-layer-top" aria-hidden="true">
-          <div className="cloud-drift cloud-nudge-right" style={{ position: 'absolute', left: '-14%', top: '14%' }}>
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '-14%', top: '14%' }}>
             <Cloud src="cloud-wisp.png" width="clamp(320px, 36vw, 640px)" opacity={0.95} drift driftSpeed={17} />
           </div>
-          <div className="cloud-drift cloud-nudge-right" style={{ position: 'absolute', right: '-12%', top: '7%' }}>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '-12%', top: '7%' }}>
             <Cloud src="cloud-wisp.png" width="clamp(260px, 28vw, 520px)" opacity={0.95} drift driftSpeed={14} />
           </div>
           {/* mid-sky pair under the whale: white puff bleeding off the left,
               big blue cloud bleeding off the right */}
-          <div className="cloud-drift" style={{ position: 'absolute', left: '-8%', top: '42%' }}>
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '-8%', top: '42%' }}>
             <Cloud src="cloud-white.png" width="clamp(360px, 42vw, 760px)" drift driftSpeed={19} />
           </div>
-          <div className="cloud-drift" style={{ position: 'absolute', right: '-10%', top: '38%' }}>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '-10%', top: '38%' }}>
             <Cloud src="cloud-big.png" width="clamp(640px, 76vw, 1400px)" drift driftSpeed={21} />
           </div>
         </div>
@@ -174,7 +174,7 @@ function App() {
         {/* FRONT layer — above the whale, below the title text. Flipped big
             cloud on the left, overlapping the white cloud behind the whale. */}
         <div className="cloud-layer cloud-layer-front" aria-hidden="true">
-          <div className="cloud-drift" style={{ position: 'absolute', left: '-12%', top: '48%' }}>
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '-12%', top: '48%' }}>
             <Cloud src="cloud-big.png" flip width="clamp(560px, 66vw, 1200px)" drift driftSpeed={23} />
           </div>
         </div>
@@ -183,13 +183,13 @@ function App() {
             above every other cloud but still below the title text. */}
         <div className="cloud-layer cloud-layer-frontmost" aria-hidden="true">
           {/* centered wide cloud, rendered first so it sits UNDER the two side clouds */}
-          <div className="cloud-drift" style={{ position: 'absolute', left: '50%', top: '60%', transform: 'translateX(-50%)' }}>
+          <div className="cloud-drift cloud-center" style={{ position: 'absolute', left: '50%', top: '60%' }}>
             <Cloud src="cloud.png" width="clamp(560px, 64vw, 1200px)" drift driftSpeed={20} />
           </div>
-          <div className="cloud-drift" style={{ position: 'absolute', left: '-26%', top: '58%' }}>
+          <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '-26%', top: '58%' }}>
             <Cloud src="cloud-side.png" flip width="clamp(540px, 62vw, 1140px)" drift driftSpeed={18} />
           </div>
-          <div className="cloud-drift" style={{ position: 'absolute', right: '-22%', top: '56%' }}>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '-22%', top: '56%' }}>
             <Cloud src="cloud-side.png" width="clamp(540px, 62vw, 1140px)" drift driftSpeed={24} />
           </div>
         </div>
