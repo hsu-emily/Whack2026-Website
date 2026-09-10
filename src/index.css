@@ -36,19 +36,19 @@ html {
   scroll-behavior: smooth;
 }
 
+html { background: #030C20; }
+
 body {
   font-family: 'Delius', cursive;
-  background: linear-gradient(
-    180deg,
-    #F5E2FF 0%,
-    #D7B8FF 15%,
-    #B08CFF 30%,
-    #7A5CFF 45%,
-    #4B3DBF 60%,
-    #192C67 75%,
-    #0B1535 90%,
-    #030C20 100%
-  );
+  /* one continuous gradient across the ENTIRE scroll: 0% is the very top of
+     the page and 100% the very bottom. It is painted on a fixed, full-viewport
+     pseudo-element (see body::before) rather than here, so that scrolling
+     reveals successive slices of a single ramp instead of repainting it.
+     Every section below is transparent so this one ramp reads through all.
+     The body itself must stay transparent: a background on `body` paints
+     above its own ::before at z-index:-1 and would hide the ramp. The solid
+     fallback lives on `html` instead. */
+  background: transparent;
   min-height: 100vh;
   color: white;
   overflow-x: hidden;
@@ -76,11 +76,27 @@ nav {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+/* Nav text tracks the sky behind it. The page ramp starts pale lavender and
+   turns navy within the first ~17% of the scroll, so App.jsx adds
+   `nav-on-light` while the viewport top is still in that pale zone and the
+   text goes dark; past it the text returns to light. */
+nav .nav-logo,
+nav .nav-links a,
+nav .nav-register { transition: color 0.35s ease, background-color 0.35s ease, border-color 0.35s ease; }
+nav.nav-on-light .nav-logo,
+nav.nav-on-light .nav-links a,
+nav.nav-on-light .nav-register { color: #1a0a2e; }
+nav.nav-on-light .nav-register {
+  background: rgba(26, 10, 46, 0.12);
+  border-color: rgba(26, 10, 46, 0.2);
+}
+nav.nav-on-light .nav-register:hover { background: rgba(26, 10, 46, 0.2); }
+
 .nav-logo {
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #1a0a2e;
+  color: #f4f1ff;
   text-decoration: none;
 }
 
@@ -93,7 +109,7 @@ nav {
 .nav-links a {
   font-size: 1rem;
   font-weight: 500;
-  color: #1a0a2e;
+  color: #f4f1ff;
   text-decoration: none;
   opacity: 0.65;
   transition: opacity 0.2s;
@@ -102,18 +118,43 @@ nav {
 .nav-links a:hover { opacity: 1; }
 
 .nav-register {
-  background: rgba(26, 10, 46, 0.12);
-  border: 1px solid rgba(26, 10, 46, 0.2);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 8px;
   padding: 8px 20px;
   font-size: 1rem;
   font-weight: 600;
-  color: #1a0a2e;
+  color: #f4f1ff;
   text-decoration: none;
   transition: background 0.2s;
 }
 
-.nav-register:hover { background: rgba(26, 10, 46, 0.2); }
+.nav-register:hover { background: rgba(255, 255, 255, 0.22); }
+
+/* full-page sky. Fixed to the viewport and scaled to the document height, then
+   shifted by the scroll offset in JS (--sky-shift), so the six stops stretch
+   across the whole scroll and each screen shows one slice of them. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    #F5E2FF 0%,
+    #192C67 17%,
+    #3E3D58 34%,
+    #576BAF 60%,
+    #192C67 80%,
+    #030C20 100%
+  );
+  background-repeat: no-repeat;
+  /* height of the whole document, pulled up as you scroll */
+  height: var(--doc-h, 100vh);
+  transform: translateY(calc(-1 * var(--sky-shift, 0px)));
+  will-change: transform;
+}
 
 /* ── Shared section styles ──────────────────── */
 .section {
@@ -176,7 +217,7 @@ h2 {
 
 /* ── Section 1 – Hero ───────────────────────── */
 .section-1 {
-  color: #1a1c3a;
+  color: #f4f1ff;
   position: relative;
   /* clip sideways so wide clouds can't cause horizontal scroll/jitter, but
      keep the vertical spill so the bank still bleeds into the next section.
@@ -187,20 +228,55 @@ h2 {
   /* twilight sky that hands off cleanly into the body's day→night ramp:
      starts on the body's pastel lavender top and eases into its next stops,
      so the hero and the rest of the page read as one continuous gradient. */
-  background: linear-gradient(
-    180deg,
-    #F5E2FF 0%,
-    #EAD6F6 22%,
-    #DCC6F2 46%,
-    #CDB0FF 72%,
-    #B08CFF 100%
-  );
+  background: transparent;
 }
 .section-1 .eyebrow { opacity: 0.5; }
-.section-1 .section-lead { opacity: 0.7; color: #2a2c4a; position: relative; z-index: 2; }
+.section-1 .section-lead { opacity: 0.75; color: #d8d2f0; position: relative; z-index: 2; }
 
 /* dreamy cloud framing — sits behind hero content */
 .section-1 { --part: 0; }
+
+/* ── shared star field (hero + schedule) ──────
+   .sky-band wraps the hero and schedule sections. .sky-stars is a frame that
+   spans the whole band; the field inside is position:fixed so it stays
+   perfectly still while the page scrolls past. Masking the FRAME clips the
+   fixed field to the band and
+   fades it out into the schedule's cloud bed. The package ships an opaque
+   black night background (.noite); it is cleared so the page's own sky
+   gradient shows through and only the stars and meteors remain. */
+.sky-band { position: relative; }
+.sky-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 82%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 82%, rgba(0,0,0,0) 100%);
+}
+.sky-stars-field {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+.sky-stars .starry-sky-container { height: 100%; width: 100%; background: transparent; }
+.sky-stars .noite { background: transparent !important; }
+
+/* white stars with a soft bloom so they read as glowing points, not pixels */
+.sky-stars .estrela { box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.6); }
+.sky-stars .estrela.tam1 { width: 2px; height: 2px; }
+.sky-stars .estrela.tam2 { width: 3px; height: 3px; }
+
+/* the package's forest layer is position:fixed — keep it out entirely */
+.sky-stars .floresta { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-stars .estrela,
+  .sky-stars .meteoro,
+  .sky-stars .constelacao { animation: none !important; }
+  .sky-stars .meteoro { display: none; }
+}
 
 /* big crescent moon glowing behind the whale */
 .hero-moon {
@@ -242,25 +318,6 @@ h2 {
   .hero-moon { animation: none; filter: drop-shadow(0 0 40px rgba(255, 250, 240, 0.8)); }
 }
 
-/* scattered stars */
-.star-field { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-
-.sky-star {
-  position: absolute;
-  width: var(--s, 12px);
-  height: var(--s, 12px);
-  background: #ffffff;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85));
-  animation: star-twinkle 3.2s ease-in-out infinite;
-  opacity: 0.9;
-}
-.sky-star-y {
-  background: #ffe27a;
-  filter: drop-shadow(0 0 7px rgba(255, 220, 120, 0.9));
-  animation-duration: 4.1s;
-}
-
 .cloud-layer {
   position: absolute;
   inset: 0;
@@ -268,6 +325,25 @@ h2 {
   z-index: 0;
 }
 .cloud-layer > * { pointer-events: none; }
+
+/* hand-painted cloud PNGs (public/clouds). Height follows the image's own
+   aspect ratio; `flip` mirrors one file so it can serve both sides. */
+.cloud-img {
+  display: block;
+  height: auto;
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.cloud-img-flip { transform: scaleX(-1); }
+.cloud-img-drift { animation: cloud-bob var(--drift-speed, 9s) ease-in-out infinite; }
+@keyframes cloud-bob {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 12px -9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cloud-img-drift { animation: none; }
+}
 
 /* extra clouds fade in as the screen widens — sparse on laptops, lush on
    big desktops, hidden on mobile (which also trims via nth-child below) */
@@ -287,6 +363,9 @@ h2 {
 }
 .cloud-bank > * { pointer-events: none; }
 .cloud-layer-top { z-index: 1; }
+/* front layer: above the whale (z 2), below the title text (z 6) */
+.cloud-layer-front { z-index: 4; }
+.cloud-layer-frontmost { z-index: 5; }
 
 /* front bank renders above the whale/title layer (z-index 2) so the whale
    reads as rising out from between the cloud layers */
@@ -311,11 +390,13 @@ h2 {
 }
 .cloud-left  { transform: translate3d(calc(var(--part) * -12vw), 0, 0); }
 .cloud-right { transform: translate3d(calc(var(--part) *  12vw), 0, 0); }
+/* gentle rightward slide for the upper-sky wisps */
+.cloud-nudge-right { transform: translate3d(calc(var(--part) * 5vw), 0, 0); }
 /* dense front cloud sinks a touch as you scroll (keeps its -50% centering) */
 .cloud-center { transform: translate3d(-50%, calc(var(--part) * 12vh), 0); }
 
 @media (prefers-reduced-motion: reduce) {
-  .cloud-left, .cloud-right { transform: none; }
+  .cloud-left, .cloud-right, .cloud-nudge-right { transform: none; }
   .cloud-center { transform: translateX(-50%); }
   .cloud-drift { opacity: 0.95; }
 }
@@ -350,8 +431,9 @@ h2 {
   width: 62%;
   max-width: 780px;
   flex-shrink: 0;
-  margin-left: -15%;    /* let the big whale bleed toward the edge */
-  margin-bottom: -12%; /* dip its belly into the front cloud bank */
+  margin-left: -15%;   /* let the big whale bleed toward the edge */
+  margin-top: -4%;     /* lift the whale a touch so its head clears the cloud tops */
+  margin-bottom: 0;
 }
 
 /* ── Hero Turtle ────────────────────────── */
@@ -415,7 +497,7 @@ h2 {
   font-size: clamp(1.4rem, 3vw, 2.2rem);
   letter-spacing: 0.10em;
   text-transform: uppercase;
-  color: #1a1c3a;
+  color: #f4f1ff;
   opacity: 0.9;
   margin-bottom: 1rem;
 }
@@ -438,7 +520,7 @@ h2 {
   font-size: clamp(1rem, 2vw, 1.35rem);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #1a1c3a;
+  color: #f4f1ff;
   opacity: 0.9;
   margin-top: -0.8rem;
 }
@@ -498,19 +580,19 @@ h2 {
 .btn-outline {
   display: inline-block;
   background: transparent;
-  border: 1.5px solid rgba(26, 10, 46, 0.3);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
   border-radius: 10px;
   padding: 13px 32px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1a0a2e;
+  color: #f4f1ff;
   text-decoration: none;
   transition: border-color 0.2s;
 }
-.btn-outline:hover { border-color: rgba(26, 10, 46, 0.6); }
+.btn-outline:hover { border-color: rgba(255, 255, 255, 0.7); }
 
 /* ── Section 2 – About cards ────────────────── */
-.section-2 { color: #1a0a2e; }
+.section-2 { color: #f0edff; }
 .section-2 .eyebrow { opacity: 0.4; }
 
 .cards {
@@ -520,8 +602,8 @@ h2 {
 }
 
 .card {
-  background: rgba(26, 10, 46, 0.07);
-  border: 1px solid rgba(26, 10, 46, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 16px;
   padding: 28px 24px;
 }
@@ -569,11 +651,12 @@ h2 {
 .section-4 {
   color: white;
   position: relative;
-  overflow: hidden;
+  /* Let the hourglass glow fade past the section boundary into Tracks. */
+  overflow: visible;
   /* deeper, more saturated indigo twilight (matches the reference) — still
      starts on the hero's #B08CFF and lands on #4B3DBF so the chain is seamless,
      but the mid-tones lean richer blue-violet instead of bright periwinkle */
-  background: linear-gradient(180deg, #B08CFF 0%, #8B6FEE 30%, #6A54D8 62%, #4B3DBF 100%);
+  background: transparent;
 }
 .section-4 .section-inner {
   position: relative;
@@ -780,7 +863,7 @@ h2 {
    The galaxy canvas is transparent and draws additively over this. */
 .section-5 {
   color: white;
-  background: linear-gradient(180deg, #4B3DBF 0%, #2E3390 100%);
+  background: transparent;
 }
 
 /* the canvas is absolutely positioned inside the section, so the section
@@ -845,7 +928,7 @@ h2 {
 /* ── Section 6 – Sponsors ───────────────────── */
 .section-6 {
   color: white;
-  background: linear-gradient(180deg, #2E3390 0%, #192C67 100%);
+  background: transparent;
 }
 
 .sponsor-tiers { margin-top: 2.5rem; }
@@ -908,7 +991,7 @@ h2 {
 /* ── Section 7 – FAQ ────────────────────────── */
 .section-7 {
   color: white;
-  background: linear-gradient(180deg, #192C67 0%, #0B1535 100%);
+  background: transparent;
 }
 
 /* ── Waves FAQ ────────────────────────────────
@@ -1032,7 +1115,7 @@ h2 {
 /* ── Section 8 – Final CTA ──────────────────── */
 .section-8 {
   color: white;
-  background: linear-gradient(180deg, #0B1535 0%, #030C20 100%);
+  background: transparent;
   position: relative;
   overflow: visible;
   z-index: 2;
