@@ -505,11 +505,13 @@ h2 {
 .theme-title {
   font-family: 'Great Vibes', cursive;
   font-size: clamp(6rem, 9vw, 12rem);
-  font-weight: 400;
+  font-weight: bold;
+  -webkit-text-stroke: 1px #494463;
+  color: #494463;
   letter-spacing: 0.01em;
   line-height: 1.08;
   margin-bottom: 1.2rem;
-  text-shadow: 0 0 22px rgba(190, 215, 255, 0.25);
+  text-shadow: 7px 7px 1px #a1b3e4;
 }
 
 /* date line under the script title, bold + dark like the mockup */
@@ -527,6 +529,7 @@ h2 {
 
 .title-whale {
   width: 100%;
+  left:-15%;
   height: auto;
   object-fit: contain;
   position: relative;
