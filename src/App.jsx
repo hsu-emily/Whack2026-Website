@@ -293,7 +293,7 @@ function App() {
           <div className="cloud-drift cloud-left" style={{ position: 'absolute', left: '-26%', top: '58%' }}>
             <Cloud src="cloud-side.png" flip width="clamp(540px, 62vw, 1140px)" drift driftSpeed={18} />
           </div>
-          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '-22%', top: '56%' }}>
+          <div className="cloud-drift cloud-right" style={{ position: 'absolute', right: '-22%', top: '64%' }}>
             <Cloud src="cloud-side.png" width="clamp(540px, 62vw, 1140px)" drift driftSpeed={24} />
           </div>
         </div>
