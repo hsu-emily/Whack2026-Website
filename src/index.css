@@ -458,7 +458,7 @@ h2 {
    viewport, so they stay anchored to the corners at any width */
 .sched-wisp  { right: clamp(-6%, -2vw, 0%); top: clamp(10%, 14vh, 20%); }
 .sched-left  { left: clamp(-22%, -10vw, -8%); bottom: clamp(-10%, -4vh, -2%); }
-.sched-right { right: clamp(-20%, -9vw, -6%); bottom: clamp(-24%, -12vh, -10%); }
+.sched-right { right: clamp(-20%, -9vw, -6%); bottom: clamp(-38%, -20vh, -18%); }
 .sched-left  { transform: translate3d(calc(var(--sched, 0) * -6vw), calc(var(--sched, 0) * -3vh), 0); }
 .sched-right { transform: translate3d(calc(var(--sched, 0) *  6vw), calc(var(--sched, 0) * -3vh), 0); }
 .sched-wisp  { transform: translate3d(calc(var(--sched, 0) *  4vw), calc(var(--sched, 0) * -5vh), 0); }
