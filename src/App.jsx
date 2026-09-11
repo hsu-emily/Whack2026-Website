@@ -414,7 +414,7 @@ function App() {
         />
       </section>
 
-      {/* ── Section 8 · Register CTA ── */}
+      {/* ── Section 8 · Register CTA ──
       <section id="register" className="section section-8">
         <div className="section-inner register-inner">
           <div className="register-content">
@@ -426,11 +426,11 @@ function App() {
           </div>
 
           <div className="register-illustration" aria-hidden="true">
-            {/* <img src={pillow} alt="" className="register-pillow" /> */}
+            <img src={pillow} alt="" className="register-pillow" />
             <img src={whaleSleep} alt="Sleeping Whale" className="register-whale" />
           </div>
         </div>
-      </section>
+      </section> */}
 
       <footer>
         © 2026 WHACK Hackathon · Wellesley College · Made with love and too much coffee
