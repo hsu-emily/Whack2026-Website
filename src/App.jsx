@@ -308,7 +308,7 @@ function App() {
           </div>
 
           <div className="register-illustration" aria-hidden="true">
-            <img src={pillow} alt="" className="register-pillow" />
+            {/* <img src={pillow} alt="" className="register-pillow" /> */}
             <img src={whaleSleep} alt="Sleeping Whale" className="register-whale" />
           </div>
         </div>
