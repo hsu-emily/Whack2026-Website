@@ -20,10 +20,45 @@ import Waves from './components/Waves'
 // constant, never an inline array literal, or the sky reshuffles as you scroll.
 const METEOR_INTERVAL = [4000, 10000]
 
+// Fewer stars overall, and fewer still on smaller screens.
+//
+// StarrySky scatters its stars over a square whose side is the viewport
+// DIAGONAL, so the area to fill grows with the square of screen size. Stepping
+// the count linearly would leave a narrow screen far denser than a wide one, so
+// the count is derived from that area against a target density, then clamped.
+function starsForWidth(w) {
+  const h = typeof window === 'undefined' ? 900 : window.innerHeight
+  const side = Math.sqrt(w * w + h * h)
+  const STARS_PER_MPX = 150
+  const n = Math.round((side * side) / 1e6 * STARS_PER_MPX)
+  return Math.max(120, Math.min(650, n))
+}
+
 function App() {
   const heroRef = useRef(null)
   const navRef = useRef(null)
+  const skyStarsRef = useRef(null)
+  const scheduleRef = useRef(null)
   const [scrollProgress, setScrollProgress] = useState(0)
+
+  // Star count scales with viewport width. StarrySky scatters its stars over a
+  // square sized to the viewport DIAGONAL, so a fixed count packs into a much
+  // smaller area on a narrow screen and reads as far denser. Stepping the count
+  // down keeps the apparent star density roughly even across screen sizes.
+  const [starCount, setStarCount] = useState(() => starsForWidth(
+    typeof window === 'undefined' ? 1440 : window.innerWidth
+  ))
+  useEffect(() => {
+    // Only update when the bucket actually changes: setting a new starCount
+    // makes StarrySky rebuild every star, so reacting to each resize pixel
+    // would reshuffle the sky continuously while dragging a window edge.
+    const onResize = () => setStarCount(prev => {
+      const next = starsForWidth(window.innerWidth)
+      return next === prev ? prev : next
+    })
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight
@@ -35,6 +70,41 @@ function App() {
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // The starry-sky package places each star at an absolute PIXEL offset inside
+  // a box sized to the viewport diagonal — roughly one screen — so the stars
+  // stop well before Tracks/Sponsors no matter how tall .sky-band is. Rewrite
+  // each star's px coords as percentages once it has rendered, so they scatter
+  // across the entire band. Re-runs whenever the star nodes change.
+  useEffect(() => {
+    const field = skyStarsRef.current
+    if (!field) return
+
+    const spread = () => {
+      const box = field.querySelector('.constelacao')
+      if (!box) return
+      const stars = box.querySelectorAll('.estrela')
+      if (!stars.length) return
+      // The package set these in px before our CSS stretched the box to 100%.
+      const w = parseFloat(box.style.width) || box.clientWidth
+      const h = parseFloat(box.style.height) || box.clientHeight
+      if (!w || !h) return
+      stars.forEach((star) => {
+        if (star.dataset.spread) return
+        const left = parseFloat(star.style.left)
+        const top = parseFloat(star.style.top)
+        if (Number.isNaN(left) || Number.isNaN(top)) return
+        star.style.left = `${(left / w) * 100}%`
+        star.style.top = `${(top / h) * 100}%`
+        star.dataset.spread = '1'
+      })
+    }
+
+    spread()
+    const observer = new MutationObserver(spread)
+    observer.observe(field, { childList: true, subtree: true })
+    return () => observer.disconnect()
   }, [])
 
   // Drive the full-page sky gradient (body::before): give it the document's
@@ -65,6 +135,30 @@ function App() {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       ro.disconnect()
+    }
+  }, [])
+
+  // Schedule clouds drift apart slightly as the section crosses the viewport:
+  // --sched 0 (section entering) → 1 (section leaving).
+  useEffect(() => {
+    const el = scheduleRef.current
+    if (!el) return
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const r = el.getBoundingClientRect()
+      const vh = window.innerHeight || 1
+      const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)))
+      el.style.setProperty('--sched', p.toFixed(3))
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
     }
   }, [])
 
@@ -122,7 +216,7 @@ function App() {
         < Star />
       </div> */}
       {/* ── Nav ── */}
-      <nav ref={navRef}>
+      <nav ref={navRef} aria-label="Main navigation">
         <a href="#hero" className="nav-logo">WHACK 2026</a>
         <ul className="nav-links">
           <li><a href="#schedule">Schedule</a></li>
@@ -133,6 +227,17 @@ function App() {
         <a href="#register" className="nav-register">Register</a>
       </nav>
 
+      {/* MLH badge hangs from the page's top-right corner, outside the nav, so
+          it never competes with the bar's layout or clips at its edge. */}
+      <a
+        href="https://mlh.io/seasons/2026/events?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2026-season&utm_content=white"
+        target="_blank"
+        rel="noreferrer"
+        className="mlh-badge"
+      >
+        <img src="/mlhBadge.png" alt="Major League Hacking 2026 Official Season Badge" />
+      </a>
+
       {/* ── Sky band: hero + schedule share ONE star field ──
           .sky-stars is an absolutely-positioned frame spanning both sections;
           inside it the field is position:fixed so the stars stay perfectly
@@ -141,8 +246,8 @@ function App() {
           the hero has its own crescent moon and clouds. */}
       <div className="sky-band">
         <div className="sky-stars" aria-hidden="true">
-          <div className="sky-stars-field">
-            <StarrySky starCount={300} meteorInterval={METEOR_INTERVAL} showMoon={false} showForest={false} />
+          <div className="sky-stars-field" ref={skyStarsRef}>
+            <StarrySky starCount={starCount} meteorInterval={METEOR_INTERVAL} showMoon={false} showForest={false} />
           </div>
         </div>
 
@@ -209,13 +314,25 @@ function App() {
       </section>
 
       {/* ── Section 4 · Schedule ── */}
-      <section id="schedule" className="section section-4">
+      <section id="schedule" className="section section-4" ref={scheduleRef}>
+        {/* hand-painted cloud framing — one wisp up top right, two side clouds
+            hugging the bottom. They ease outward/up as the section scrolls. */}
+        <div className="cloud-layer cloud-layer-bottom sched-clouds" aria-hidden="true">
+          <div className="sched-cloud sched-wisp">
+            <Cloud src="cloud-wisp.png" width="clamp(200px, 32vw, 760px)" opacity={0.95} drift driftSpeed={16} />
+          </div>
+          <div className="sched-cloud sched-left">
+            <Cloud src="cloud-side.png" flip width="clamp(380px, 56vw, 1280px)" drift driftSpeed={19} />
+          </div>
+          <div className="sched-cloud sched-right">
+            <Cloud src="cloud-side.png" width="clamp(380px, 56vw, 1280px)" drift driftSpeed={22} />
+          </div>
+        </div>
         <div className="section-inner centered">
           <h1>The Schedule</h1>
           <Schedule />
         </div>
       </section>
-      </div>{/* /sky-band */}
 
       {/* ── Section 5 · Tracks ── */}
       <section id="tracks" className="section section-5 galaxy-section">
@@ -275,6 +392,7 @@ function App() {
             <a href="mailto:sponsor@whack.ucsc.edu" style={{ color: 'white' }}>Reach out →</a>
         </p>
       </section>
+      </div>{/* /sky-band */}
 
       {/* ── Section 7 · FAQ ── */}
       <section id="faq" className="section section-7">

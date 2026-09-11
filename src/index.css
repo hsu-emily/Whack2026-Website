@@ -69,7 +69,8 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 48px;
+  /* extra right padding reserves room for the MLH badge in the corner */
+  padding: 16px 136px 16px 48px;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   background: rgba(245, 226, 255, 0.06);
@@ -130,6 +131,29 @@ nav.nav-on-light .nav-register:hover { background: rgba(26, 10, 46, 0.2); }
 }
 
 .nav-register:hover { background: rgba(255, 255, 255, 0.22); }
+nav a:focus-visible { outline: 2px solid white; outline-offset: 4px; }
+
+/* MLH badge: fixed to the page's top-right corner, above the nav, per MLH's
+   placement rules. It sits outside <nav> so it can't affect the bar's layout
+   or clip against its edge. */
+.mlh-badge {
+  position: fixed;
+  top: 0;
+  right: 48px;
+  z-index: 110;
+  display: block;
+  width: 68px;
+  /* Trim the image's white corners so the pennant tip reads as a point. */
+  clip-path: polygon(0 0, 100% 0, 100% 89%, 50% 100%, 0 89%);
+}
+.mlh-badge img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.mlh-badge:focus-visible { outline: 2px solid white; outline-offset: 4px; }
+
+.section { scroll-margin-top: 100px; }
 
 /* full-page sky. Fixed to the viewport and scaled to the document height, then
    shifted by the scroll offset in JS (--sky-shift), so the six stops stretch
@@ -250,18 +274,33 @@ h2 {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 82%, rgba(0,0,0,0) 100%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 82%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 94%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 94%, rgba(0,0,0,0) 100%);
 }
 .sky-stars-field {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 }
 .sky-stars .starry-sky-container { height: 100%; width: 100%; background: transparent; }
 .sky-stars .noite { background: transparent !important; }
+
+/* The package sizes .constelacao in PIXELS to the viewport diagonal and centers
+   it with translate(-50%,-50%), so its stars only ever cover about one screen —
+   which is why they stopped before Tracks. Stretch it to fill the whole band
+   from the top instead, and drop the slow rotation (it would swing a non-square
+   box out of frame). Stars are placed in px within that box, so .constelacao is
+   given an explicit tall size and the stars are scattered across all of it. */
+.sky-stars .constelacao {
+  width: 100% !important;
+  height: 100% !important;
+  top: 0;
+  left: 0;
+  transform: none;
+  animation: none;
+}
 
 /* white stars with a soft bloom so they read as glowing points, not pixels */
 .sky-stars .estrela { box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.6); }
@@ -403,6 +442,29 @@ h2 {
 
 /* schedule clouds sit above the glass's lower half but below text */
 .cloud-layer-bottom { z-index: 1; }
+
+/* schedule cloud framing: one wisp top-right, two side clouds along the
+   bottom. They ease outward/up with --sched (0 → 1) as you scroll past. */
+/* clip sideways only — the layer must not add horizontal scroll, but the
+   section itself stays overflow:visible for the hourglass glow. */
+.sched-clouds { overflow-x: clip; }
+.sched-clouds > * { pointer-events: none; }
+.sched-cloud {
+  position: absolute;
+  will-change: transform;
+  transition: transform 0.15s linear;
+}
+/* placement is fluid: the side clouds hang off the edges by a share of the
+   viewport, so they stay anchored to the corners at any width */
+.sched-wisp  { right: clamp(-6%, -2vw, 0%); top: clamp(10%, 14vh, 20%); }
+.sched-left  { left: clamp(-22%, -10vw, -8%); bottom: clamp(-10%, -4vh, -2%); }
+.sched-right { right: clamp(-20%, -9vw, -6%); bottom: clamp(-14%, -6vh, -4%); }
+.sched-left  { transform: translate3d(calc(var(--sched, 0) * -6vw), calc(var(--sched, 0) * -3vh), 0); }
+.sched-right { transform: translate3d(calc(var(--sched, 0) *  6vw), calc(var(--sched, 0) * -3vh), 0); }
+.sched-wisp  { transform: translate3d(calc(var(--sched, 0) *  4vw), calc(var(--sched, 0) * -5vh), 0); }
+@media (prefers-reduced-motion: reduce) {
+  .sched-left, .sched-right, .sched-wisp { transform: none; }
+}
 
 /* Keep .section-inner as a z-index:auto passthrough (NOT its own stacking
    context) so its children's z-index compete directly against the cloud
@@ -661,7 +723,9 @@ h2 {
 .section-4 .section-inner {
   position: relative;
   z-index: 2;
-  max-width: 1320px; /* wider than other sections so the itineraries fit beside the glass */
+  /* wider than other sections so the itineraries fit beside the glass, and
+     fluid so the whole stage grows with the viewport instead of capping */
+  max-width: min(1600px, 94vw);
 }
 
 /* Hourglass centerpiece flanked by the two day itineraries */
@@ -678,7 +742,7 @@ h2 {
 .hourglass-frame {
   position: relative;
   /* the art layers are square (2048×2048), so the frame is too */
-  width: clamp(400px, 40vw, 600px);
+  width: clamp(420px, 44vw, 820px);
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
   /* the art has generous transparent padding, so pull the neighbouring
@@ -772,28 +836,28 @@ h2 {
 /* Flanking day itineraries — "day 1" upper-left, "day 2" lower-right,
    staggered like the mockup */
 .day-col { text-align: left; min-width: 0; }
-.day-col-left  { justify-self: end; margin-top: -3rem; }
-.day-col-right { justify-self: start; margin-top: 4rem; }
+.day-col-left  { justify-self: end; margin-top: clamp(-4.5rem, -4vw, -2rem); }
+.day-col-right { justify-self: start; margin-top: clamp(2.5rem, 5vw, 6rem); }
 
 .day-col-head {
   display: flex;
   align-items: baseline;
-  gap: 12px;
-  margin-bottom: 14px;
-  padding-bottom: 10px;
+  gap: clamp(10px, 1vw, 18px);
+  margin-bottom: clamp(12px, 1.2vw, 20px);
+  padding-bottom: clamp(8px, 0.9vw, 14px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .day-col-label {
   font-family: 'Great Vibes', cursive;
-  font-size: clamp(1.7rem, 3.2vw, 2.3rem);
+  font-size: clamp(1.8rem, 3.4vw, 3.1rem);
   line-height: 1;
   text-shadow: 0 0 18px rgba(150, 200, 255, 0.35);
   white-space: nowrap;
 }
 
 .day-col-date {
-  font-size: 0.7rem;
+  font-size: clamp(0.68rem, 0.7vw, 0.88rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0.55;
@@ -804,18 +868,18 @@ h2 {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 11px;
-  max-width: 300px;
+  gap: clamp(10px, 1.1vw, 18px);
+  max-width: clamp(300px, 26vw, 440px);
 }
 
 .day-col-event {
   display: grid;
-  grid-template-columns: 60px 1fr;
-  gap: 10px;
+  grid-template-columns: clamp(58px, 5vw, 82px) 1fr;
+  gap: clamp(10px, 1vw, 16px);
 }
 
 .day-col-time {
-  font-size: 0.7rem;
+  font-size: clamp(0.68rem, 0.72vw, 0.9rem);
   font-weight: 700;
   letter-spacing: 0.04em;
   opacity: 0.6;
@@ -823,9 +887,9 @@ h2 {
   white-space: nowrap;
 }
 
-.day-col-body { display: flex; flex-direction: column; gap: 2px; }
-.day-col-title { font-size: 0.85rem; font-weight: 600; }
-.day-col-desc  { font-size: 0.72rem; opacity: 0.55; line-height: 1.45; }
+.day-col-body { display: flex; flex-direction: column; gap: clamp(2px, 0.25vw, 5px); }
+.day-col-title { font-size: clamp(0.85rem, 0.95vw, 1.15rem); font-weight: 600; }
+.day-col-desc  { font-size: clamp(0.72rem, 0.8vw, 0.98rem); opacity: 0.55; line-height: 1.45; }
 
 @keyframes day-fade {
   from { opacity: 0; transform: translateY(10px); }
@@ -837,7 +901,7 @@ h2 {
 
 .day-toggle-btn {
   font-family: 'Great Vibes', cursive;
-  font-size: 2rem;
+  font-size: clamp(1.9rem, 6vw, 2.6rem);
   color: rgba(255, 255, 255, 0.9);
   background: none;
   border: none;
@@ -1212,10 +1276,10 @@ footer {
 }
 
 /* ── Responsive ─────────────────────────────── */
-
 @media (max-width: 680px) {
-  nav { padding: 14px 20px; }
+  nav { padding: 14px 82px 14px 20px; }
   .nav-links { display: none; }
+  .mlh-badge { right: 20px; width: 54px; }
   .section { padding: 100px 24px 64px; }
   h1 { font-size: 2.2rem; }
   h2 { font-size: 1.6rem; }
@@ -1230,11 +1294,12 @@ footer {
 
   /* Schedule: hourglass on top, day toggle below it, one itinerary at a time */
   .schedule-stage { grid-template-columns: 1fr; justify-items: center; gap: 18px; }
-  .hourglass-frame { order: -1; width: min(420px, 96vw); margin: -8% 0; }
+  .hourglass-frame { order: -1; width: min(460px, 92vw); margin: -8% 0; }
   .day-toggle { display: flex; gap: 28px; justify-content: center; }
   .day-col { order: 1; animation: day-fade 0.45s cubic-bezier(.22,1,.36,1); }
   .day-col-left, .day-col-right { margin-top: 0; justify-self: center; }
   .day-col.compact-hidden { display: none; }
+  .day-col-events { max-width: min(420px, 88vw); }
 
   /* phones: keep the band continuous with fewer clouds. Drop the two INNER
      band clouds (children 2 & 3) and let the two wide OUTER ones (1 & 4)
@@ -1250,12 +1315,12 @@ footer {
    phone breakpoint uses — glass on top, toggle, one itinerary beneath it. */
 @media (min-width: 681px) and (max-width: 1150px) {
   .schedule-stage { grid-template-columns: 1fr; justify-items: center; gap: 18px; }
-  .hourglass-frame { order: -1; width: min(520px, 78vw); margin: -7% 0; }
+  .hourglass-frame { order: -1; width: min(620px, 80vw); margin: -7% 0; }
   .day-toggle { display: flex; gap: 28px; justify-content: center; }
   .day-col { order: 1; animation: day-fade 0.45s cubic-bezier(.22,1,.36,1); }
   .day-col-left, .day-col-right { margin-top: 0; justify-self: center; }
   .day-col.compact-hidden { display: none; }
-  .day-col-events { max-width: 420px; }
+  .day-col-events { max-width: min(480px, 90vw); }
 }
 
 /* more */
