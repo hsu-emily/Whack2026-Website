@@ -1013,6 +1013,108 @@ h2 {
   line-height: 1.5;
 }
 
+.fish-interstitial {
+  position: relative;
+  height: 150px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.bottom-creature-row {
+  position: relative;
+  height: 190px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.fish-swimmer {
+  position: absolute;
+  right: clamp(7%, 11vw, 14%);
+  top: 30%;
+  width: clamp(180px, 21vw, 300px);
+  padding: 12px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translateY(-50%);
+  transition: transform 0.35s ease;
+}
+
+.fish-swimmer.is-flipped {
+  transform: translateY(-50%) scaleX(-1);
+}
+
+.seahorse-swimmer,
+.turtle-swimmer {
+  right: auto;
+  left: clamp(6%, 10vw, 13%);
+}
+
+.seahorse-swimmer {
+  top: 58%;
+  left: clamp(2%, 6vw, 9%);
+  width: clamp(180px, 19vw, 270px);
+}
+
+.turtle-swimmer {
+  top: 140%;
+  left: clamp(17%, 21vw, 26%);
+  width: clamp(220px, 24vw, 340px);
+}
+
+.seahorse-swimmer img {
+  animation-duration: 3.1s;
+  animation-delay: -0.35s;
+}
+
+.turtle-swimmer img {
+  animation-duration: 5.2s;
+  animation-delay: -3.8s;
+}
+
+.starfish-swimmer,
+.clownfish-swimmer {
+  width: clamp(220px, 24vw, 340px);
+}
+
+.starfish-swimmer {
+  right: auto;
+  left: clamp(6%, 10vw, 13%);
+  top: 52%;
+}
+
+.clownfish-swimmer {
+  top: -24%;
+}
+
+.clownfish-swimmer img {
+  animation-delay: -1.8s;
+}
+
+.fish-swimmer img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 8px 8px rgba(8, 14, 46, 0.12));
+  animation: fishBob 2.8s ease-in-out infinite;
+}
+
+.fish-swimmer:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 4px;
+}
+
+@keyframes fishBob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-9px) rotate(2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fish-swimmer { transition: none; }
+  .fish-swimmer img { animation: none; }
+}
+
 /* ── Section 6 – Sponsors ───────────────────── */
 .section-6 {
   color: white;

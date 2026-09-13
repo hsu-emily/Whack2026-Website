@@ -5,6 +5,10 @@ import './index.css'
 import whaleJump from './assets/logo.png'
 import turtle from './assets/turtle.png'
 import wishingWell from './assets/wishing_well.png'
+import fatFish from './assets/fat_fish.png'
+import seahorse from './assets/seahorse.png'
+import starfish from './assets/starfish.png'
+import clownfish from './assets/clownfish.png'
 import whaleSleep from './assets/logo_sleep.png'
 import pillow from './assets/pillow.png'
 import sponsorLogoPlaceholder from './assets/sponsor_logo_placeholder.png'
@@ -14,6 +18,21 @@ import Cloud from './components/Cloud'
 import Schedule from './components/Schedule'
 //import WishingWell from './components/WishingWell'
 import Waves from './components/Waves'
+
+function SeaCreature({ src, label, className = '', initiallyFlipped = false }) {
+  const [flipped, setFlipped] = useState(initiallyFlipped)
+
+  return (
+    <button
+      type="button"
+      className={`fish-swimmer ${className}${flipped ? ' is-flipped' : ''}`}
+      onClick={() => setFlipped((current) => !current)}
+      aria-label={`Flip the ${label}`}
+    >
+      <img src={src} alt="" />
+    </button>
+  )
+}
 
 // StarrySky regenerates every star whenever this prop changes identity, and App
 // re-renders on every scroll tick — so this MUST be a stable module-level
@@ -369,6 +388,12 @@ function App() {
         </div>
       </section>
 
+      <div className="fish-interstitial">
+        <SeaCreature src={fatFish} label="fish" />
+        <SeaCreature src={seahorse} label="seahorse" className="seahorse-swimmer" />
+        <SeaCreature src={turtle} label="turtle" className="turtle-swimmer" initiallyFlipped />
+      </div>
+
       {/* ── Section 6 · Sponsors ── */}
       <section id="sponsors" className="section section-6">
         <div className="section-inner centered">
@@ -422,6 +447,10 @@ function App() {
             <a href="mailto:sponsor@whack.ucsc.edu" style={{ color: 'white' }}>Reach out!</a>
         </p>
       </section>
+      <div className="bottom-creature-row">
+        <SeaCreature src={starfish} label="starfish" className="starfish-swimmer" />
+        <SeaCreature src={clownfish} label="clownfish" className="clownfish-swimmer" />
+      </div>
       </div>{/* /sky-band */}
 
       {/* ── Section 7 · FAQ ── */}
