@@ -94,12 +94,16 @@ nav.nav-on-light .nav-register {
 nav.nav-on-light .nav-register:hover { background: rgba(26, 10, 46, 0.2); }
 
 .nav-logo {
+  display: inline-flex;
+  flex-shrink: 0;
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #f4f1ff;
   text-decoration: none;
 }
+
+.nav-logo img { display: block; width: 48px; height: 48px; object-fit: contain; }
 
 .nav-links {
   display: flex;
@@ -594,7 +598,7 @@ h2 {
 
 .title-whale {
   width: 100%;
-  left:-15%;
+  left: calc(-15% - 3vw);
   height: auto;
   object-fit: contain;
   position: relative;
@@ -1376,7 +1380,8 @@ footer {
 }
 
 @media (max-width: 680px) {
-  nav { padding: 10px 78px 8px 16px; }
+  nav { padding: 10px 78px 8px 16px; flex-wrap: nowrap; }
+  .nav-links { display: none; }
   .nav-logo { font-size: 0.9rem; }
   .nav-register { padding: 10px 12px; font-size: 0.875rem; }
   .mlh-badge { right: 16px; width: 50px; }
@@ -1412,11 +1417,13 @@ footer {
     max-width: none;
     margin: 0;
   }
-  .title-whale { left: 0; }
-  .hero-moon { width: 56vw; top: 12%; right: 8%; }
+  .title-whale { left: -4vw; }
+  .hero-moon { width: 48vw; top: 12%; right: 20%; }
+  .section-1 .cloud-drift { transition: none; will-change: transform; }
+  .section-1 .cloud-img-drift { animation: none; }
   /* Oversized hero clouds continue beyond the phone edges. Scale separately
      from transform so the painted clouds keep their existing mirrored shapes. */
-  .section-1 .cloud-layer-top > :nth-child(-n+2) .cloud-img { width: 82vw !important; }
+  .section-1 .cloud-layer-top > :nth-child(-n+2) .cloud-img { width: 76vw !important; }
   .section-1 .cloud-layer-top > :first-child { left: -34% !important; }
   .section-1 .cloud-layer-top > :nth-child(2) { right: -32% !important; }
   .section-1 .cloud-layer-top > :nth-child(3) { top: 33% !important; }

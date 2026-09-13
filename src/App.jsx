@@ -170,12 +170,24 @@ function App() {
     const hero = heroRef.current
     if (!hero) return
     let raf = 0
-    const update = () => {
+    let progress = 0
+    let lastFrame = 0
+    const compact = window.matchMedia('(max-width: 680px)')
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = (now = performance.now()) => {
       raf = 0
       const h = hero.offsetHeight || 1
       // progress through the hero's own scroll span
-      const p = Math.min(1, Math.max(0, window.scrollY / (h * 0.85)))
-      hero.style.setProperty('--part', p.toFixed(3))
+      const target = Math.min(1, Math.max(0, window.scrollY / (h * 0.85)))
+      // Touch scrolling can deliver updates in bursts. Ease between them on
+      // animation frames instead of jumping every cloud on each scroll event.
+      const smooth = compact.matches && !reducedMotion.matches
+      const dt = lastFrame ? Math.min(now - lastFrame, 64) : 16
+      lastFrame = now
+      progress = smooth ? progress + (target - progress) * (1 - Math.exp(-dt / 60)) : target
+      if (Math.abs(target - progress) < 0.0001) progress = target
+      const p = progress
+      hero.style.setProperty('--part', p.toFixed(5))
 
       // big scroll-driven whale arc: sweeps up-and-over along a parabola.
       const arcX = p * 40                    // px: drifts right across the hero
@@ -184,7 +196,7 @@ function App() {
       hero.style.setProperty('--whale-x', arcX.toFixed(1) + 'px')
       hero.style.setProperty('--whale-y', arcY.toFixed(1) + 'px')
       hero.style.setProperty('--whale-rot', arcRot.toFixed(2) + 'deg')
-
+      if (progress !== target) raf = requestAnimationFrame(update)
     }
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
     update()
@@ -217,7 +229,9 @@ function App() {
       </div> */}
       {/* ── Nav ── */}
       <nav ref={navRef} aria-label="Main navigation">
-        <a href="#hero" className="nav-logo">WHACK 2026</a>
+        <a href="#hero" className="nav-logo" aria-label="WHACK 2026 home">
+          <img src="/favicon.png" alt="WHACK 2026" width="48" height="48" />
+        </a>
         <ul className="nav-links">
           <li><a href="#schedule">Schedule</a></li>
           <li><a href="#tracks">Tracks</a></li>
