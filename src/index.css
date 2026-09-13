@@ -955,41 +955,133 @@ h2 {
   z-index: 1;
 }
 
+.section-5 .section-inner {
+  max-width: 1080px;
+}
+
+/* soft glowing script heading to match the hero */
+.section-5 h1 {
+  margin-bottom: 0.4rem;
+}
+
+/* little subtitle line under the heading (optional, see JSX note) */
+.tracks-sub {
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: 0.5rem;
+}
+
 .tracks {
   display: grid;
-  grid-template-columns: minmax(0, 640px);
-  justify-content: start;
-  gap: 18px;
-  margin-top: 2rem;
-  width: 120vw;
-  margin-left: calc(50% - 50vw + 288px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 22px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 4.5rem auto 0;   /* moves the cards further down */
 }
 
 .track-card {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
-  padding: 32px 26px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 34px 28px 30px;
+  border-radius: 22px;
   text-align: left;
+
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(185, 167, 238, 0.06) 55%,
+    rgba(124, 140, 224, 0.10) 100%
+  );
+  border: 1px solid rgba(220, 210, 255, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 10px 34px rgba(8, 10, 40, 0.30);
+
+  transition:
+    transform 0.3s cubic-bezier(.22, 1, .36, 1),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
-.track-card.first {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.28);
+/* tiny star ✦ marker in the top corner of each card */
+.track-card::before {
+  content: '✦';
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  font-size: 1rem;
+  color: rgba(255, 243, 216, 0.75);
+  text-shadow: 0 0 10px rgba(255, 230, 170, 0.8);
 }
 
+.track-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(238, 240, 255, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 16px 44px rgba(8, 10, 40, 0.40),
+    0 0 30px rgba(140, 130, 240, 0.28);
+}
+
+/* split "Better Worlds:" style names onto their own script line */
 .track-name {
-  /*font-family: 'Great Vibes';*/
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 800;
-  letter-spacing: -0.03em;
-  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  text-shadow: 0 0 16px rgba(190, 215, 255, 0.25);
 }
 
 .track-desc {
-  font-size: 1rem;
-  opacity: 0.55;
-  line-height: 1.5;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: rgba(240, 238, 255, 0.66);
+}
+
+@media (max-width: 900px) {
+  .tracks {
+    grid-template-columns: 1fr;
+    max-width: 540px;
+  }
+}
+
+@media (max-width: 680px) {
+  .tracks {
+    max-width: 100%;
+    gap: 14px;
+    margin-top: 2rem;   /* less push-down needed when stacked */
+  }
+  .track-card {
+    padding: 22px 18px 20px;
+    border-radius: 18px;
+  }
+  .track-card::before {
+    top: 14px;
+    right: 16px;
+    font-size: 0.85rem;
+  }
+  .track-name {
+    font-size: 1.12rem;
+    padding-right: 24px;  /* keeps text clear of the corner star */
+  }
+  .track-desc {
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+  .track-card:hover { transform: none; }  /* no lift on touch */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track-card { transition: none; }
+  .track-card:hover { transform: none; }
 }
 
 /* ── Section 6 – Sponsors ───────────────────── */
