@@ -13,7 +13,7 @@ import Cloud from './Cloud';
 const DAYS = {
   1: {
     label: 'day 1',
-    date: 'Nov 10, 2026',
+    date: 'Nov 21, 2026',
     events: [
       { time: '4:00 PM', title: 'Check-in & Badges', desc: 'Arrive, grab your lanyard, and settle in.' },
       { time: '6:00 PM', title: 'Opening Ceremony', desc: 'Kickoff, sponsor intros, and the theme reveal.' },
@@ -24,7 +24,7 @@ const DAYS = {
   },
   2: {
     label: 'day 2',
-    date: 'Nov 12, 2026',
+    date: 'Nov 22, 2026',
     events: [
       { time: '9:00 AM', title: 'Morning Workshops', desc: 'AI/ML, design, and hardware deep-dives.' },
       { time: '12:00 PM', title: 'Sponsor Expo', desc: 'Meet the teams behind the tools you love.' },
