@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useLayoutEffect, useRef, useState } from 'react'
 import Layer1 from '../assets/wave/Layer1.png'
 import Layer2 from '../assets/wave/Layer2.png'
 import Layer3 from '../assets/wave/Layer3.png'
@@ -29,6 +29,8 @@ const LAYER_GROUPS = [
 
 function Waves({ items = [], heading, children }) {
   const [openIndex, setOpenIndex] = useState(null)
+  const listRef = useRef(null)
+  const [restHeight, setRestHeight] = useState(null)
 
   // Questions are linked to layers in reverse: question 1 → the last layer
   // (Layer8), question 2 → the second-to-last, and so on, leaving Layer1 as
@@ -36,9 +38,27 @@ function Waves({ items = [], heading, children }) {
   // every layer above it; layers below stay put.
   const activeTiedLayerIndex = openIndex === null ? null : LAYER_GROUPS.length - 1 - openIndex
 
+  // The art/scrim height is pinned to the list's resting (all-closed) height
+  // instead of tracking it live. Otherwise, opening a question animates the
+  // list taller every frame, forcing the whole full-bleed artwork stack to
+  // reflow/re-crop in lockstep — that's what shows up as a glitch on click.
+  useLayoutEffect(() => {
+    const el = listRef.current
+    if (!el) return
+    const measure = () => {
+      if (openIndex === null) setRestHeight(el.offsetHeight)
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [openIndex])
+
+  const pinnedHeightStyle = restHeight != null ? { height: `${restHeight}px` } : undefined
+
   return (
     <div className="waves-faq">
-      <div className="waves-art" aria-hidden="true">
+      <div className="waves-art" aria-hidden="true" style={pinnedHeightStyle}>
         {LAYER_GROUPS.map((layer, i) => {
           const isHidden = activeTiedLayerIndex !== null && i >= activeTiedLayerIndex
           const wrapClassName = `waves-art-layer-wrap${isHidden ? ' is-hidden' : ''}`
@@ -64,9 +84,9 @@ function Waves({ items = [], heading, children }) {
         })}
       </div>
 
-      <div className="waves-scrim" aria-hidden="true" />
+      <div className="waves-scrim" aria-hidden="true" style={pinnedHeightStyle} />
 
-      <div className="waves-list">
+      <div className="waves-list" ref={listRef}>
         {heading && <h1>{heading}</h1>}
         {children}
         {items.map((item, i) => {
