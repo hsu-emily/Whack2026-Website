@@ -34,11 +34,12 @@ import backGlow from '../assets/hourglass/9_backglow.png';
 // How far each piece may wander from its painted home position, as a fraction
 // of the frame size. Kept small so the art never crosses the glass walls.
 const STAR_RANGE = { x: 0.085, y: 0.075 };
-const MOON_RANGE = { x: 0.085, y: 0.07 };
+// The lower bulb has more room above the moon than below its painted position.
+const MOON_RANGE = { x: 0.03, y: 0.012, minY: -0.08 };
 
 // px/sec of travel (as a fraction of frame size per second) — a slow float.
 const STAR_SPEED = { x: 0.055, y: 0.043 };
-const MOON_SPEED = { x: 0.041, y: 0.052 };
+const MOON_SPEED = { x: 0.012, y: 0.007 };
 
 /** One drifting piece: position + velocity in normalized frame units. */
 function makeDrifter(range, speed, phase) {
@@ -58,7 +59,8 @@ function stepDrifter(d, dt) {
   if (d.x > d.range.x) { d.x = d.range.x; d.vx = -d.vx; }
   if (d.x < -d.range.x) { d.x = -d.range.x; d.vx = -d.vx; }
   if (d.y > d.range.y) { d.y = d.range.y; d.vy = -d.vy; }
-  if (d.y < -d.range.y) { d.y = -d.range.y; d.vy = -d.vy; }
+  const minY = d.range.minY ?? -d.range.y;
+  if (d.y < minY) { d.y = minY; d.vy = -d.vy; }
 }
 
 export default function Hourglass({
