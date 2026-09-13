@@ -58,7 +58,7 @@ const CONFIG = {
 
   // ── the two star trails peeling off the lower edge ──
   trails: {
-    enabled: true, // set false to show the disc alone
+    enabled: false, // set false to show the disc alone
     counts: [120, 70], // particles per trail
   },
 }
