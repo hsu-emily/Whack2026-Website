@@ -1028,15 +1028,60 @@ h2 {
 
 .sponsors-illustration {
   position: relative;
-  width: 62%;
+  width: 100%;
   max-width: 780px;
   margin: 3rem auto 0;
   display: flex;
   justify-content: center;
 }
 
+.sponsor-logo-placeholders {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.sponsor-logo-placeholder-link {
+  pointer-events: auto;
+}
+
+.sponsor-logo-placeholder-link:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 5px;
+}
+
+.sponsor-logo-placeholder-link:hover .sponsor-logo-placeholder,
+.sponsor-logo-placeholder-link:focus-visible .sponsor-logo-placeholder {
+  filter: drop-shadow(0 0 12px rgba(220, 202, 255, 0.58)) drop-shadow(0 6px 12px rgba(8, 14, 46, 0.28));
+}
+
+.sponsor-logo-placeholder {
+  position: absolute;
+  width: clamp(54px, 8vw, 92px);
+  height: auto;
+  filter: drop-shadow(0 6px 10px rgba(8, 14, 46, 0.3));
+  transition: filter 0.25s ease;
+  animation: sponsorLogoBob 4.8s ease-in-out infinite;
+}
+
+.sponsor-logo-placeholder-1 { left: -1%; top: 22%; animation-delay: -0.8s; }
+.sponsor-logo-placeholder-2 { left: 3%; top: 62%; animation-delay: -2.1s; }
+.sponsor-logo-placeholder-3 { right: 3%; top: 12%; animation-delay: -3.4s; }
+.sponsor-logo-placeholder-4 { right: -1%; top: 42%; animation-delay: -1.5s; }
+.sponsor-logo-placeholder-5 { right: 8%; top: 72%; animation-delay: -4.2s; }
+
+@keyframes sponsorLogoBob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sponsor-logo-placeholder { animation: none; }
+}
+
 .sponsors-well {
-  width: 120%;
+  width: 100%;
   height: auto;
   object-fit: contain;
   display: block;

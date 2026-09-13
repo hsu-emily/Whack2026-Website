@@ -7,6 +7,7 @@ import turtle from './assets/turtle.png'
 import wishingWell from './assets/wishing_well.png'
 import whaleSleep from './assets/logo_sleep.png'
 import pillow from './assets/pillow.png'
+import sponsorLogoPlaceholder from './assets/sponsor_logo_placeholder.png'
 import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
 import Cloud from './components/Cloud'
@@ -357,7 +358,7 @@ function App() {
       {/* ── Section 6 · Sponsors ── */}
       <section id="sponsors" className="section section-6">
         <div className="section-inner centered">
-          <h1>Sponsors</h1>
+          <h1>Sponsors ( pending... )</h1>
           {/*/* <div className="sponsor-tiers">
             <div className="sponsor-tier-label">Platinum</div>
             <div className="sponsor-row">
@@ -378,7 +379,24 @@ function App() {
               <span className="sponsor-pill">Linear</span>
             </div>
           </div>*/}
-          <div className="sponsors-illustration" aria-hidden="true">
+          <div className="sponsors-illustration">
+            <div className="sponsor-logo-placeholders">
+              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-1" />
+              </a>
+              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-2" />
+              </a>
+              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-3" />
+              </a>
+              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-4" />
+              </a>
+              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-5" />
+              </a>
+            </div>
             <img src={wishingWell} alt="" className="sponsors-well" />
           </div>
         {/*<div className="well-wrap" style={{ width: '90%', height: '800px', position: 'relative' }}>
