@@ -1409,17 +1409,17 @@ h2 {
    aspect-ratio, so the art and scrim always cover the full list — on
    narrow screens the list wraps onto many more lines than a fixed-ratio
    box could ever fit. object-fit: cover on the layers crops to whatever
-   height results, same as a responsive background image. The top edge
-   is masked to fully transparent so the artwork fades into whatever
-   section sits above it instead of cutting in with a hard line. */
+   height results, same as a responsive background image. Height itself is
+   pinned by Waves.jsx (measured from the list's resting/closed height) so
+   opening a question never resizes — and re-crops — the artwork.
+   Both edges are masked to fully transparent: the top so the artwork fades
+   into whatever section sits above it, the bottom so it fades into the
+   page's own dark-navy gradient tail instead of cutting hard into the footer. */
 .waves-art,
 .waves-scrim {
   width: 100%;
-  /* no intrinsic height of their own (their children are absolutely
-     positioned) so the grid's default stretch alignment sizes them to
-     match .waves-list's content height automatically */
-  mask-image: linear-gradient(to bottom, transparent 0%, black 14%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 88%, transparent 100%);
 }
 
 .waves-art {
