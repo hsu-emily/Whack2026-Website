@@ -806,6 +806,8 @@ h2 {
 .hg-topbubble     { z-index: 6; }
 .hg-moon          { z-index: 5; }
 .hg-moon { transform-origin: 47% 74%; }
+.hourglass-png.is-paused,
+.hourglass-png.is-paused .hg-layer { animation-play-state: paused; }
 .hg-bottombubble  { z-index: 4; }
 .hg-backpillars   { z-index: 3; }
 .hg-case          { z-index: 2; }
@@ -1423,6 +1425,7 @@ h2 {
 }
 
 .waves-art {
+  position: relative;
   overflow: hidden;
   pointer-events: none;
 }
@@ -1447,7 +1450,7 @@ h2 {
 .waves-art-layer {
   position: absolute;
   top: -6%;
-  left: 0%;
+  left: -6%;
   width: 112%;
   height: 112%;
   object-fit: cover;
@@ -1469,6 +1472,7 @@ h2 {
 
 .waves-list {
   position: relative;
+  align-self: start;
   z-index: 2;
   width: 100%;
   max-width: clamp(520px, 62vw, 900px);
@@ -1786,6 +1790,11 @@ footer {
   .track-card { padding: 24px 20px; }
   .track-name { font-size: clamp(1.125rem, 4.8vw, 1.4rem); }
   .wave-q-btn { min-height: 44px; }
+  .waves-art-layer {
+    object-fit: fill;
+    left: -2%;
+    width: 104%;
+  }
   footer { padding: 24px 20px; line-height: 1.6; }
   .hero-inner { flex-direction: column; align-items: flex-start; gap: 28px; }
   .hero-whale { width: 60%; }
