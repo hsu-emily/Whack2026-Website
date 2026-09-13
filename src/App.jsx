@@ -396,9 +396,8 @@ function App() {
       </section>
 
       <div className="fish-interstitial">
-        <SeaCreature src={fatFish} label="fish" />
+        <SeaCreature src={fatFish} label="fish" className="fat-fish-swimmer" />
         <SeaCreature src={seahorse} label="seahorse" className="seahorse-swimmer" />
-        <SeaCreature src={turtle} label="turtle" className="turtle-swimmer" initiallyFlipped />
       </div>
 
       {/* ── Section 6 · Sponsors ── */}
@@ -456,20 +455,15 @@ function App() {
       </section>
       <div className="bottom-creature-row">
         <SeaCreature src={starfish} label="starfish" className="starfish-swimmer" />
+        <SeaCreature src={turtle} label="turtle" className="turtle-swimmer bottom-turtle-swimmer" initiallyFlipped />
         <SeaCreature src={clownfish} label="clownfish" className="clownfish-swimmer" />
       </div>
       </div>{/* /sky-band */}
 
       {/* ── Section 7 · FAQ ── */}
       <section id="faq" className="section section-7">
-        <div className="section-inner">
-          <h1>Frequently Asked Questions</h1>
-          <p className="section-lead">
-            Here are the most common questions we get. Still curious?{' '}
-            <a href="mailto:hello@whack.ucsc.edu" style={{ color: 'white' }}>Email us →</a>
-          </p>
-        </div>
         <Waves
+          heading="Frequently Asked Questions"
           items={[
             { q: 'Who can participate?', a: 'WHACK is open to all current college and university students. As long as you are enrolled in a degree-seeking program, you can attend.' },
             { q: 'Do I need a team?', a: "You can apply solo or with a team of up to 4. We also have a team-forming event on Friday evening to help you mingle and find teammates. Once you're in, you can also check out our discord to meet people in advance!" },
@@ -479,7 +473,12 @@ function App() {
             { q: 'Will there be food?', a: "We'll provide three meals on Saturday and two meals on Sunday (breakfast and lunch)." },
             { q: "What if I've never hacked before?", a: 'You can still attend! We welcome beginners, especially first-time hackers. If you find yourself struggling, we have beginner-friendly workshops and a dedicated mentorship team to help you with any questions.' },
           ]}
-        />
+        >
+          <p className="section-lead">
+            Here are the most common questions we get. Still curious?{' '}
+            <a href="mailto:hello@whack.ucsc.edu" style={{ color: 'white' }}>Email us →</a>
+          </p>
+        </Waves>
       </section>
 
       {/* ── Section 8 · Register CTA ──
