@@ -1340,9 +1340,15 @@ h2 {
 /*add tiers later if needed*/
 
 /* ── Section 7 – FAQ ────────────────────────── */
+/* this is the last section on the page, so it drops the shared .section
+   min-height/centering and bottom padding — it hugs the waves art exactly
+   instead of leaving empty space before the footer */
 .section-7 {
   color: white;
   background: transparent;
+  min-height: 0;
+  padding-bottom: 0;
+  justify-content: flex-start;
 }
 
 /* ── Waves FAQ ────────────────────────────────
@@ -1356,8 +1362,11 @@ h2 {
 
 .waves-faq {
   position: relative;
-  width: 100%;
-  max-width: 1100px;
+  /* full-bleed: break out of the padded section so the art spans the
+     entire screen width, no matter how narrow/wide the viewport is */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   display: grid;
 }
 
@@ -1369,27 +1378,65 @@ h2 {
   grid-area: 1 / 1;
 }
 
-.waves-art {
-  align-self: start;
+/* width tracks the screen (100vw via the parent); height stretches to
+   match the tallest grid child (the question list) instead of a fixed
+   aspect-ratio, so the art and scrim always cover the full list — on
+   narrow screens the list wraps onto many more lines than a fixed-ratio
+   box could ever fit. object-fit: cover on the layers crops to whatever
+   height results, same as a responsive background image. The top edge
+   is masked to fully transparent so the artwork fades into whatever
+   section sits above it instead of cutting in with a hard line. */
+.waves-art,
+.waves-scrim {
   width: 100%;
-  aspect-ratio: 2916 / 1640;
+  /* no intrinsic height of their own (their children are absolutely
+     positioned) so the grid's default stretch alignment sizes them to
+     match .waves-list's content height automatically */
+  mask-image: linear-gradient(to bottom, transparent 0%, black 14%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%);
+}
+
+.waves-art {
   overflow: hidden;
   pointer-events: none;
 }
 
-.waves-art-layer {
+/* wrap handles the show/hide slide so it never fights with the layer's
+   own continuous sway animation (see .waves-art-layer below) */
+.waves-art-layer-wrap {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  overflow: hidden;
+  transition: opacity 0.4s ease, transform 0.6s ease;
+}
+
+/* opening a question keeps its linked layer and every layer before it
+   (see Waves.jsx); every later layer slides away to the right out of the frame */
+.waves-art-layer-wrap.is-hidden {
+  transform: translateX(80%);
+}
+
+/* oversized + inset so the sway animation always has a buffer of image to
+   pan into, instead of running out of image and exposing a straight edge */
+.waves-art-layer {
+  position: absolute;
+  top: -6%;
+  left: 0%;
+  width: 112%;
+  height: 112%;
   object-fit: cover;
   display: block;
+  animation: wave-sway 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* gentle, endless in/out sway so the coastline never sits fully still */
+@keyframes wave-sway {
+  0%, 100% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(1.4%) scale(1.01); }
 }
 
 .waves-scrim {
-  align-self: start;
-  width: 100%;
-  aspect-ratio: 2916 / 1640;
   pointer-events: none;
   background: linear-gradient(180deg, rgba(4, 7, 18, 0.2) 0%, rgba(4, 7, 18, 0.4) 55%, rgba(4, 7, 18, 0.55) 100%);
 }
@@ -1398,19 +1445,26 @@ h2 {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 900px;
+  max-width: clamp(520px, 62vw, 900px);
   margin: 0 auto;
-  padding: 5% 20px;
+  padding: clamp(28px, 6vw, 90px) clamp(16px, 4vw, 40px);
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
+  text-align: center;
+}
+
+/* the shared h1 rule only scales between ~860-1170px viewports; this section
+   scales across the full 320-1800px range so it visibly tracks screen size,
+   starting from the smallest phones instead of flattening out below 400px */
+.waves-list h1 {
+  font-size: clamp(1.6rem, 1.08rem + 2.59vw, 4rem);
 }
 
 .wave-q-row {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 20px 0;
+  padding: clamp(10px, 2.2vw, 26px) 0;
 }
-.wave-q-row:last-child { border-bottom: none; }
 
 .wave-q-btn {
   display: block;
@@ -1420,16 +1474,16 @@ h2 {
   margin: 0;
   padding: 0;
   cursor: pointer;
-  text-align: left;
+  text-align: center;
   font: inherit;
   color: inherit;
   -webkit-tap-highlight-color: transparent;
 }
 
 .wave-q {
-  font-family: 'Great Vibes', cursive;
-  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
-  font-weight: 700;
+  font-family: 'Delius', cursive;
+  font-size: clamp(1rem, 0.74rem + 1.3vw, 2.2rem);
+  font-weight: 400;
   letter-spacing: -0.01em;
   color: #ffffff;
   text-shadow: 0 2px 6px rgba(2, 4, 12, 0.85), 0 0 16px rgba(180, 210, 255, 0.3);
@@ -1453,14 +1507,11 @@ h2 {
 .wave-answer-inner { overflow: hidden; }
 
 .wave-a {
-  margin-top: 10px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  background: rgba(4, 7, 18, 0.55);
-  font-size: 0.88rem;
+  margin: clamp(6px, 1.5vw, 16px) auto 0;
+  font-size: clamp(0.95rem, 0.83rem + 0.59vw, 1.5rem);
   line-height: 1.65;
   color: rgba(230, 236, 255, 0.72);
-  max-width: 560px;
+  max-width: clamp(280px, 58vw, 620px);
 }
 
 /* ── Section 8 – Final CTA ──────────────────── */
@@ -1665,7 +1716,6 @@ footer {
   .section-1 .cloud-layer-top > :nth-child(n+3) .cloud-img { scale: 1.4; }
   .track-card { padding: 24px 20px; }
   .track-name { font-size: clamp(1.125rem, 4.8vw, 1.4rem); }
-  .waves-list { padding: 20px 12px; }
   .wave-q-btn { min-height: 44px; }
   footer { padding: 24px 20px; line-height: 1.6; }
   .hero-inner { flex-direction: column; align-items: flex-start; gap: 28px; }
