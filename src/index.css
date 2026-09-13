@@ -739,6 +739,7 @@ h2 {
 
 .hourglass-frame {
   position: relative;
+  justify-self: center;
   /* the art layers are square (2048×2048), so the frame is too */
   width: clamp(420px, 44vw, 820px);
   aspect-ratio: 1 / 1;
@@ -797,6 +798,7 @@ h2 {
 .hg-star          { z-index: 7; transition: opacity 0.6s ease; }
 .hg-topbubble     { z-index: 6; }
 .hg-moon          { z-index: 5; }
+.hg-moon { transform-origin: 47% 74%; }
 .hg-bottombubble  { z-index: 4; }
 .hg-backpillars   { z-index: 3; }
 .hg-case          { z-index: 2; }
