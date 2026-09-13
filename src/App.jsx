@@ -18,6 +18,7 @@ import Cloud from './components/Cloud'
 import Schedule from './components/Schedule'
 //import WishingWell from './components/WishingWell'
 import Waves from './components/Waves'
+<<<<<<< Updated upstream
 import PlanetDrift from './components/PlanetDrift'
 import CometTrail from './components/CometTrail'
 
@@ -54,6 +55,8 @@ function starsForWidth(w) {
   const n = Math.round((side * side) / 1e6 * STARS_PER_MPX)
   return Math.max(120, Math.min(650, n))
 }
+=======
+>>>>>>> Stashed changes
 
 function App() {
   const heroRef = useRef(null)
@@ -462,14 +465,8 @@ function App() {
 
       {/* ── Section 7 · FAQ ── */}
       <section id="faq" className="section section-7">
-        <div className="section-inner">
-          <h1>Frequently Asked Questions</h1>
-          <p className="section-lead">
-            Here are the most common questions we get. Still curious?{' '}
-            <a href="mailto:hello@whack.ucsc.edu" style={{ color: 'white' }}>Email us →</a>
-          </p>
-        </div>
         <Waves
+          heading="Frequently Asked Questions"
           items={[
             { q: 'Who can participate?', a: 'WHACK is open to all current college and university students. As long as you are enrolled in a degree-seeking program, you can attend.' },
             { q: 'Do I need a team?', a: "You can apply solo or with a team of up to 4. We also have a team-forming event on Friday evening to help you mingle and find teammates. Once you're in, you can also check out our discord to meet people in advance!" },
@@ -479,7 +476,26 @@ function App() {
             { q: 'Will there be food?', a: "We'll provide three meals on Saturday and two meals on Sunday (breakfast and lunch)." },
             { q: "What if I've never hacked before?", a: 'You can still attend! We welcome beginners, especially first-time hackers. If you find yourself struggling, we have beginner-friendly workshops and a dedicated mentorship team to help you with any questions.' },
           ]}
+        >
+          <p className="section-lead">
+            Here are the most common questions we get. Still curious?{' '}
+            <a href="mailto:hello@whack.ucsc.edu" style={{ color: 'white' }}>Email us →</a>
+          </p>
+<<<<<<< Updated upstream
+        </Waves>
+=======
+        </div>
+        <Waves
+          items={[
+            { q: 'Who can participate?', a: 'WHACK is open to all current college and university students. No matter your major, background, or experience level — everyone is welcome.' },
+            { q: 'Do I need a team?', a: "You can apply solo or with a team of up to 4. If you are flying solo, we'll have a team-forming event Friday evening so you won't be alone for long." },
+            { q: 'Is it free to attend?', a: 'Yes! Registration, meals, snacks, swag, and workshop access are all completely free. We also provide travel reimbursements for qualifying applicants.' },
+            { q: 'What should I bring?', a: 'Laptop, chargers, any hardware you plan to use, and a sleeping bag if you want to crash on-site. We handle the rest.' },
+            { q: 'Are beginners welcome?', a: 'Absolutely. We have beginner-friendly workshops and a dedicated mentorship team to help you get unstuck and ship something you are proud of.' },
+            { q: 'When do applications open?', a: 'Applications open January 15, 2026. Decisions are rolling, so apply early for the best chance of acceptance.' },
+          ]}
         />
+>>>>>>> Stashed changes
       </section>
 
       {/* ── Section 8 · Register CTA ──
