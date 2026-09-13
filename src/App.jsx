@@ -305,8 +305,8 @@ function App() {
           </div>
           <div className="title-text">
             <span className="title-kicker">WHACK 2026</span>
-            <div className="theme-title">Wish upon<br/>a Whale</div>
-            <span className="title-date">November 20-22, 2026 · Wellesley College</span>
+            <h1 className="theme-title"><span>Wish upon</span><span>a Whale</span></h1>
+            <span className="title-date"><span>November 20-22, 2026</span>{' · '}<span>Wellesley College</span></span>
           </div>
         </div>
 

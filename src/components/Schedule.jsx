@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Hourglass from './Hourglass';
+import Cloud from './Cloud';
 
 /**
  * Schedule — "Wish upon a Whale" schedule section.
@@ -98,6 +99,11 @@ export default function Schedule() {
           progress={pour}
           style={{ pointerEvents: 'none' }}
         />
+        <div className="schedule-art-clouds" aria-hidden="true">
+          <Cloud src="cloud-wisp.png" width="64%" className="schedule-art-wisp" />
+          <Cloud src="cloud-side.png" width="82%" flip className="schedule-art-left" />
+          <Cloud src="cloud-side.png" width="82%" className="schedule-art-right" />
+        </div>
       </div>
 
       {/* only visible on small screens, below the glass */}
