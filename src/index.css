@@ -1027,6 +1027,10 @@ h2 {
   transform: translateY(-50%) scaleX(-1);
 }
 
+.fat-fish-swimmer {
+  top: 240%;
+}
+
 .seahorse-swimmer,
 .turtle-swimmer {
   right: auto;
@@ -1034,15 +1038,25 @@ h2 {
 }
 
 .seahorse-swimmer {
-  top: 125%;
+  top: 400%;
   left: clamp(2%, 6vw, 9%);
   width: clamp(180px, 19vw, 270px);
 }
 
 .turtle-swimmer {
-  top: 52%;
+  top: 50%;
   left: clamp(17%, 21vw, 26%);
   width: clamp(220px, 24vw, 340px);
+}
+
+.bottom-turtle-swimmer {
+  right: auto;
+  left: 62%;
+  transform: translate(-50%, -50%);
+}
+
+.bottom-turtle-swimmer.is-flipped {
+  transform: translate(-50%, -50%) scaleX(-1);
 }
 
 .seahorse-swimmer img {
@@ -1063,11 +1077,11 @@ h2 {
 .starfish-swimmer {
   right: auto;
   left: clamp(6%, 10vw, 13%);
-  top: 52%;
+  top: -30%;
 }
 
 .clownfish-swimmer {
-  top: -24%;
+  top: -180%;
 }
 
 .clownfish-swimmer img {
@@ -1469,9 +1483,37 @@ footer {
   .nav-logo { font-size: 0.9rem; }
   .nav-register { padding: 10px 12px; font-size: 0.875rem; }
   .mlh-badge { right: 16px; width: 50px; }
-  .seahorse-swimmer { top: 78%; left: clamp(-5%, 1vw, 4%); }
-  .turtle-swimmer { top: 170%; left: clamp(34%, 40vw, 48%); }
-  .starfish-swimmer { top: 88%; }
+  .fish-interstitial {
+    height: 250px;
+  }
+  .fat-fish-swimmer {
+    top: 40%;
+    right: 12%;
+    width: clamp(150px, 40vw, 210px);
+  }
+  .seahorse-swimmer {
+    top: 68%;
+    left: 10%;
+    width: clamp(145px, 38vw, 200px);
+  }
+  .bottom-creature-row {
+    height: 280px;
+  }
+  .starfish-swimmer {
+    top: 25%;
+    left: 4%;
+    width: clamp(145px, 38vw, 200px);
+  }
+  .bottom-turtle-swimmer {
+    top: 74%;
+    left: 50%;
+    width: clamp(150px, 40vw, 210px);
+  }
+  .clownfish-swimmer {
+    top: 25%;
+    right: 4%;
+    width: clamp(145px, 38vw, 200px);
+  }
   .section { min-height: var(--mobile-viewport-height, 100svh); padding: 120px 20px 64px; scroll-margin-top: 110px; }
   h1 { font-size: clamp(2.2rem, 9vw, 3.5rem); }
   h2 { font-size: 1.6rem; }
