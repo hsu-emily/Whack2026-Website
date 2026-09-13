@@ -1362,11 +1362,16 @@ h2 {
 
 .waves-faq {
   position: relative;
+<<<<<<< Updated upstream
   /* full-bleed: break out of the padded section so the art spans the
      entire screen width, no matter how narrow/wide the viewport is */
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
+=======
+  width: 100%;
+  max-width: 1100px;
+>>>>>>> Stashed changes
   display: grid;
 }
 
@@ -1378,6 +1383,7 @@ h2 {
   grid-area: 1 / 1;
 }
 
+<<<<<<< Updated upstream
 /* width tracks the screen (100vw via the parent); height stretches to
    match the tallest grid child (the question list) instead of a fixed
    aspect-ratio, so the art and scrim always cover the full list — on
@@ -1397,10 +1403,17 @@ h2 {
 }
 
 .waves-art {
+=======
+.waves-art {
+  align-self: start;
+  width: 100%;
+  aspect-ratio: 2916 / 1640;
+>>>>>>> Stashed changes
   overflow: hidden;
   pointer-events: none;
 }
 
+<<<<<<< Updated upstream
 /* wrap handles the show/hide slide so it never fights with the layer's
    own continuous sway animation (see .waves-art-layer below) */
 .waves-art-layer-wrap {
@@ -1437,6 +1450,21 @@ h2 {
 }
 
 .waves-scrim {
+=======
+.waves-art-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.waves-scrim {
+  align-self: start;
+  width: 100%;
+  aspect-ratio: 2916 / 1640;
+>>>>>>> Stashed changes
   pointer-events: none;
   background: linear-gradient(180deg, rgba(4, 7, 18, 0.2) 0%, rgba(4, 7, 18, 0.4) 55%, rgba(4, 7, 18, 0.55) 100%);
 }
@@ -1445,6 +1473,7 @@ h2 {
   position: relative;
   z-index: 2;
   width: 100%;
+<<<<<<< Updated upstream
   max-width: clamp(520px, 62vw, 900px);
   margin: 0 auto;
   padding: clamp(28px, 6vw, 90px) clamp(16px, 4vw, 40px);
@@ -1465,6 +1494,21 @@ h2 {
 .wave-q-row {
   padding: clamp(10px, 2.2vw, 26px) 0;
 }
+=======
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 5% 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.wave-q-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 0;
+}
+.wave-q-row:last-child { border-bottom: none; }
+>>>>>>> Stashed changes
 
 .wave-q-btn {
   display: block;
@@ -1474,16 +1518,26 @@ h2 {
   margin: 0;
   padding: 0;
   cursor: pointer;
+<<<<<<< Updated upstream
   text-align: center;
+=======
+  text-align: left;
+>>>>>>> Stashed changes
   font: inherit;
   color: inherit;
   -webkit-tap-highlight-color: transparent;
 }
 
 .wave-q {
+<<<<<<< Updated upstream
   font-family: 'Delius', cursive;
   font-size: clamp(1rem, 0.74rem + 1.3vw, 2.2rem);
   font-weight: 400;
+=======
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  font-weight: 700;
+>>>>>>> Stashed changes
   letter-spacing: -0.01em;
   color: #ffffff;
   text-shadow: 0 2px 6px rgba(2, 4, 12, 0.85), 0 0 16px rgba(180, 210, 255, 0.3);
@@ -1507,11 +1561,22 @@ h2 {
 .wave-answer-inner { overflow: hidden; }
 
 .wave-a {
+<<<<<<< Updated upstream
   margin: clamp(6px, 1.5vw, 16px) auto 0;
   font-size: clamp(0.95rem, 0.83rem + 0.59vw, 1.5rem);
   line-height: 1.65;
   color: rgba(230, 236, 255, 0.72);
   max-width: clamp(280px, 58vw, 620px);
+=======
+  margin-top: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(4, 7, 18, 0.55);
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: rgba(230, 236, 255, 0.72);
+  max-width: 560px;
+>>>>>>> Stashed changes
 }
 
 /* ── Section 8 – Final CTA ──────────────────── */
