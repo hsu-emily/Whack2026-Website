@@ -1498,6 +1498,13 @@ footer {
   .day-col-date { font-size: 0.8rem; }
 }
 
+@media (max-width: 680px) and (prefers-reduced-motion: no-preference) {
+  .schedule-art-clouds .cloud-img { will-change: translate; }
+  .schedule-art-left { translate: calc(var(--sched, 0) * -16px) calc(var(--sched, 0) * -8px); }
+  .schedule-art-right { translate: calc(var(--sched, 0) * 16px) calc(var(--sched, 0) * -8px); }
+  .schedule-art-wisp { translate: calc(var(--sched, 0) * 10px) calc(var(--sched, 0) * -6px); }
+}
+
 /* more */
 .welcome-logo {
     width:40vw;

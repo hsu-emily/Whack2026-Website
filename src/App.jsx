@@ -152,7 +152,8 @@ function App() {
     const update = () => {
       raf = 0
       const r = el.getBoundingClientRect()
-      const vh = window.innerHeight || 1
+      const stableHeight = parseFloat(document.documentElement.style.getPropertyValue('--mobile-viewport-height'))
+      const vh = (window.innerWidth <= 680 ? stableHeight : window.innerHeight) || window.innerHeight || 1
       const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)))
       el.style.setProperty('--sched', p.toFixed(3))
     }
@@ -322,7 +323,7 @@ function App() {
           <div className="title-text">
             <span className="title-kicker">WHACK 2026</span>
             <h1 className="theme-title"><span>Wish upon</span><span>a Whale</span></h1>
-            <span className="title-date"><span>November 20-22, 2026</span>{' · '}<span>Wellesley College</span></span>
+            <span className="title-date"><span>November 21–22, 2026</span>{' · '}<span>Wellesley College</span></span>
           </div>
         </div>
 
