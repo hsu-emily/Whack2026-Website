@@ -40,15 +40,7 @@ html { background: #030C20; }
 
 body {
   font-family: 'Delius', cursive;
-  /* one continuous gradient across the ENTIRE scroll: 0% is the very top of
-     the page and 100% the very bottom. It is painted on a fixed, full-viewport
-     pseudo-element (see body::before) rather than here, so that scrolling
-     reveals successive slices of a single ramp instead of repainting it.
-     Every section below is transparent so this one ramp reads through all.
-     The body itself must stay transparent: a background on `body` paints
-     above its own ::before at z-index:-1 and would hide the ramp. The solid
-     fallback lives on `html` instead. */
-  background: transparent;
+  /* Transparent sections share the full-page gradient below. */
   min-height: 100vh;
   color: white;
   overflow-x: hidden;
@@ -94,12 +86,16 @@ nav.nav-on-light .nav-register {
 nav.nav-on-light .nav-register:hover { background: rgba(26, 10, 46, 0.2); }
 
 .nav-logo {
+  display: inline-flex;
+  flex-shrink: 0;
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #f4f1ff;
   text-decoration: none;
 }
+
+.nav-logo img { display: block; width: 48px; height: 48px; object-fit: contain; }
 
 .nav-links {
   display: flex;
@@ -155,15 +151,9 @@ nav a:focus-visible { outline: 2px solid white; outline-offset: 4px; }
 
 .section { scroll-margin-top: 100px; }
 
-/* full-page sky. Fixed to the viewport and scaled to the document height, then
-   shifted by the scroll offset in JS (--sky-shift), so the six stops stretch
-   across the whole scroll and each screen shows one slice of them. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
+/* Let the browser scroll the full-page sky with the content. A fixed layer
+   translated by JavaScript lags behind native touch scrolling on iOS. */
+body {
   background: linear-gradient(
     180deg,
     #F5E2FF 0%,
@@ -174,10 +164,6 @@ body::before {
     #030C20 100%
   );
   background-repeat: no-repeat;
-  /* height of the whole document, pulled up as you scroll */
-  height: var(--doc-h, 100vh);
-  transform: translateY(calc(-1 * var(--sky-shift, 0px)));
-  will-change: transform;
 }
 
 /* ── Shared section styles ──────────────────── */
@@ -268,7 +254,7 @@ h2 {
    fades it out into the schedule's cloud bed. The package ships an opaque
    black night background (.noite); it is cleared so the page's own sky
    gradient shows through and only the stars and meteors remain. */
-.sky-band { position: relative; }
+.sky-band { position: relative; overflow-x: clip; }
 .sky-stars {
   position: absolute;
   inset: 0;
@@ -431,8 +417,8 @@ h2 {
 .cloud-right { transform: translate3d(calc(var(--part) *  12vw), 0, 0); }
 /* gentle rightward slide for the upper-sky wisps */
 .cloud-nudge-right { transform: translate3d(calc(var(--part) * 5vw), 0, 0); }
-/* dense front cloud sinks a touch as you scroll (keeps its -50% centering) */
-.cloud-center { transform: translate3d(-50%, calc(var(--part) * 12vh), 0); }
+/* The middle cloud drifts left, keeping the cloud bank at the same height. */
+.cloud-center { transform: translate3d(calc(-50% - var(--part) * 8vw), 0, 0); }
 
 @media (prefers-reduced-motion: reduce) {
   .cloud-left, .cloud-right, .cloud-nudge-right { transform: none; }
@@ -490,8 +476,8 @@ h2 {
 .title-whale-wrap {
   position: relative;
   z-index: 2;           
-  width: 62%;
-  max-width: 780px;
+  width: clamp(62%, 52vw, 1200px);
+  max-width: 1200px;
   flex-shrink: 0;
   margin-left: -15%;   /* let the big whale bleed toward the edge */
   margin-top: -4%;     /* lift the whale a touch so its head clears the cloud tops */
@@ -566,7 +552,7 @@ h2 {
 
 .theme-title {
   font-family: 'Great Vibes', cursive;
-  font-size: clamp(6rem, 9vw, 12rem);
+  font-size: clamp(3rem, 9vw, 12rem);
   font-weight: bold;
   -webkit-text-stroke: 1px #494463;
   color: #494463;
@@ -575,6 +561,9 @@ h2 {
   margin-bottom: 1.2rem;
   text-shadow: 7px 7px 1px #a1b3e4;
 }
+
+.theme-title > span { display: block; white-space: nowrap; }
+.title-date > span { display: inline-block; }
 
 /* date line under the script title, bold + dark like the mockup */
 .title-date {
@@ -591,7 +580,7 @@ h2 {
 
 .title-whale {
   width: 100%;
-  left:-15%;
+  left: calc(-15% - 3vw);
   height: auto;
   object-fit: contain;
   position: relative;
@@ -723,6 +712,12 @@ h2 {
      but the mid-tones lean richer blue-violet instead of bright periwinkle */
   background: transparent;
 }
+.section-4 h1 {
+  font-size: clamp(3rem, 13vw, 6.5rem);
+  line-height: 1.15;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
 .section-4 .section-inner {
   position: relative;
   z-index: 2;
@@ -842,6 +837,13 @@ h2 {
 .day-col-left  { justify-self: end; margin-top: clamp(-7.5rem, -7vw, -4rem); margin-right: clamp(-5rem, -4vw, -1.5rem); }
 .day-col-right { justify-self: start; margin-top: clamp(2.5rem, 5vw, 6rem); margin-left: clamp(-5rem, -4vw, -1.5rem); }
 
+/* Lift the flanking itineraries clear of the lower cloud banks without
+   moving the hourglass or changing the stacked mobile schedule. */
+@media (min-width: 1151px) {
+  .day-col-left { position: relative; top: calc(-1 * clamp(4rem, 6vw, 6rem) - 24px); }
+  .day-col-right { position: relative; top: calc(-1 * clamp(2rem, 3vw, 3rem) - 24px); }
+}
+
 .day-col-head {
   display: flex;
   align-items: baseline;
@@ -901,6 +903,7 @@ h2 {
 
 /* day toggle — only shown on small screens, below the hourglass */
 .day-toggle { display: none; }
+.schedule-art-clouds { display: none; }
 
 .day-toggle-btn {
   font-family: 'Great Vibes', cursive;
@@ -1000,6 +1003,12 @@ h2 {
 
 .tracks {
   display: grid;
+  grid-template-columns: minmax(0, 640px);
+  justify-content: start;
+  gap: 18px;
+  margin-top: 2rem;
+  width: 100%;
+  margin-inline: auto;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
   gap: 22px;
@@ -1120,6 +1129,108 @@ h2 {
   .track-card:hover { transform: none; }
 }
 
+.fish-interstitial {
+  position: relative;
+  height: 150px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.bottom-creature-row {
+  position: relative;
+  height: 190px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.fish-swimmer {
+  position: absolute;
+  right: clamp(7%, 11vw, 14%);
+  top: 30%;
+  width: clamp(180px, 21vw, 300px);
+  padding: 12px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translateY(-50%);
+  transition: transform 0.35s ease;
+}
+
+.fish-swimmer.is-flipped {
+  transform: translateY(-50%) scaleX(-1);
+}
+
+.seahorse-swimmer,
+.turtle-swimmer {
+  right: auto;
+  left: clamp(6%, 10vw, 13%);
+}
+
+.seahorse-swimmer {
+  top: 125%;
+  left: clamp(2%, 6vw, 9%);
+  width: clamp(180px, 19vw, 270px);
+}
+
+.turtle-swimmer {
+  top: 52%;
+  left: clamp(17%, 21vw, 26%);
+  width: clamp(220px, 24vw, 340px);
+}
+
+.seahorse-swimmer img {
+  animation-duration: 3.1s;
+  animation-delay: -0.35s;
+}
+
+.turtle-swimmer img {
+  animation-duration: 5.2s;
+  animation-delay: -3.8s;
+}
+
+.starfish-swimmer,
+.clownfish-swimmer {
+  width: clamp(220px, 24vw, 340px);
+}
+
+.starfish-swimmer {
+  right: auto;
+  left: clamp(6%, 10vw, 13%);
+  top: 52%;
+}
+
+.clownfish-swimmer {
+  top: -24%;
+}
+
+.clownfish-swimmer img {
+  animation-delay: -1.8s;
+}
+
+.fish-swimmer img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 8px 8px rgba(8, 14, 46, 0.12));
+  animation: fishBob 2.8s ease-in-out infinite;
+}
+
+.fish-swimmer:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 4px;
+}
+
+@keyframes fishBob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-9px) rotate(2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fish-swimmer { transition: none; }
+  .fish-swimmer img { animation: none; }
+}
+
 /* ── Section 6 – Sponsors ───────────────────── */
 .section-6 {
   color: white;
@@ -1156,15 +1267,60 @@ h2 {
 
 .sponsors-illustration {
   position: relative;
-  width: 62%;
+  width: 100%;
   max-width: 780px;
   margin: 3rem auto 0;
   display: flex;
   justify-content: center;
 }
 
+.sponsor-logo-placeholders {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.sponsor-logo-placeholder-link {
+  pointer-events: auto;
+}
+
+.sponsor-logo-placeholder-link:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 5px;
+}
+
+.sponsor-logo-placeholder-link:hover .sponsor-logo-placeholder,
+.sponsor-logo-placeholder-link:focus-visible .sponsor-logo-placeholder {
+  filter: drop-shadow(0 0 12px rgba(220, 202, 255, 0.58)) drop-shadow(0 6px 12px rgba(8, 14, 46, 0.28));
+}
+
+.sponsor-logo-placeholder {
+  position: absolute;
+  width: clamp(54px, 8vw, 92px);
+  height: auto;
+  filter: drop-shadow(0 6px 10px rgba(8, 14, 46, 0.3));
+  transition: filter 0.25s ease;
+  animation: sponsorLogoBob 4.8s ease-in-out infinite;
+}
+
+.sponsor-logo-placeholder-1 { left: -1%; top: 22%; animation-delay: -0.8s; }
+.sponsor-logo-placeholder-2 { left: 3%; top: 62%; animation-delay: -2.1s; }
+.sponsor-logo-placeholder-3 { right: 3%; top: 12%; animation-delay: -3.4s; }
+.sponsor-logo-placeholder-4 { right: -1%; top: 42%; animation-delay: -1.5s; }
+.sponsor-logo-placeholder-5 { right: 8%; top: 72%; animation-delay: -4.2s; }
+
+@keyframes sponsorLogoBob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sponsor-logo-placeholder { animation: none; }
+}
+
 .sponsors-well {
-  width: 120%;
+  width: 100%;
   height: auto;
   object-fit: contain;
   display: block;
@@ -1414,19 +1570,104 @@ footer {
 }
 
 /* ── Responsive ─────────────────────────────── */
-@media (max-width: 680px) {
-  nav { padding: 14px 82px 14px 20px; }
-  .nav-links { display: none; }
-  .mlh-badge { right: 20px; width: 54px; }
-  .section { padding: 100px 24px 64px; }
-  h1 { font-size: 2.2rem; }
-  h2 { font-size: 1.6rem; }
-  /*.title-inner { flex-direction: column; text-align: center; gap: 24px; }*/
-  .title-inner {
-    position: relative;
-    justify-content: center;   /* was implicit flex-start */
+@media (min-width: 1001px) {
+  .section-4 { margin-top: 32px; }
+  .section-1 .cloud-layer-top > :nth-child(n+3) .cloud-img,
+  .section-1 .cloud-layer-front .cloud-img,
+  .section-1 .cloud-layer-frontmost .cloud-img {
+    scale: 1.2;
+    transform-origin: center top;
   }
-  .title-whale-wrap { width: 92%; max-width: 380px; margin: 0; }
+}
+
+@media (min-width: 681px) and (max-width: 1000px) and (max-height: 640px) {
+  .section-1 { min-height: 640px; }
+}
+
+@media (max-width: 1000px) {
+  nav { padding: 12px 100px 12px 24px; gap: 16px; }
+  .nav-links { gap: 16px; }
+  .mlh-badge { right: 24px; width: 60px; }
+}
+
+@media (max-width: 800px) {
+  nav { flex-wrap: wrap; gap: 8px 16px; }
+  .nav-links { order: 1; width: 100%; justify-content: space-between; gap: 8px; }
+  .nav-links a { display: block; padding: 8px 0; font-size: 0.875rem; }
+  .nav-register { margin-left: auto; }
+}
+
+@media (max-width: 680px) {
+  nav { padding: 10px 78px 8px 16px; flex-wrap: nowrap; }
+  .nav-links { display: none; }
+  .nav-logo { font-size: 0.9rem; }
+  .nav-register { padding: 10px 12px; font-size: 0.875rem; }
+  .mlh-badge { right: 16px; width: 50px; }
+  .seahorse-swimmer { top: 78%; left: clamp(-5%, 1vw, 4%); }
+  .turtle-swimmer { top: 170%; left: clamp(34%, 40vw, 48%); }
+  .starfish-swimmer { top: 88%; }
+  .section { min-height: var(--mobile-viewport-height, 100svh); padding: 120px 20px 64px; scroll-margin-top: 110px; }
+  h1 { font-size: clamp(2.2rem, 9vw, 3.5rem); }
+  h2 { font-size: 1.6rem; }
+  /* Anchor the artwork and copy to the same viewport-sized stage. The two
+     script lines scale together instead of wrapping or drifting right. */
+  .section-1 { min-height: max(640px, var(--mobile-viewport-height, 100svh)); padding: 0; }
+  .section-4 {
+    min-height: 0;
+    justify-content: flex-start;
+    margin-top: calc(-1 * clamp(24px, calc(var(--mobile-viewport-height, 100svh) * 0.08), 80px));
+    padding-top: 32px;
+  }
+  .section-1 .title-inner { position: absolute; inset: 0; max-width: none; }
+  .section-1 .title-text {
+    left: 50%;
+    top: 44%;
+    transform: translateX(-50%);
+    width: 92%;
+    max-width: none;
+  }
+  .title-kicker { font-size: clamp(1.125rem, 5vw, 2rem); margin-bottom: 0.25rem; }
+  .theme-title { font-size: clamp(3rem, 19vw, 8rem); line-height: 1.02; margin-bottom: 0.75rem; }
+  .title-date { font-size: clamp(0.875rem, 3vw, 1.125rem); letter-spacing: 0.025em; line-height: 1.5; margin-top: 0; }
+  .title-kicker, .title-date { text-shadow: 0 1px 4px #494463; }
+  .section-1 .title-whale-wrap {
+    position: absolute;
+    top: 27%;
+    left: -8%;
+    width: 105%;
+    max-width: none;
+    margin: 0;
+  }
+  .title-whale { left: -4vw; }
+  .hero-moon { width: 48vw; top: 12%; right: 20%; }
+  .section-1 .cloud-drift { transition: none; will-change: transform; }
+  .section-1 .cloud-img-drift { animation: none; }
+  /* Oversized hero clouds continue beyond the phone edges. Scale separately
+     from transform so the painted clouds keep their existing mirrored shapes. */
+  .section-1 .cloud-layer-top > :nth-child(-n+2) .cloud-img { width: 76vw !important; }
+  .section-1 .cloud-layer-top > :first-child { left: -34% !important; }
+  .section-1 .cloud-layer-top > :nth-child(2) { right: -32% !important; }
+  .section-1 .cloud-layer-top > :nth-child(3) { top: 33% !important; }
+  .section-1 .cloud-layer-front > .cloud-left { top: 40% !important; }
+  .section-1 .cloud-layer-frontmost > .cloud-left { left: -60% !important; top: 56% !important; }
+  .section-1 .cloud-layer-frontmost > .cloud-right { right: -60% !important; top: 52% !important; }
+  .section-1 .cloud-layer-frontmost > .cloud-center {
+    top: 51% !important;
+    left: 62% !important;
+  }
+  .section-1 .cloud-layer-top > :nth-child(n+3) .cloud-img,
+  .section-1 .cloud-layer-front .cloud-img,
+  .section-1 .cloud-layer-frontmost .cloud-img {
+    scale: 1.2;
+    transform-origin: center top;
+  }
+  .section-1 .cloud-layer-frontmost > .cloud-center .cloud-img { scale: 1.45; }
+  .section-1 .cloud-layer-top > :nth-child(n+3) .cloud-img { scale: 1.4; }
+  .track-card { padding: 24px 20px; }
+  .track-name { font-size: clamp(1.125rem, 4.8vw, 1.4rem); }
+  .waves-list { padding: 20px 12px; }
+  .wave-q-btn { min-height: 44px; }
+  footer { padding: 24px 20px; line-height: 1.6; }
   .hero-inner { flex-direction: column; align-items: flex-start; gap: 28px; }
   .hero-whale { width: 60%; }
 
@@ -1435,9 +1676,13 @@ footer {
   .hourglass-frame { order: -1; width: min(460px, 92vw); margin: -8% 0; }
   .day-toggle { display: flex; gap: 28px; justify-content: center; }
   .day-col { order: 1; animation: day-fade 0.45s cubic-bezier(.22,1,.36,1); }
-  .day-col-left, .day-col-right { margin-top: 0; justify-self: center; }
+  .day-col-left, .day-col-right { margin: 0; justify-self: center; width: 100%; }
   .day-col.compact-hidden { display: none; }
-  .day-col-events { max-width: min(420px, 88vw); }
+  .day-col-events { max-width: 100%; }
+  .day-col-event { grid-template-columns: 64px minmax(0, 1fr); }
+  .day-col-time { font-size: 0.75rem; }
+  .day-col-title { font-size: 1rem; }
+  .day-col-desc { font-size: 0.875rem; }
 
   /* phones: keep the band continuous with fewer clouds. Drop the two INNER
      band clouds (children 2 & 3) and let the two wide OUTER ones (1 & 4)
@@ -1456,9 +1701,47 @@ footer {
   .hourglass-frame { order: -1; width: min(620px, 80vw); margin: -7% 0; }
   .day-toggle { display: flex; gap: 28px; justify-content: center; }
   .day-col { order: 1; animation: day-fade 0.45s cubic-bezier(.22,1,.36,1); }
-  .day-col-left, .day-col-right { margin-top: 0; justify-self: center; }
+  .day-col-left, .day-col-right { margin: 0; justify-self: center; }
   .day-col.compact-hidden { display: none; }
   .day-col-events { max-width: min(480px, 90vw); }
+}
+
+/* On compact screens, clouds belong to the hourglass stage rather than the
+   bottom of the section, so longer itineraries never push them into text. */
+@media (max-width: 1150px) {
+  .section-4 > .sched-clouds { display: none; }
+  .schedule-stage { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .hourglass-frame { margin: -4% 0 -20px; pointer-events: none; }
+  .schedule-art-clouds {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: min(100vw, 700px);
+    transform: translateX(-50%);
+    overflow: clip;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .schedule-art-clouds .cloud-img { position: absolute; }
+  .schedule-art-wisp { top: 0; right: -20%; }
+  .schedule-art-left { top: 14%; left: -36%; }
+  .schedule-art-right { top: 44%; right: -36%; }
+  .day-toggle { align-items: baseline; gap: 20px; }
+  .day-toggle-btn { font-size: clamp(1.8rem, 6vw, 2.4rem); min-height: 44px; }
+  .day-toggle-btn.is-active { font-size: clamp(3rem, 10vw, 4rem); transform: none; }
+  .day-col { width: min(100%, 420px); }
+  .day-col-head { justify-content: center; border-bottom: 0; padding-bottom: 0; margin-bottom: 24px; }
+  .day-col-label { display: none; }
+  .day-col-date { font-size: 0.8rem; }
+}
+
+@media (max-width: 680px) and (prefers-reduced-motion: no-preference) {
+  .schedule-art-clouds .cloud-img { will-change: translate; }
+  .schedule-art-left { translate: calc(var(--sched, 0) * -16px) calc(var(--sched, 0) * -8px); }
+  .schedule-art-right { translate: calc(var(--sched, 0) * 16px) calc(var(--sched, 0) * -8px); }
+  .schedule-art-wisp { translate: calc(var(--sched, 0) * 10px) calc(var(--sched, 0) * -6px); }
 }
 
 /* more */

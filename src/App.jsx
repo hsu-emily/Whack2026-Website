@@ -1,12 +1,17 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import StarrySky from '@gura_ame/starry-sky'
 import '@gura_ame/starry-sky/dist/StarrySky.css'
 import './index.css'
 import whaleJump from './assets/logo.png'
 import turtle from './assets/turtle.png'
 import wishingWell from './assets/wishing_well.png'
+import fatFish from './assets/fat_fish.png'
+import seahorse from './assets/seahorse.png'
+import starfish from './assets/starfish.png'
+import clownfish from './assets/clownfish.png'
 import whaleSleep from './assets/logo_sleep.png'
 import pillow from './assets/pillow.png'
+import sponsorLogoPlaceholder from './assets/sponsor_logo_placeholder.png'
 import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
 import Cloud from './components/Cloud'
@@ -15,6 +20,21 @@ import Schedule from './components/Schedule'
 import Waves from './components/Waves'
 import PlanetDrift from './components/PlanetDrift'
 import CometTrail from './components/CometTrail'
+
+function SeaCreature({ src, label, className = '', initiallyFlipped = false }) {
+  const [flipped, setFlipped] = useState(initiallyFlipped)
+
+  return (
+    <button
+      type="button"
+      className={`fish-swimmer ${className}${flipped ? ' is-flipped' : ''}`}
+      onClick={() => setFlipped((current) => !current)}
+      aria-label={`Flip the ${label}`}
+    >
+      <img src={src} alt="" />
+    </button>
+  )
+}
 
 // StarrySky regenerates every star whenever this prop changes identity, and App
 // re-renders on every scroll tick — so this MUST be a stable module-level
@@ -40,7 +60,24 @@ function App() {
   const navRef = useRef(null)
   const skyStarsRef = useRef(null)
   const scheduleRef = useRef(null)
-  const [scrollProgress, setScrollProgress] = useState(0)
+
+  useLayoutEffect(() => {
+    const root = document.documentElement
+    let width = window.innerWidth
+    const measure = () => root.style.setProperty('--mobile-viewport-height', `${window.innerHeight}px`)
+    measure()
+    const onResize = () => {
+      // Reflow for rotation or a new layout width, not collapsing browser bars.
+      if (window.innerWidth === width) return
+      width = window.innerWidth
+      measure()
+    }
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+      root.style.removeProperty('--mobile-viewport-height')
+    }
+  }, [])
 
   // Star count scales with viewport width. StarrySky scatters its stars over a
   // square sized to the viewport DIAGONAL, so a fixed count packs into a much
@@ -53,24 +90,16 @@ function App() {
     // Only update when the bucket actually changes: setting a new starCount
     // makes StarrySky rebuild every star, so reacting to each resize pixel
     // would reshuffle the sky continuously while dragging a window edge.
-    const onResize = () => setStarCount(prev => {
-      const next = starsForWidth(window.innerWidth)
-      return next === prev ? prev : next
-    })
+    let lastWidth = window.innerWidth
+    const onResize = () => {
+      // Mobile browser chrome changes viewport height while scrolling. Keep
+      // the existing sky in place unless the layout width actually changes.
+      if (window.innerWidth === lastWidth) return
+      lastWidth = window.innerWidth
+      setStarCount(starsForWidth(lastWidth))
+    }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
-  }, [])
-  useEffect(() => {
-    const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight
-      if (totalHeight > 0) {
-        const progress = window.scrollY / totalHeight
-        setScrollProgress(progress)
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   // The starry-sky package places each star at an absolute PIXEL offset inside
@@ -108,16 +137,12 @@ function App() {
     return () => observer.disconnect()
   }, [])
 
-  // Drive the full-page sky gradient (body::before): give it the document's
-  // height and slide it up by the scroll offset, so the six colour stops
-  // stretch across the entire scroll rather than repeating per viewport.
+  // Match navigation contrast to the full-page sky, which scrolls natively.
   useEffect(() => {
     let raf = 0
     const apply = () => {
       raf = 0
       const docH = document.documentElement.scrollHeight
-      document.body.style.setProperty('--doc-h', docH + 'px')
-      document.body.style.setProperty('--sky-shift', window.scrollY + 'px')
 
       // The ramp's first stop (#F5E2FF → #192C67) runs over the top 17% of the
       // page. Nav text stays dark while the viewport top is in the paler
@@ -148,7 +173,8 @@ function App() {
     const update = () => {
       raf = 0
       const r = el.getBoundingClientRect()
-      const vh = window.innerHeight || 1
+      const stableHeight = parseFloat(document.documentElement.style.getPropertyValue('--mobile-viewport-height'))
+      const vh = (window.innerWidth <= 680 ? stableHeight : window.innerHeight) || window.innerHeight || 1
       const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)))
       el.style.setProperty('--sched', p.toFixed(3))
     }
@@ -163,20 +189,29 @@ function App() {
     }
   }, [])
 
-  const leftPosition = 85 - 280 * scrollProgress * (1 - scrollProgress)
-  const topPosition = 50 + (scrollProgress * 20)
-
   // Part the hero clouds as you scroll down: 0 (closed) → 1 (fully parted).
   useEffect(() => {
     const hero = heroRef.current
     if (!hero) return
     let raf = 0
-    const update = () => {
+    let progress = 0
+    let lastFrame = 0
+    const compact = window.matchMedia('(max-width: 680px)')
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = (now = performance.now()) => {
       raf = 0
       const h = hero.offsetHeight || 1
       // progress through the hero's own scroll span
-      const p = Math.min(1, Math.max(0, window.scrollY / (h * 0.85)))
-      hero.style.setProperty('--part', p.toFixed(3))
+      const target = Math.min(1, Math.max(0, window.scrollY / (h * 0.85)))
+      // Touch scrolling can deliver updates in bursts. Ease between them on
+      // animation frames instead of jumping every cloud on each scroll event.
+      const smooth = compact.matches && !reducedMotion.matches
+      const dt = lastFrame ? Math.min(now - lastFrame, 64) : 16
+      lastFrame = now
+      progress = smooth ? progress + (target - progress) * (1 - Math.exp(-dt / 60)) : target
+      if (Math.abs(target - progress) < 0.0001) progress = target
+      const p = progress
+      hero.style.setProperty('--part', p.toFixed(5))
 
       // big scroll-driven whale arc: sweeps up-and-over along a parabola.
       const arcX = p * 40                    // px: drifts right across the hero
@@ -185,7 +220,7 @@ function App() {
       hero.style.setProperty('--whale-x', arcX.toFixed(1) + 'px')
       hero.style.setProperty('--whale-y', arcY.toFixed(1) + 'px')
       hero.style.setProperty('--whale-rot', arcRot.toFixed(2) + 'deg')
-
+      if (progress !== target) raf = requestAnimationFrame(update)
     }
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
     update()
@@ -218,7 +253,9 @@ function App() {
       </div> */}
       {/* ── Nav ── */}
       <nav ref={navRef} aria-label="Main navigation">
-        <a href="#hero" className="nav-logo">WHACK 2026</a>
+        <a href="#hero" className="nav-logo" aria-label="WHACK 2026 home">
+          <img src="/favicon.png" alt="WHACK 2026" width="48" height="48" />
+        </a>
         <ul className="nav-links">
           <li><a href="#schedule">Schedule</a></li>
           <li><a href="#tracks">Tracks</a></li>
@@ -306,8 +343,8 @@ function App() {
           </div>
           <div className="title-text">
             <span className="title-kicker">WHACK 2026</span>
-            <div className="theme-title">Wish upon<br/>a Whale</div>
-            <span className="title-date">November 20-22, 2026 · Wellesley College</span>
+            <h1 className="theme-title"><span>Wish upon</span><span>a Whale</span></h1>
+            <span className="title-date"><span>November 21–22, 2026</span>{' · '}<span>Wellesley College</span></span>
           </div>
         </div>
 
@@ -358,10 +395,16 @@ function App() {
         </div>
       </section>
 
+      <div className="fish-interstitial">
+        <SeaCreature src={fatFish} label="fish" />
+        <SeaCreature src={seahorse} label="seahorse" className="seahorse-swimmer" />
+        <SeaCreature src={turtle} label="turtle" className="turtle-swimmer" initiallyFlipped />
+      </div>
+
       {/* ── Section 6 · Sponsors ── */}
       <section id="sponsors" className="section section-6">
         <div className="section-inner centered">
-          <h1>Sponsors</h1>
+          <h1>Sponsors ( pending... )</h1>
           {/*/* <div className="sponsor-tiers">
             <div className="sponsor-tier-label">Platinum</div>
             <div className="sponsor-row">
@@ -382,7 +425,24 @@ function App() {
               <span className="sponsor-pill">Linear</span>
             </div>
           </div>*/}
-          <div className="sponsors-illustration" aria-hidden="true">
+          <div className="sponsors-illustration">
+            <div className="sponsor-logo-placeholders">
+              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-1" />
+              </a>
+              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-2" />
+              </a>
+              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-3" />
+              </a>
+              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-4" />
+              </a>
+              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-5" />
+              </a>
+            </div>
             <img src={wishingWell} alt="" className="sponsors-well" />
           </div>
         {/*<div className="well-wrap" style={{ width: '90%', height: '800px', position: 'relative' }}>
@@ -394,6 +454,10 @@ function App() {
             <a href="mailto:sponsor@whack.ucsc.edu" style={{ color: 'white' }}>Reach out!</a>
         </p>
       </section>
+      <div className="bottom-creature-row">
+        <SeaCreature src={starfish} label="starfish" className="starfish-swimmer" />
+        <SeaCreature src={clownfish} label="clownfish" className="clownfish-swimmer" />
+      </div>
       </div>{/* /sky-band */}
 
       {/* ── Section 7 · FAQ ── */}
