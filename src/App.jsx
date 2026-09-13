@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import StarrySky from '@gura_ame/starry-sky'
 import '@gura_ame/starry-sky/dist/StarrySky.css'
 import './index.css'
@@ -15,8 +15,8 @@ import Schedule from './components/Schedule'
 //import WishingWell from './components/WishingWell'
 import Waves from './components/Waves'
 
-// StarrySky regenerates every star whenever this prop changes identity, and App
-// re-renders on every scroll tick — so this MUST be a stable module-level
+// StarrySky regenerates every star whenever this prop changes identity,
+// so this MUST be a stable module-level
 // constant, never an inline array literal, or the sky reshuffles as you scroll.
 const METEOR_INTERVAL = [4000, 10000]
 
@@ -39,7 +39,24 @@ function App() {
   const navRef = useRef(null)
   const skyStarsRef = useRef(null)
   const scheduleRef = useRef(null)
-  const [scrollProgress, setScrollProgress] = useState(0)
+
+  useLayoutEffect(() => {
+    const root = document.documentElement
+    let width = window.innerWidth
+    const measure = () => root.style.setProperty('--mobile-viewport-height', `${window.innerHeight}px`)
+    measure()
+    const onResize = () => {
+      // Reflow for rotation or a new layout width, not collapsing browser bars.
+      if (window.innerWidth === width) return
+      width = window.innerWidth
+      measure()
+    }
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+      root.style.removeProperty('--mobile-viewport-height')
+    }
+  }, [])
 
   // Star count scales with viewport width. StarrySky scatters its stars over a
   // square sized to the viewport DIAGONAL, so a fixed count packs into a much
@@ -52,24 +69,16 @@ function App() {
     // Only update when the bucket actually changes: setting a new starCount
     // makes StarrySky rebuild every star, so reacting to each resize pixel
     // would reshuffle the sky continuously while dragging a window edge.
-    const onResize = () => setStarCount(prev => {
-      const next = starsForWidth(window.innerWidth)
-      return next === prev ? prev : next
-    })
+    let lastWidth = window.innerWidth
+    const onResize = () => {
+      // Mobile browser chrome changes viewport height while scrolling. Keep
+      // the existing sky in place unless the layout width actually changes.
+      if (window.innerWidth === lastWidth) return
+      lastWidth = window.innerWidth
+      setStarCount(starsForWidth(lastWidth))
+    }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
-  }, [])
-  useEffect(() => {
-    const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight
-      if (totalHeight > 0) {
-        const progress = window.scrollY / totalHeight
-        setScrollProgress(progress)
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   // The starry-sky package places each star at an absolute PIXEL offset inside
@@ -107,16 +116,12 @@ function App() {
     return () => observer.disconnect()
   }, [])
 
-  // Drive the full-page sky gradient (body::before): give it the document's
-  // height and slide it up by the scroll offset, so the six colour stops
-  // stretch across the entire scroll rather than repeating per viewport.
+  // Match navigation contrast to the full-page sky, which scrolls natively.
   useEffect(() => {
     let raf = 0
     const apply = () => {
       raf = 0
       const docH = document.documentElement.scrollHeight
-      document.body.style.setProperty('--doc-h', docH + 'px')
-      document.body.style.setProperty('--sky-shift', window.scrollY + 'px')
 
       // The ramp's first stop (#F5E2FF → #192C67) runs over the top 17% of the
       // page. Nav text stays dark while the viewport top is in the paler
@@ -161,9 +166,6 @@ function App() {
       window.removeEventListener('resize', onScroll)
     }
   }, [])
-
-  const leftPosition = 85 - 280 * scrollProgress * (1 - scrollProgress)
-  const topPosition = 50 + (scrollProgress * 20)
 
   // Part the hero clouds as you scroll down: 0 (closed) → 1 (fully parted).
   useEffect(() => {
