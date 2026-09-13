@@ -487,7 +487,7 @@ h2 {
 /* ── Hero Turtle ────────────────────────── */
 .hero-turtle {
   position: absolute;
-  width: 500px; /* Adjust scale relative to jumping whale */
+  width: clamp(260px, 36vw, 500px); /* fluid: scales down with the viewport */
   height: auto;
   top: -27%;   /* Positions turtle floating near top-right of whale */
   right: -110%; 
@@ -543,11 +543,15 @@ h2 {
   font-family: 'DM Sans', system-ui, sans-serif;
   font-weight: 800;
   font-size: clamp(1.4rem, 3vw, 2.2rem);
-  letter-spacing: 0.10em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #f4f1ff;
-  opacity: 0.9;
+  color: #ffffff;
+  opacity: 1;
   margin-bottom: 1rem;
+  /* dark edge + soft violet bloom so it holds up on the pale sky top */
+  text-shadow:
+    0 1px 3px rgba(73, 68, 99, 0.8),
+    0 0 20px rgba(73, 68, 99, 0.35);
 }
 
 .theme-title {
@@ -573,9 +577,12 @@ h2 {
   font-size: clamp(1rem, 2vw, 1.35rem);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #f4f1ff;
-  opacity: 0.9;
+  color: #ffffff;
+  opacity: 1;
   margin-top: -0.8rem;
+  text-shadow:
+    0 1px 3px rgba(73, 68, 99, 0.8),
+    0 0 16px rgba(73, 68, 99, 0.35);
 }
 
 .title-whale {
@@ -955,9 +962,12 @@ h2 {
 
 .galaxy-section .planet-canvas {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
+  /* extends BELOW the section so the ring's low side can spill over the
+     next section edge — must match EXTEND_DOWN in PlanetDrift.jsx */
+  height: calc(100% + 200px);
   pointer-events: none;
   z-index: 0;
 }
@@ -1649,6 +1659,22 @@ footer {
   .section-1 { min-height: 640px; }
 }
 
+/* tablets: the desktop side-by-side hero gets cramped — recentre the text
+   over the artwork and rein in the whale/turtle/moon so nothing collides
+   or spills at in-between widths */
+@media (min-width: 681px) and (max-width: 1000px) {
+  .section-1 .title-text {
+    left: 50%;
+    top: 78%;
+    width: 92%;
+    max-width: 92%;
+  }
+  .theme-title { font-size: clamp(3.2rem, 11vw, 7rem); }
+  .title-whale-wrap { width: 78%; margin-left: -12%; }
+  .hero-turtle { right: -70%; top: -20%; }
+  .hero-moon { width: clamp(200px, 34vw, 380px); right: 10%; }
+}
+
 @media (max-width: 1000px) {
   nav { padding: 12px 100px 12px 24px; gap: 16px; }
   .nav-links { gap: 16px; }
@@ -1722,7 +1748,6 @@ footer {
   .title-kicker { font-size: clamp(1.125rem, 5vw, 2rem); margin-bottom: 0.25rem; }
   .theme-title { font-size: clamp(3rem, 19vw, 8rem); line-height: 1.02; margin-bottom: 0.75rem; }
   .title-date { font-size: clamp(0.875rem, 3vw, 1.125rem); letter-spacing: 0.025em; line-height: 1.5; margin-top: 0; }
-  .title-kicker, .title-date { text-shadow: 0 1px 4px #494463; }
   .section-1 .title-whale-wrap {
     position: absolute;
     top: 27%;

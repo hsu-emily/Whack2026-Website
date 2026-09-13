@@ -31,6 +31,11 @@ ringInner: 1.5, // ring radii as multiples of the planet radius
   rotationSpeed: 0.12, // ring drift, radians/sec (slow)
 }
 
+// how far BELOW the section the canvas extends (px) — room for the ring's
+// low side to spill over the next section instead of being cut off.
+// MUST match the CSS: .planet-canvas { height: calc(100% + 200px); }
+const EXTEND_DOWN = 200
+
 const BRIGHT = ['#eef0ff', '#fff3d8', '#dcd2ff']
 const DEEP = ['#7c8ce0', '#5d6fd4', '#9aa8f2', '#b9a7ee']
 const TWO_PI = Math.PI * 2
@@ -64,7 +69,8 @@ export default function PlanetDrift({ intensity = 1, className = '' }) {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const C = CONFIG
 
-    let W = 0, H = 0, raf = 0
+    let W = 0, H = 0, raf = 0   // W/H = SECTION size (placement basis)
+    let CH = 0                  // canvas height = H + EXTEND_DOWN
     let visible = true
     let last = performance.now()
     let elapsed = Math.random() * 100
@@ -76,10 +82,11 @@ export default function PlanetDrift({ intensity = 1, className = '' }) {
       const rect = canvas.parentElement.getBoundingClientRect()
       W = Math.max(1, rect.width)
       H = Math.max(1, rect.height)
+      CH = H + EXTEND_DOWN
       canvas.width = W * dpr
-      canvas.height = H * dpr
+      canvas.height = CH * dpr
       canvas.style.width = W + 'px'
-      canvas.style.height = H + 'px'
+      canvas.style.height = CH + 'px'
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
       planet = {
@@ -333,7 +340,7 @@ export default function PlanetDrift({ intensity = 1, className = '' }) {
     }
 
     function draw(t) {
-      ctx.clearRect(0, 0, W, H)
+      ctx.clearRect(0, 0, W, CH)
       ctx.globalCompositeOperation = 'lighter'
       //drawRingBandsHalf(true)
       drawRingStreaksHalf(t, true)
