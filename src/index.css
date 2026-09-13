@@ -1469,7 +1469,8 @@ footer {
   .nav-logo { font-size: 0.9rem; }
   .nav-register { padding: 10px 12px; font-size: 0.875rem; }
   .mlh-badge { right: 16px; width: 50px; }
-  .turtle-swimmer { top: 185%; left: clamp(34%, 40vw, 48%); }
+  .seahorse-swimmer { top: 78%; left: clamp(-5%, 1vw, 4%); }
+  .turtle-swimmer { top: 170%; left: clamp(34%, 40vw, 48%); }
   .starfish-swimmer { top: 88%; }
   .section { min-height: var(--mobile-viewport-height, 100svh); padding: 120px 20px 64px; scroll-margin-top: 110px; }
   h1 { font-size: clamp(2.2rem, 9vw, 3.5rem); }
