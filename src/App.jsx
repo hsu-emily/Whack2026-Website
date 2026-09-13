@@ -14,6 +14,7 @@ import Schedule from './components/Schedule'
 //import WishingWell from './components/WishingWell'
 import Waves from './components/Waves'
 import PlanetDrift from './components/PlanetDrift'
+import CometTrail from './components/CometTrail'
 
 // StarrySky regenerates every star whenever this prop changes identity, and App
 // re-renders on every scroll tick — so this MUST be a stable module-level
@@ -337,6 +338,7 @@ function App() {
       <section id="tracks" className="section section-5 galaxy-section">
         <GalaxyStream variant="galaxy" />
         <PlanetDrift />
+        <CometTrail />
         <div className="section-inner centered">
           <h1>Tracks</h1>
           <div className="tracks">

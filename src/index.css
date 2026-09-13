@@ -937,7 +937,8 @@ h2 {
    itself must be a positioning context and clip any overdraw */
 .galaxy-section {
   position: relative;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 .galaxy-section .galaxy-canvas {
@@ -954,6 +955,16 @@ h2 {
   inset: 0;
   width: 100%;
   height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.galaxy-section .comet-canvas {
+  position: absolute;
+  top: -340px;
+  left: 0;
+  width: 100%;
+  height: calc(100% + 340px);
   pointer-events: none;
   z-index: 0;
 }
@@ -1006,13 +1017,20 @@ h2 {
   border-radius: 22px;
   text-align: left;
 
-  background: linear-gradient(
+  /*background: linear-gradient(
     165deg,
     rgba(255, 255, 255, 0.10) 0%,
     rgba(185, 167, 238, 0.06) 55%,
     rgba(124, 140, 224, 0.10) 100%
+  );*/
+  background: linear-gradient(
+    165deg,
+    rgba(255, 214, 240, 0.11) 0%,     /* soft pink, comet family */
+    rgba(180, 190, 255, 0.07) 55%,    /* cool periwinkle */
+    rgba(120, 150, 240, 0.11) 100%    /* deeper blue, planet family */
   );
-  border: 1px solid rgba(220, 210, 255, 0.18);
+  /*border: 1px solid rgba(220, 210, 255, 0.18);*/
+  border: 1px solid rgba(210, 220, 255, 0.2);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow:
@@ -1032,8 +1050,12 @@ h2 {
   top: 18px;
   right: 22px;
   font-size: 1rem;
-  color: rgba(255, 243, 216, 0.75);
-  text-shadow: 0 0 10px rgba(255, 230, 170, 0.8);
+  /*color: rgba(255, 243, 216, 0.75);
+  text-shadow: 0 0 10px rgba(255, 230, 170, 0.8);*/
+  /*color: rgba(190, 215, 255, 0.85);
+  text-shadow: 0 0 10px rgba(140, 175, 255, 0.9);*/
+  color: rgba(255, 250, 240, 0.8);
+  text-shadow: 0 0 10px rgba(255, 240, 235, 0.85);
 }
 
 .track-card:hover {
@@ -1042,7 +1064,7 @@ h2 {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.18),
     0 16px 44px rgba(8, 10, 40, 0.40),
-    0 0 30px rgba(140, 130, 240, 0.28);
+    0 0 30px rgba(140, 130, 240, 0.28);/*0 0 30px rgba(255, 180, 230, 0.22);*/ 
 }
 
 /* split "Better Worlds:" style names onto their own script line */

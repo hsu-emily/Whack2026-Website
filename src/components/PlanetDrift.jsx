@@ -14,7 +14,7 @@ import { useEffect, useRef } from 'react'
 const CONFIG = {
   // placement (fractions of the section)
   centerX: 0.18,  // was 0.14 — closer to the section's middle
-  centerY: 0.80,  // optional: lift it a touch so the ring's low side clears the bottom edge
+  centerY: 0.88,  // optional: lift it a touch so the ring's low side clears the bottom edge
   radius: 0.09,   // PLANET radius as fraction of min(W, H)
 
   // orientation — opposite sign to the galaxy's tilt: -0.45
