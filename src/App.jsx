@@ -223,7 +223,7 @@ function App() {
           <li><a href="#sponsors">Sponsors</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
-        <a href="#register" className="nav-register">Register</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe6KQZrSr_bB43ZAI0b-VeduSLwQiM2cEyelw3T1rKWpQu1xQ/viewform?usp=sharing&ouid=113710513260861004152" target="_blank" className="nav-register">Register</a>
       </nav>
 
       {/* MLH badge hangs from the page's top-right corner, outside the nav, so
