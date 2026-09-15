@@ -268,7 +268,7 @@ function App() {
       {/* MLH badge hangs from the page's top-right corner, outside the nav, so
           it never competes with the bar's layout or clips at its edge. */}
       <a
-        href="https://mlh.io/seasons/2026/events?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2026-season&utm_content=white"
+        href="https://mlh.io/seasons/2027/events?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2026-season&utm_content=white"
         target="_blank"
         rel="noreferrer"
         className="mlh-badge"
