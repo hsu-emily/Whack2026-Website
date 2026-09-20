@@ -12,6 +12,7 @@ import clownfish from './assets/clownfish.png'
 import whaleSleep from './assets/logo_sleep.png'
 import pillow from './assets/pillow.png'
 import sponsorLogoPlaceholder from './assets/sponsor_logo_placeholder.png'
+import beamLogo from './assets/beam_logo.png'
 import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
 import Cloud from './components/Cloud'
@@ -427,7 +428,7 @@ function App() {
           <div className="sponsors-illustration">
             <div className="sponsor-logo-placeholders">
               <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
-                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-1" />
+                <img src={beamLogo} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-1" />
               </a>
               <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
                 <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-2" />
