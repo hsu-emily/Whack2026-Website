@@ -1526,13 +1526,16 @@ h2 {
   z-index: 2;
   width: 100%;
   max-width: clamp(520px, 62vw, 900px);
-  /* the extra bottom padding offsets the space removed by halving
+  /* the extra top/bottom padding offsets the space removed by halving
      .wave-q-row's padding across all 7 rows, so the resting (closed) list
      height — and therefore the pinned wave art height — stays the same as
      before that change, even though the questions themselves sit closer
-     together now */
-  padding: clamp(28px, 6vw, 90px) clamp(16px, 4vw, 40px)
-    calc(clamp(28px, 6vw, 90px) + 6.5 * clamp(10px, 2.2vw, 26px));
+     together now. Split evenly top and bottom (not just added to the
+     bottom): .waves-list is centered as a whole box within the art (see
+     position: absolute above), so lopsided padding would center the BOX
+     while leaving the actual visible content sitting off-center inside it. */
+  padding: calc(clamp(28px, 6vw, 90px) + 3.25 * clamp(10px, 2.2vw, 26px))
+    clamp(16px, 4vw, 40px);
   display: flex;
   flex-direction: column;
   align-items: center;
