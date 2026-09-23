@@ -1325,14 +1325,15 @@ h2 {
 
 .sponsor-logo-placeholder {
   position: absolute;
-  width: clamp(54px, 8vw, 92px);
+  width: clamp(72px, 12vw, 140px);
   height: auto;
   filter: drop-shadow(0 6px 10px rgba(8, 14, 46, 0.3));
   transition: filter 0.25s ease;
   animation: sponsorLogoBob 4.8s ease-in-out infinite;
 }
 
-.sponsor-logo-placeholder-1 { left: -1%; top: 22%; animation-delay: -0.8s; }
+/* white circle is a gradient, not border-radius: border-radius clips an img's pixels to the inner (padding) curve and cut the logo corners */
+.sponsor-logo-placeholder-1 { left: -1%; top: 22%; animation-delay: -0.8s; background: radial-gradient(circle closest-side, #fff calc(100% - 1.5px), transparent); padding: clamp(9px, 1.45vw, 17px); }
 .sponsor-logo-placeholder-2 { left: 3%; top: 62%; animation-delay: -2.1s; }
 .sponsor-logo-placeholder-3 { right: 3%; top: 12%; animation-delay: -3.4s; }
 .sponsor-logo-placeholder-4 { right: -1%; top: 42%; animation-delay: -1.5s; }
