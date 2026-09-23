@@ -12,6 +12,7 @@ import clownfish from './assets/clownfish.png'
 import whaleSleep from './assets/logo_sleep.png'
 import pillow from './assets/pillow.png'
 import sponsorLogoPlaceholder from './assets/sponsor_logo_placeholder.png'
+import beamLogo from './assets/logos/logo_beam.png'
 import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
 import Cloud from './components/Cloud'
@@ -268,7 +269,7 @@ function App() {
       {/* MLH badge hangs from the page's top-right corner, outside the nav, so
           it never competes with the bar's layout or clips at its edge. */}
       <a
-        href="https://mlh.io/seasons/2026/events?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2026-season&utm_content=white"
+        href="https://mlh.io/seasons/2027/events?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2026-season&utm_content=white"
         target="_blank"
         rel="noreferrer"
         className="mlh-badge"
@@ -426,8 +427,8 @@ function App() {
           </div>*/}
           <div className="sponsors-illustration">
             <div className="sponsor-logo-placeholders">
-              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
-                <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-1" />
+              <a href="https://careereducation.wellesley.edu/beam" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={beamLogo} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-1" />
               </a>
               <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
                 <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-2" />

@@ -806,6 +806,8 @@ h2 {
 .hg-topbubble     { z-index: 6; }
 .hg-moon          { z-index: 5; }
 .hg-moon { transform-origin: 47% 74%; }
+.hourglass-png.is-paused,
+.hourglass-png.is-paused .hg-layer { animation-play-state: paused; }
 .hg-bottombubble  { z-index: 4; }
 .hg-backpillars   { z-index: 3; }
 .hg-case          { z-index: 2; }
@@ -1323,14 +1325,15 @@ h2 {
 
 .sponsor-logo-placeholder {
   position: absolute;
-  width: clamp(54px, 8vw, 92px);
+  width: clamp(72px, 12vw, 140px);
   height: auto;
   filter: drop-shadow(0 6px 10px rgba(8, 14, 46, 0.3));
   transition: filter 0.25s ease;
   animation: sponsorLogoBob 4.8s ease-in-out infinite;
 }
 
-.sponsor-logo-placeholder-1 { left: -1%; top: 22%; animation-delay: -0.8s; }
+/* white circle is a gradient, not border-radius: border-radius clips an img's pixels to the inner (padding) curve and cut the logo corners */
+.sponsor-logo-placeholder-1 { left: -1%; top: 22%; animation-delay: -0.8s; background: radial-gradient(circle closest-side, #fff calc(100% - 1.5px), transparent); padding: clamp(9px, 1.45vw, 17px); }
 .sponsor-logo-placeholder-2 { left: 3%; top: 62%; animation-delay: -2.1s; }
 .sponsor-logo-placeholder-3 { right: 3%; top: 12%; animation-delay: -3.4s; }
 .sponsor-logo-placeholder-4 { right: -1%; top: 42%; animation-delay: -1.5s; }
@@ -1423,6 +1426,7 @@ h2 {
 }
 
 .waves-art {
+  position: relative;
   overflow: hidden;
   pointer-events: none;
 }
@@ -1448,7 +1452,7 @@ h2 {
 .waves-art-layer {
   position: absolute;
   top: -6%;
-  left: 0%;
+  left: -6%;
   width: 112%;
   height: 112%;
   object-fit: cover;
@@ -1470,6 +1474,7 @@ h2 {
 
 .waves-list {
   position: relative;
+  align-self: start;
   z-index: 2;
   width: 100%;
   max-width: clamp(520px, 62vw, 900px);
@@ -1787,6 +1792,11 @@ footer {
   .track-card { padding: 24px 20px; }
   .track-name { font-size: clamp(1.125rem, 4.8vw, 1.4rem); }
   .wave-q-btn { min-height: 44px; }
+  .waves-art-layer {
+    object-fit: fill;
+    left: -2%;
+    width: 104%;
+  }
   footer { padding: 24px 20px; line-height: 1.6; }
   .hero-inner { flex-direction: column; align-items: flex-start; gap: 28px; }
   .hero-whale { width: 60%; }

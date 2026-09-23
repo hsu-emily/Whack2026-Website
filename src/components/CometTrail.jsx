@@ -84,7 +84,7 @@ export default function CometTrail({ intensity = 1, className = '' }) {
 
     let W = 0, H = 0, raf = 0      // W/H = SECTION size (placement basis)
     let CH = 0                     // canvas height = H + EXTEND
-    let visible = true
+    let visible = false
     let last = performance.now()
     let elapsed = Math.random() * 100
     let comet = null
@@ -322,8 +322,6 @@ export default function CometTrail({ intensity = 1, className = '' }) {
     updateDrift()
     if (reducedMotion) {
       draw(elapsed)
-    } else {
-      raf = requestAnimationFrame(frame)
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -335,10 +333,20 @@ export default function CometTrail({ intensity = 1, className = '' }) {
     })
     ro.observe(canvas.parentElement)
 
+    const syncPlayback = () => {
+      cancelAnimationFrame(raf)
+      raf = 0
+      if (visible && !document.hidden && !reducedMotion) {
+        last = performance.now()
+        raf = requestAnimationFrame(frame)
+      }
+    }
     const io = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting
+      syncPlayback()
     }, { rootMargin: `${EXTEND}px 0px 0px 0px` })
     io.observe(canvas)
+    document.addEventListener('visibilitychange', syncPlayback)
 
     return () => {
       cancelAnimationFrame(raf)
@@ -346,6 +354,7 @@ export default function CometTrail({ intensity = 1, className = '' }) {
       window.removeEventListener('scroll', onScroll)
       ro.disconnect()
       io.disconnect()
+      document.removeEventListener('visibilitychange', syncPlayback)
     }
   }, [intensity])
 
