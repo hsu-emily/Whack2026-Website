@@ -376,6 +376,8 @@ function App() {
         <GalaxyStream variant="galaxy" />
         <PlanetDrift />
         <CometTrail />
+        <SeaCreature src={fatFish} label="fish" className="fat-fish-swimmer tracks-fish" />
+        <SeaCreature src={turtle} label="turtle" className="turtle-swimmer tracks-turtle" initiallyFlipped />
         <div className="section-inner centered">
           <h1>Tracks</h1>
           <div className="tracks">
@@ -396,7 +398,6 @@ function App() {
       </section>
 
       <div className="fish-interstitial">
-        <SeaCreature src={fatFish} label="fish" className="fat-fish-swimmer" />
         <SeaCreature src={seahorse} label="seahorse" className="seahorse-swimmer" />
       </div>
 
@@ -455,7 +456,6 @@ function App() {
       </section>
       <div className="bottom-creature-row">
         <SeaCreature src={starfish} label="starfish" className="starfish-swimmer" />
-        <SeaCreature src={turtle} label="turtle" className="turtle-swimmer bottom-turtle-swimmer" initiallyFlipped />
         <SeaCreature src={clownfish} label="clownfish" className="clownfish-swimmer" />
       </div>
       </div>{/* /sky-band */}
