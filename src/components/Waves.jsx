@@ -46,13 +46,16 @@ function Waves({ items = [], heading, children }) {
     const el = listRef.current
     if (!el) return
     const measure = () => {
-      if (openIndex === null) setRestHeight(el.offsetHeight)
+      const answerHeight = [...el.querySelectorAll('.wave-answer-wrap')]
+        .reduce((height, answer) => height + answer.getBoundingClientRect().height, 0)
+      // Subtract the animated answers so opening/closing cannot resize the art.
+      setRestHeight(Math.round(el.getBoundingClientRect().height - answerHeight))
     }
     measure()
     const observer = new ResizeObserver(measure)
     observer.observe(el)
     return () => observer.disconnect()
-  }, [openIndex])
+  }, [])
 
   const pinnedHeightStyle = restHeight != null ? { height: `${restHeight}px` } : undefined
 

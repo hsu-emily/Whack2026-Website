@@ -58,7 +58,6 @@ function DayColumn({ side, day, hiddenWhenCompact }) {
 }
 
 export default function Schedule() {
-  const [pour, setPour] = useState(0);
   // Small screens collapse the flanking itineraries into a day toggle below
   // the glass; `day` picks which itinerary shows there. On wide screens both
   // columns render and the toggle is hidden, so this state has no effect.
@@ -77,7 +76,11 @@ export default function Schedule() {
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight || 1;
       const raw = (vh - rect.top) / (vh + rect.height);
-      setPour(Math.min(1, Math.max(0, (raw - 0.12) * 1.9)));
+      const pour = Math.min(1, Math.max(0, (raw - 0.12) * 1.9));
+      const glow = (0.75 + pour * 0.25).toFixed(3);
+      if (el.style.getPropertyValue('--hourglass-glow') !== glow) {
+        el.style.setProperty('--hourglass-glow', glow);
+      }
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
     update();
@@ -96,7 +99,6 @@ export default function Schedule() {
 
       <div className="hourglass-frame">
         <Hourglass
-          progress={pour}
           style={{ pointerEvents: 'none' }}
         />
         <div className="schedule-art-clouds" aria-hidden="true">

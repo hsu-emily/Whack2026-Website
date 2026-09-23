@@ -71,7 +71,7 @@ export default function PlanetDrift({ intensity = 1, className = '' }) {
 
     let W = 0, H = 0, raf = 0   // W/H = SECTION size (placement basis)
     let CH = 0                  // canvas height = H + EXTEND_DOWN
-    let visible = true
+    let visible = false
     let last = performance.now()
     let elapsed = Math.random() * 100
     let planet = null // { cx, cy, R }
@@ -376,8 +376,6 @@ export default function PlanetDrift({ intensity = 1, className = '' }) {
     rebuild()
     if (reducedMotion) {
       draw(elapsed)
-    } else {
-      raf = requestAnimationFrame(frame)
     }
 
     const ro = new ResizeObserver(() => {
@@ -386,15 +384,26 @@ export default function PlanetDrift({ intensity = 1, className = '' }) {
     })
     ro.observe(canvas.parentElement)
 
+    const syncPlayback = () => {
+      cancelAnimationFrame(raf)
+      raf = 0
+      if (visible && !document.hidden && !reducedMotion) {
+        last = performance.now()
+        raf = requestAnimationFrame(frame)
+      }
+    }
     const io = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting
+      syncPlayback()
     })
     io.observe(canvas)
+    document.addEventListener('visibilitychange', syncPlayback)
 
     return () => {
       cancelAnimationFrame(raf)
       ro.disconnect()
       io.disconnect()
+      document.removeEventListener('visibilitychange', syncPlayback)
     }
   }, [intensity])
 

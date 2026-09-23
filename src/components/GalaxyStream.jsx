@@ -119,7 +119,7 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
     let W = 0
     let H = 0
     let raf = 0
-    let visible = true
+    let visible = false
     let last = performance.now()
     let elapsed = Math.random() * 100
 
@@ -402,18 +402,14 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
     function frame(now) {
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
-      if (visible) {
-        elapsed += dt
-        draw(elapsed, dt)
-      }
+      elapsed += dt
+      draw(elapsed, dt)
       raf = requestAnimationFrame(frame)
     }
 
     rebuild()
     if (reducedMotion) {
       draw(elapsed) // single static frame
-    } else {
-      raf = requestAnimationFrame(frame)
     }
 
     const ro = new ResizeObserver(() => {
@@ -422,15 +418,26 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
     })
     ro.observe(canvas.parentElement)
 
+    const syncPlayback = () => {
+      cancelAnimationFrame(raf)
+      raf = 0
+      if (visible && !document.hidden && !reducedMotion) {
+        last = performance.now()
+        raf = requestAnimationFrame(frame)
+      }
+    }
     const io = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting // pause when scrolled offscreen
+      visible = entry.isIntersecting
+      syncPlayback()
     })
     io.observe(canvas)
+    document.addEventListener('visibilitychange', syncPlayback)
 
     return () => {
       cancelAnimationFrame(raf)
       ro.disconnect()
       io.disconnect()
+      document.removeEventListener('visibilitychange', syncPlayback)
     }
   }, [intensity])
 

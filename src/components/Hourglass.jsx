@@ -110,8 +110,29 @@ export default function Hourglass({
 
       raf = requestAnimationFrame(frame);
     };
-    raf = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(raf);
+    const element = starEl.parentElement;
+    let inView = false;
+    const syncPlayback = () => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      const paused = !inView || document.hidden;
+      element.classList.toggle('is-paused', paused);
+      last = 0;
+      if (!paused) raf = requestAnimationFrame(frame);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      syncPlayback();
+    });
+    element.classList.add('is-paused');
+    observer.observe(element);
+    document.addEventListener('visibilitychange', syncPlayback);
+    return () => {
+      cancelAnimationFrame(raf);
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', syncPlayback);
+      element.classList.remove('is-paused');
+    };
   }, []);
 
   // Glow swells a little as the schedule pours.
@@ -124,7 +145,7 @@ export default function Hourglass({
       aria-hidden="true"
     >
       {/* 9 → 1: back to front */}
-      <img src={backGlow} alt="" className="hg-layer hg-backglow" style={{ opacity: glowOpacity }} />
+      <img src={backGlow} alt="" className="hg-layer hg-backglow" style={{ opacity: `var(--hourglass-glow, ${glowOpacity})` }} />
       <img src={caseLayer} alt="" className="hg-layer hg-case" />
       <img src={backPillars} alt="" className="hg-layer hg-backpillars" />
       <img src={bottomBubble} alt="" className="hg-layer hg-bottombubble" />
