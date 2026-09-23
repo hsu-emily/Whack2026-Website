@@ -1259,6 +1259,42 @@ h2 {
   .fish-swimmer img { animation: none; }
 }
 
+/* ── Tracks-section creatures ── */
+/* .galaxy-section is already position: relative, so these anchor to it.
+   `.galaxy-section .tracks-*` outranks the plain .fat-fish-swimmer /
+   .turtle-swimmer rules (including their mobile overrides), so no !important. */
+.galaxy-section .tracks-fish,
+.galaxy-section .tracks-turtle {
+  z-index: 2;          /* above the canvases (0) and track cards (1) */
+  transform: none;     /* drop the translateY(-50%) from .fish-swimmer */
+}
+.galaxy-section .tracks-fish.is-flipped,
+.galaxy-section .tracks-turtle.is-flipped {
+  transform: scaleX(-1);
+}
+
+/* Dory: empty space below the comet */
+.galaxy-section .tracks-fish {
+  top: 18%;            /* tweak until it sits under the comet */
+  left: 5%;
+  right: auto;         /* .fish-swimmer sets right: clamp(...) */
+  width: clamp(160px, 18vw, 280px);
+}
+
+/* Turtle: bottom right */
+.galaxy-section .tracks-turtle {
+  top: auto;           /* .turtle-swimmer sets top: 50% */
+  bottom: 2%;
+  left: auto;          /* .turtle-swimmer sets left: clamp(...) */
+  right: 4%;
+  width: clamp(180px, 20vw, 300px);
+}
+
+@media (max-width: 680px) {
+  .galaxy-section .tracks-fish { top: 10%; left: 2%; width: clamp(110px, 30vw, 150px); }
+  .galaxy-section .tracks-turtle { bottom: 0; right: 2%; width: clamp(120px, 32vw, 160px); }
+}
+
 /* ── Section 6 – Sponsors ───────────────────── */
 .section-6 {
   color: white;
