@@ -31,6 +31,8 @@ function Waves({ items = [], heading, children }) {
   const [openIndex, setOpenIndex] = useState(null)
   const listRef = useRef(null)
   const [restHeight, setRestHeight] = useState(null)
+  const openIndexRef = useRef(openIndex)
+  openIndexRef.current = openIndex
 
   // Questions are linked to layers in reverse: question 1 → the last layer
   // (Layer8), question 2 → the second-to-last, and so on, leaving Layer1 as
@@ -42,17 +44,33 @@ function Waves({ items = [], heading, children }) {
   // instead of tracking it live. Otherwise, opening a question animates the
   // list taller every frame, forcing the whole full-bleed artwork stack to
   // reflow/re-crop in lockstep — that's what shows up as a glitch on click.
+  //
+  // Measuring is debounced rather than read straight off the ResizeObserver:
+  // closing a question fires a resize the instant the class changes, well
+  // before the 0.5s collapse transition has actually shrunk anything, so an
+  // immediate read locks in the still-open height forever (never
+  // self-corrects, and — because .waves-list has no explicit height of its
+  // own — that wrong height then stretches the list too, snapping every
+  // question to a new centered position). Waiting for the size to stop
+  // changing for a bit guarantees we only ever commit a settled value.
   useLayoutEffect(() => {
     const el = listRef.current
     if (!el) return
-    const measure = () => {
-      if (openIndex === null) setRestHeight(el.offsetHeight)
+    let debounceTimer = null
+    const commit = () => {
+      if (openIndexRef.current === null) setRestHeight(el.offsetHeight)
     }
-    measure()
-    const observer = new ResizeObserver(measure)
+    commit()
+    const observer = new ResizeObserver(() => {
+      clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(commit, 600)
+    })
     observer.observe(el)
-    return () => observer.disconnect()
-  }, [openIndex])
+    return () => {
+      observer.disconnect()
+      clearTimeout(debounceTimer)
+    }
+  }, [])
 
   const pinnedHeightStyle = restHeight != null ? { height: `${restHeight}px` } : undefined
 
