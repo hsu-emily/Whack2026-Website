@@ -1509,13 +1509,30 @@ h2 {
 }
 
 .waves-list {
-  position: relative;
-  align-self: start;
+  /* taken out of the grid row entirely and centered by absolute position
+     instead of align-self: as the tallest item, .waves-list would otherwise
+     dictate the row's own height once a question opens, leaving no extra
+     space for alignment to act on — so it just grew downward from a fixed
+     top, same as before. Centering it via top: 50% + translateY(-50%)
+     anchors its MIDPOINT instead of its top edge: growing taller pushes the
+     top edge up and the bottom edge down by equal amounts, so every
+     question's position shifts as the block re-centers around its own
+     growth. The row (and pinned wave height) never has to change because
+     .waves-list no longer contributes to its size at all. */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 2;
   width: 100%;
   max-width: clamp(520px, 62vw, 900px);
-  margin: 0 auto;
-  padding: clamp(28px, 6vw, 90px) clamp(16px, 4vw, 40px);
+  /* the extra bottom padding offsets the space removed by halving
+     .wave-q-row's padding across all 7 rows, so the resting (closed) list
+     height — and therefore the pinned wave art height — stays the same as
+     before that change, even though the questions themselves sit closer
+     together now */
+  padding: clamp(28px, 6vw, 90px) clamp(16px, 4vw, 40px)
+    calc(clamp(28px, 6vw, 90px) + 6.5 * clamp(10px, 2.2vw, 26px));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1530,8 +1547,18 @@ h2 {
   font-size: clamp(1.6rem, 1.08rem + 2.59vw, 4rem);
 }
 
+/* the shared .section-lead rule leaves 3rem below the intro paragraph;
+   pull the questions in closer underneath it here specifically */
+.waves-list .section-lead {
+  margin-bottom: clamp(0.5rem, 1.5vw, 1.25rem);
+}
+
 .wave-q-row {
-  padding: clamp(10px, 2.2vw, 26px) 0;
+  padding: clamp(5px, 1.1vw, 13px) 0;
+}
+
+.wave-q-row:first-of-type {
+  padding-top: 0;
 }
 
 .wave-q-btn {
@@ -1550,7 +1577,7 @@ h2 {
 
 .wave-q {
   font-family: 'Delius', cursive;
-  font-size: clamp(1rem, 0.74rem + 1.3vw, 2.2rem);
+  font-size: clamp(0.81rem, 0.55rem + 1.3vw, 2.01rem);
   font-weight: 400;
   letter-spacing: -0.01em;
   color: #ffffff;
@@ -1579,7 +1606,7 @@ h2 {
   font-size: clamp(0.95rem, 0.83rem + 0.59vw, 1.5rem);
   line-height: 1.65;
   color: rgba(230, 236, 255, 0.72);
-  max-width: clamp(560px, 116vw, 1240px);
+  max-width: clamp(728px, 151vw, 1612px);
 }
 
 /* ── Section 8 – Final CTA ──────────────────── */
@@ -1669,6 +1696,12 @@ h2 {
 .btn-white:hover { opacity: 0.88;}
 
 footer {
+  /* .waves-list is absolutely positioned and can grow past the pinned wave
+     art's bottom edge when an answer opens (see .waves-list); position +
+     z-index here keeps the footer's own solid background painting over
+     that overflow instead of the FAQ text covering the footer */
+  position: relative;
+  z-index: 3;
   text-align: center;
   padding: 28px 48px;
   font-size: 0.8rem;
