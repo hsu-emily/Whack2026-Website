@@ -501,7 +501,7 @@ function App() {
       </section> */}
 
       <footer>
-        © 2026 WHACK Hackathon · Wellesley College · Made with love and too much coffee
+        © 2026 WHACK Hackathon · Wellesley College · Made with love and too much coffee 
       </footer>
     </>
   )
