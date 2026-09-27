@@ -61,6 +61,8 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  text-transform: uppercase;
   /* extra right padding reserves room for the MLH badge in the corner */
   padding: 16px 136px 16px 48px;
   backdrop-filter: blur(18px);
@@ -1550,7 +1552,7 @@ h2 {
 
 .wave-q {
   font-family: 'Delius', cursive;
-  font-size: clamp(1rem, 0.74rem + 1.3vw, 2.2rem);
+  font-size: clamp(0.8rem, 0.6rem + 1vw, 2rem);
   font-weight: 400;
   letter-spacing: -0.01em;
   color: #ffffff;
@@ -1576,7 +1578,7 @@ h2 {
 
 .wave-a {
   margin: clamp(6px, 1.5vw, 16px) auto 0;
-  font-size: clamp(0.95rem, 0.83rem + 0.59vw, 1.5rem);
+  font-size: clamp(0.8rem, 0.6rem + 0.54vw, 1.3rem);
   line-height: 1.65;
   color: rgba(230, 236, 255, 0.72);
   max-width: clamp(560px, 116vw, 1240px);
