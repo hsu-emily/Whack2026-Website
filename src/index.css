@@ -36,7 +36,14 @@ html {
   scroll-behavior: smooth;
 }
 
-html { background: #030C20; }
+/*html { background: #030C20; }*/
+/*html {
+  background: linear-gradient(180deg, #F5E2FF 0 50%, #030C20 50% 100%) fixed;
+}*/
+html {
+  background-color: #030C20;
+  overscroll-behavior-y: none;
+}
 
 body {
   font-family: 'Delius', cursive;
