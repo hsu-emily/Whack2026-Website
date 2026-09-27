@@ -426,12 +426,7 @@ function App() {
               <span className="sponsor-pill">Linear</span>
             </div>
           </div>*/}
-          <div className="sponsors-illustration">
-            <div className="sponsor-logo-placeholders">
-              <a href="https://careereducation.wellesley.edu/beam" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
-                <img src={beamLogo} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-1" />
-              </a>
-              <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+          {/*<a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
                 <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-2" />
               </a>
               <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
@@ -442,6 +437,11 @@ function App() {
               </a>
               <a href="https://google.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
                 <img src={sponsorLogoPlaceholder} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-5" />
+              </a>*/}
+          <div className="sponsors-illustration">
+            <div className="sponsor-logo-placeholders">
+              <a href="https://careereducation.wellesley.edu/beam" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={beamLogo} alt="Sponsor logo placeholder" className="sponsor-logo-placeholder sponsor-logo-placeholder-1" />
               </a>
             </div>
             <img src={wishingWell} alt="" className="sponsors-well" />
@@ -452,7 +452,7 @@ function App() {
         </div>
         <p className="section-lead">
             Interested in sponsoring?{' '}
-            <a href="mailto:sponsor@whack.ucsc.edu" style={{ color: 'white' }}>Reach out!</a>
+            <a href="mailto:ac163@wellesley.edu" style={{ color: 'white' }}>Reach out!</a>
         </p>
       </section>
       <div className="bottom-creature-row">
@@ -477,7 +477,7 @@ function App() {
         >
           <p className="section-lead">
             Here are the most common questions we get. Still curious?{' '}
-            <a href="mailto:hello@whack.ucsc.edu" style={{ color: 'white' }}>Email us →</a>
+            <a href="mailto:ac163@wellesley.edu" style={{ color: 'white' }}>Email us!</a>
           </p>
         </Waves>
       </section>
