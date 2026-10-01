@@ -447,7 +447,7 @@ function App() {
             </div>
             <div className="sponsor-logo-placeholders">
               <a href="https://mlh.link/MLH-PureButtons-hackathons" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
-                <img src={purebuttons} alt="Pure Buttons" className="sponsor-logo-placeholder sponsor-logo-placeholder-1" />
+                <img src={purebuttons} alt="Pure Buttons" className="sponsor-logo-placeholder sponsor-logo-placeholder-2" />
               </a>
             </div>
             <img src={wishingWell} alt="" className="sponsors-well" />
