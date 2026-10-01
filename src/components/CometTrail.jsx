@@ -106,10 +106,23 @@ export default function CometTrail({ intensity = 1, className = '' }) {
 
       const phone = W < 680
       // +EXTEND: all y coords are in CANVAS space (0 = EXTEND px above section)
-      const hx = W * (phone ? 0.3 : C.headX)
-      const hy = H * (phone ? 0.12 : C.headY) + EXTEND
-      const tx = hx + W * C.tailDX * (phone ? 0.8 : 1)
-      const ty = hy + H * C.tailDY * (phone ? 0.6 : 1)
+      let hx, hy, tx, ty, R
+      if (phone) {
+        // Phones: size everything off the WIDTH. The stacked section is far
+        // taller than it is wide, so H-based numbers stretch the comet
+        // vertically. dy/dx = 0.48 matches the desktop tail angle.
+        hx = W * 0.72          // head, right of centre
+        hy = EXTEND + 70       // just inside the section top, above the heading
+        tx = hx - W * 0.58     // tail reaches up-left...
+        ty = hy - W * 0.28     // ...and spills above the section edge
+        R  = W * 0.023        // head size in proportion to the tail
+      } else {
+        hx = W * C.headX
+        hy = H * C.headY + EXTEND
+        tx = hx + W * C.tailDX
+        ty = hy + H * C.tailDY
+        R  = Math.min(W, H) * C.headRadius
+      }
       const mx = (hx + tx) / 2
       const my = (hy + ty) / 2
       const nx = -(ty - hy)
@@ -118,7 +131,7 @@ export default function CometTrail({ intensity = 1, className = '' }) {
         hx, hy, tx, ty,
         px: mx + nx * C.tailCurve,
         py: my + ny * C.tailCurve,
-        R: Math.min(W, H) * C.headRadius * (phone ? 1.4 : 1),
+        R,
       }
 
       const n = Math.round(C.dustCount * intensity)

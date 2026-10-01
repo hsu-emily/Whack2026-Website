@@ -9,8 +9,8 @@ import fatFish from './assets/fat_fish.png'
 import seahorse from './assets/seahorse.png'
 import starfish from './assets/starfish.png'
 import clownfish from './assets/clownfish.png'
-import whaleSleep from './assets/logo_sleep.png'
-import pillow from './assets/pillow.png'
+//import whaleSleep from './assets/logo_sleep.png'
+//import pillow from './assets/pillow.png'
 import sponsorLogoPlaceholder from './assets/sponsor_logo_placeholder.png'
 import beamLogo from './assets/logos/logo_beam.png'
 import pureButtons from './assets/logos/pure_buttons.png'
@@ -43,18 +43,13 @@ function SeaCreature({ src, label, className = '', initiallyFlipped = false }) {
 // constant, never an inline array literal, or the sky reshuffles as you scroll.
 const METEOR_INTERVAL = [4000, 10000]
 
-// Fewer stars overall, and fewer still on smaller screens.
-//
-// StarrySky scatters its stars over a square whose side is the viewport
-// DIAGONAL, so the area to fill grows with the square of screen size. Stepping
-// the count linearly would leave a narrow screen far denser than a wide one, so
-// the count is derived from that area against a target density, then clamped.
-function starsForWidth(w) {
-  const h = typeof window === 'undefined' ? 900 : window.innerHeight
-  const side = Math.sqrt(w * w + h * h)
-  const STARS_PER_MPX = 150
-  const n = Math.round((side * side) / 1e6 * STARS_PER_MPX)
-  return Math.max(120, Math.min(650, n))
+function starsForBand() {
+  if (typeof window === 'undefined') return 300
+  const band = document.querySelector('.sky-band')
+  const w = window.innerWidth
+  const h = band?.offsetHeight || window.innerHeight
+  const STARS_PER_MPX = 70
+  return Math.max(150, Math.min(650, Math.round((w * h) / 1e6 * STARS_PER_MPX)))
 }
 
 function App() {
@@ -63,6 +58,22 @@ function App() {
   const skyStarsRef = useRef(null)
   const scheduleRef = useRef(null)
 
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  // Close on Escape, or if the screen grows past the phone breakpoint
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false) }
+    const mq = window.matchMedia('(min-width: 681px)')
+    const onMq = () => { if (mq.matches) setMenuOpen(false) }
+    window.addEventListener('keydown', onKey)
+    mq.addEventListener('change', onMq)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      mq.removeEventListener('change', onMq)
+    }
+  }, [menuOpen])
+  
   useLayoutEffect(() => {
     const root = document.documentElement
     let width = window.innerWidth
@@ -81,27 +92,27 @@ function App() {
     }
   }, [])
 
-  // Star count scales with viewport width. StarrySky scatters its stars over a
-  // square sized to the viewport DIAGONAL, so a fixed count packs into a much
-  // smaller area on a narrow screen and reads as far denser. Stepping the count
-  // down keeps the apparent star density roughly even across screen sizes.
-  const [starCount, setStarCount] = useState(() => starsForWidth(
-    typeof window === 'undefined' ? 1440 : window.innerWidth
-  ))
-  useEffect(() => {
-    // Only update when the bucket actually changes: setting a new starCount
-    // makes StarrySky rebuild every star, so reacting to each resize pixel
-    // would reshuffle the sky continuously while dragging a window edge.
+  const [starCount, setStarCount] = useState(starsForBand)
+
+  useLayoutEffect(() => {
     let lastWidth = window.innerWidth
+    const recount = () =>
+      setStarCount((prev) => {
+        const next = starsForBand()
+        return Math.abs(next - prev) > prev * 0.15 ? next : prev
+      })
+    recount() // before first paint, so no visible reshuffle
+    if (document.readyState !== 'complete') window.addEventListener('load', recount, { once: true })
     const onResize = () => {
-      // Mobile browser chrome changes viewport height while scrolling. Keep
-      // the existing sky in place unless the layout width actually changes.
-      if (window.innerWidth === lastWidth) return
+      if (window.innerWidth === lastWidth) return // ignore mobile toolbar show/hide
       lastWidth = window.innerWidth
-      setStarCount(starsForWidth(lastWidth))
+      recount()
     }
     window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('load', recount)
+    }
   }, [])
 
   // The starry-sky package places each star at an absolute PIXEL offset inside
@@ -254,17 +265,27 @@ function App() {
         < Star />
       </div> */}
       {/* ── Nav ── */}
-      <nav ref={navRef} aria-label="Main navigation">
+      <nav ref={navRef} aria-label="Main navigation" data-menu-open={menuOpen || undefined}>
         <a href="#hero" className="nav-logo" aria-label="WHACK 2026 home">
           <img src="/favicon.png" alt="WHACK 2026" width="48" height="48" />
         </a>
-        <ul className="nav-links">
+        <ul className="nav-links" id="nav-menu" onClick={() => setMenuOpen(false)}>
           <li><a href="#schedule">Schedule</a></li>
           <li><a href="#tracks">Tracks</a></li>
           <li><a href="#sponsors">Sponsors</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe6KQZrSr_bB43ZAI0b-VeduSLwQiM2cEyelw3T1rKWpQu1xQ/viewform?usp=sharing&ouid=113710513260861004152" target="_blank" className="nav-register">Register</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe6KQZrSr_bB43ZAI0b-VeduSLwQiM2cEyelw3T1rKWpQu1xQ/viewform?usp=sharing&ouid=113710513260861004152" target="_blank" rel="noreferrer" className="nav-register">Register</a>
+        <button
+          type="button"
+          className="nav-burger"
+          aria-expanded={menuOpen}
+          aria-controls="nav-menu"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          onClick={() => setMenuOpen((o) => !o)}
+        >
+          <span /><span /><span />
+        </button>
       </nav>
 
       {/* MLH badge hangs from the page's top-right corner, outside the nav, so
@@ -375,7 +396,7 @@ function App() {
 
       {/* ── Section 5 · Tracks ── */}
       <section id="tracks" className="section section-5 galaxy-section">
-        <GalaxyStream variant="galaxy" />
+        <GalaxyStream/>
         <PlanetDrift />
         <CometTrail />
         <SeaCreature src={fatFish} label="fish" className="fat-fish-swimmer tracks-fish" />
@@ -399,12 +420,13 @@ function App() {
         </div>
       </section>
 
-      <div className="fish-interstitial">
-        <SeaCreature src={seahorse} label="seahorse" className="seahorse-swimmer" />
-      </div>
+      <div className="fish-interstitial" />
 
       {/* ── Section 6 · Sponsors ── */}
       <section id="sponsors" className="section section-6">
+        <SeaCreature src={seahorse} label="seahorse" className="seahorse-swimmer" />
+        <SeaCreature src={starfish} label="starfish" className="starfish-swimmer" />
+        <SeaCreature src={clownfish} label="clownfish" className="clownfish-swimmer" />
         <div className="section-inner centered">
           <h1>Sponsors ( pending... )</h1>
           {/*/* <div className="sponsor-tiers">
@@ -460,10 +482,7 @@ function App() {
             <a href="mailto:ac163@wellesley.edu" style={{ color: 'white' }}>Reach out!</a>
         </p>
       </section>
-      <div className="bottom-creature-row">
-        <SeaCreature src={starfish} label="starfish" className="starfish-swimmer" />
-        <SeaCreature src={clownfish} label="clownfish" className="clownfish-swimmer" />
-      </div>
+      <div className="bottom-creature-row" />
       </div>{/* /sky-band */}
 
       {/* ── Section 7 · FAQ ── */}

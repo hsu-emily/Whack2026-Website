@@ -141,14 +141,23 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
     }
 
     function buildDisc() {
-      galaxy = {
+      /*galaxy = {
         cx: W * C.centerX,
         cy: H * C.centerY,
         R: Math.min(W, H) * C.radius,
+      }*/
+      const phone = W < 680
+      galaxy = {
+        cx: W * (phone ? 0.55 : C.centerX),
+        cy: phone ? H * 0.2 : H * C.centerY,  // behind the frosted cards, clear of the heading
+        R:  phone ? W * 0.42 : Math.min(W, H) * C.radius,
+        glow: phone ? 0.57 : 1,                // dimmer halo + core on phones for legibility
       }
+      const density = intensity * (phone ? 0.5 : 1)
+      const n = Math.round(C.starCount * density)   // use `density` for sparkles/hero stars too
 
       // star body
-      const n = Math.round(C.starCount * intensity)
+      //const n = Math.round(C.starCount * intensity)
       discStars = []
       for (let i = 0; i < n; i++) {
         const frac = Math.pow(Math.random(), C.coreBias)
@@ -166,7 +175,7 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
       }
 
       // 4-point sparkles seeded along the arms (skip the very core)
-      const ns = Math.round(C.sparkleCount * intensity)
+      const ns = Math.round(C.sparkleCount * density)
       discSparkles = []
       for (let i = 0; i < ns; i++) {
         const frac = 0.15 + Math.pow(Math.random(), 0.7) * 0.85
@@ -182,7 +191,7 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
       }
 
       // hero stars: big soft-halo highlights anywhere in the disc
-      const nh = Math.round(C.heroStarCount * intensity)
+      const nh = Math.round(C.heroStarCount * density)
       heroStars = []
       for (let i = 0; i < nh; i++) {
         heroStars.push({
@@ -274,15 +283,15 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
     }
 
     function drawGlows() {
-      const { cx, cy, R } = galaxy
+      const { cx, cy, R, glow: k } = galaxy
       ctx.save()
       ctx.translate(cx, cy)
       ctx.rotate(C.tilt)
       ctx.scale(1, C.squash)
       // wide violet halo
       let g = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 1.05)
-      g.addColorStop(0, 'rgba(140, 130, 240, 0.34)')
-      g.addColorStop(0.5, 'rgba(90, 90, 200, 0.14)')
+      g.addColorStop(0, `rgba(140, 130, 240, ${0.34 * k})`)
+      g.addColorStop(0.5, `rgba(90, 90, 200, ${0.14 * k})`)
       g.addColorStop(1, 'rgba(90, 90, 200, 0)')
       ctx.fillStyle = g
       ctx.beginPath()
@@ -290,8 +299,8 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
       ctx.fill()
       // warm core
       g = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 0.3)
-      g.addColorStop(0, 'rgba(255, 242, 214, 0.95)')
-      g.addColorStop(0.35, 'rgba(255, 226, 190, 0.4)')
+      g.addColorStop(0, `rgba(255, 242, 214, ${0.95 * k})`)
+      g.addColorStop(0.35, `rgba(255, 226, 190, ${0.4 * k})`)
       g.addColorStop(1, 'rgba(255, 226, 190, 0)')
       ctx.fillStyle = g
       ctx.beginPath()

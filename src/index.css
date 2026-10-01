@@ -135,6 +135,8 @@ nav.nav-on-light .nav-register:hover { background: rgba(26, 10, 46, 0.2); }
   transition: background 0.2s;
 }
 
+.nav-burger { display: none; }
+
 .nav-register:hover { background: rgba(255, 255, 255, 0.22); }
 nav a:focus-visible { outline: 2px solid white; outline-offset: 4px; }
 
@@ -987,10 +989,10 @@ h2 {
 
 .galaxy-section .comet-canvas {
   position: absolute;
-  top: -340px;
+  top: -200px;
   left: 0;
   width: 100%;
-  height: calc(100% + 340px);
+  height: calc(100% + 200px);
   pointer-events: none;
   z-index: 0;
 }
@@ -1026,12 +1028,12 @@ h2 {
 
 .tracks {
   display: grid;
-  grid-template-columns: minmax(0, 640px);
+  /*grid-template-columns: minmax(0, 640px);
   justify-content: start;
   gap: 18px;
   margin-top: 2rem;
   width: 100%;
-  margin-inline: auto;
+  margin-inline: auto;*/
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
   gap: 22px;
@@ -1184,10 +1186,6 @@ h2 {
   transform: translateY(-50%) scaleX(-1);
 }
 
-.fat-fish-swimmer {
-  top: 240%;
-}
-
 .seahorse-swimmer,
 .turtle-swimmer {
   right: auto;
@@ -1195,7 +1193,6 @@ h2 {
 }
 
 .seahorse-swimmer {
-  top: 400%;
   left: clamp(2%, 6vw, 9%);
   width: clamp(180px, 19vw, 270px);
 }
@@ -1204,16 +1201,6 @@ h2 {
   top: 50%;
   left: clamp(17%, 21vw, 26%);
   width: clamp(220px, 24vw, 340px);
-}
-
-.bottom-turtle-swimmer {
-  right: auto;
-  left: 62%;
-  transform: translate(-50%, -50%);
-}
-
-.bottom-turtle-swimmer.is-flipped {
-  transform: translate(-50%, -50%) scaleX(-1);
 }
 
 .seahorse-swimmer img {
@@ -1234,11 +1221,6 @@ h2 {
 .starfish-swimmer {
   right: auto;
   left: clamp(6%, 10vw, 13%);
-  top: -30%;
-}
-
-.clownfish-swimmer {
-  top: -180%;
 }
 
 .clownfish-swimmer img {
@@ -1300,8 +1282,8 @@ h2 {
 }
 
 @media (max-width: 680px) {
-  .galaxy-section .tracks-fish { top: 10%; left: 2%; width: clamp(110px, 30vw, 150px); }
-  .galaxy-section .tracks-turtle { bottom: 0; right: 2%; width: clamp(120px, 32vw, 160px); }
+  .galaxy-section .tracks-fish   { width: clamp(110px, 30vw, 150px); }
+  .galaxy-section .tracks-turtle { width: clamp(120px, 32vw, 160px); }
 }
 
 /* ── Section 6 – Sponsors ───────────────────── */
@@ -1309,6 +1291,17 @@ h2 {
   color: white;
   background: transparent;
 }
+
+.section-6 { position: relative; }
+/* z-index:auto so the logos and text can stack above the creatures individually */
+.section-6 .section-inner { position: relative; z-index: auto; }
+.section-6 .fish-swimmer { z-index: 4; }                       /* creatures over the well art */
+.section-6 h1,
+.section-6 .section-lead { position: relative; z-index: 5; }   /* text over creatures */
+.section-6 .sponsor-logo-placeholders { z-index: 5; }          /* logos over creatures */
+.section-6 .seahorse-swimmer  { top: 38%; }
+.section-6 .starfish-swimmer  { top: 95%; }
+.section-6 .clownfish-swimmer { top: 70%; }
 
 .sponsor-tiers { margin-top: 2.5rem; }
 .sponsor-tier-label {
@@ -1589,7 +1582,7 @@ h2 {
 
 .wave-q {
   font-family: 'Delius', cursive;
-  font-size: clamp(0.8rem, 0.6rem + 1vw, 2rem);
+  font-size: clamp(1rem, 0.6rem + 1vw, 2rem);
   font-weight: 400;
   letter-spacing: -0.01em;
   color: #ffffff;
@@ -1615,7 +1608,7 @@ h2 {
 
 .wave-a {
   margin: clamp(6px, 1.5vw, 16px) auto 0;
-  font-size: clamp(0.8rem, 0.6rem + 0.54vw, 1.3rem);
+  font-size: clamp(0.95rem, 0.6rem + 0.54vw, 1.3rem);
   line-height: 1.65;
   color: rgba(230, 236, 255, 0.72);
   max-width: clamp(728px, 151vw, 1612px);
@@ -1779,41 +1772,74 @@ footer {
 
 @media (max-width: 680px) {
   nav { padding: 10px 78px 8px 16px; flex-wrap: nowrap; }
-  .nav-links { display: none; }
+  .nav-burger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 11px 9px;
+    margin-left: 6px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    color: #f4f1ff;
+  }
+  nav.nav-on-light .nav-burger { color: #1a0a2e; }
+  .nav-burger span {
+    display: block;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.3s ease, opacity 0.2s ease;
+  }
+  /* bars → X */
+  nav[data-menu-open] .nav-burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  nav[data-menu-open] .nav-burger span:nth-child(2) { opacity: 0; }
+  nav[data-menu-open] .nav-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* dropdown panel under the bar */
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    padding: 4px 24px 12px;
+    background: rgba(12, 16, 44, 0.94);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+  }
+  nav[data-menu-open] .nav-links {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  nav .nav-links a,
+  nav.nav-on-light .nav-links a {   /* panel is dark, so links stay light even at the top of the page */
+    color: #f4f1ff;
+    display: block;
+    padding: 14px 0;
+    font-size: 1rem;
+    opacity: 0.85;
+  }
+  .nav-links li + li { border-top: 1px solid rgba(255, 255, 255, 0.07); }
+
   .nav-logo { font-size: 0.9rem; }
   .nav-register { padding: 10px 12px; font-size: 0.875rem; }
   .mlh-badge { right: 16px; width: 50px; }
-  .fish-interstitial {
-    height: 250px;
-  }
-  .fat-fish-swimmer {
-    top: 40%;
-    right: 12%;
-    width: clamp(150px, 40vw, 210px);
-  }
-  .seahorse-swimmer {
-    top: 68%;
-    left: 10%;
-    width: clamp(145px, 38vw, 200px);
-  }
-  .bottom-creature-row {
-    height: 280px;
-  }
-  .starfish-swimmer {
-    top: 25%;
-    left: 4%;
-    width: clamp(145px, 38vw, 200px);
-  }
-  .bottom-turtle-swimmer {
-    top: 74%;
-    left: 50%;
-    width: clamp(150px, 40vw, 210px);
-  }
-  .clownfish-swimmer {
-    top: 25%;
-    right: 4%;
-    width: clamp(145px, 38vw, 200px);
-  }
+  .seahorse-swimmer,
+  .starfish-swimmer,
+  .clownfish-swimmer { width: clamp(145px, 38vw, 200px); }
+
   .section { min-height: var(--mobile-viewport-height, 100svh); padding: 120px 20px 64px; scroll-margin-top: 110px; }
   h1 { font-size: clamp(2.2rem, 9vw, 3.5rem); }
   h2 { font-size: 1.6rem; }
@@ -1939,7 +1965,14 @@ footer {
   .schedule-art-wisp { top: 0; right: -20%; }
   .schedule-art-left { top: 14%; left: -36%; }
   .schedule-art-right { top: 44%; right: -36%; }
-  .day-toggle { align-items: baseline; gap: 20px; }
+  .day-toggle {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: baseline;
+    justify-items: center;
+    width: min(100%, 360px);
+    margin-inline: auto;
+  }
   .day-toggle-btn { font-size: clamp(1.8rem, 6vw, 2.4rem); min-height: 44px; }
   .day-toggle-btn.is-active { font-size: clamp(3rem, 10vw, 4rem); transform: none; }
   .day-col { width: min(100%, 420px); }
@@ -1964,4 +1997,20 @@ footer {
     padding-top:7.5vh;
     padding-right:7.5vw;
     z-index:100;
+}
+
+/* ── Phones: park the creatures in the section padding, clear of the text ── */
+@media (max-width: 680px) {
+  /* Tracks: fish above the heading, turtle below the last card */
+  .section-5 { padding-top: 100px; padding-bottom: 100px; }
+  .galaxy-section .tracks-fish   { top: 50px; bottom: auto; left: 2%; }
+  .galaxy-section .tracks-turtle { top: auto; bottom: 10px; right: 4%; }
+
+  /* Sponsors: seahorse above the heading, starfish + clownfish below "Reach out!" */
+  .section-6 { padding-top: 50px; padding-bottom: 100px; }
+  .section-6 .fish-swimmer { transform: none; width: clamp(110px, 30vw, 140px); }
+  .section-6 .fish-swimmer.is-flipped { transform: scaleX(-1); }
+  .section-6 .seahorse-swimmer  { top: 40px; left: 6%; }
+  .section-6 .starfish-swimmer  { top: auto; bottom: 20px; left: 6%; right: auto; }
+  .section-6 .clownfish-swimmer { top: auto; bottom: 20px; right: 6%; left: auto; }
 }
