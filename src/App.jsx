@@ -13,7 +13,7 @@ import whaleSleep from './assets/logo_sleep.png'
 import pillow from './assets/pillow.png'
 import sponsorLogoPlaceholder from './assets/sponsor_logo_placeholder.png'
 import beamLogo from './assets/logos/logo_beam.png'
-import purebuttons from './assets/logos/pure_buttons.png'
+import pureButtons from './assets/logos/pure_buttons.png'
 import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
 import Cloud from './components/Cloud'
@@ -444,7 +444,11 @@ function App() {
               <a href="https://careereducation.wellesley.edu/beam" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
                 <img src={beamLogo} alt="Beam Initiative" className="sponsor-logo-placeholder sponsor-logo-placeholder-1" />
               </a>
+              <a href="https://www.purebuttons.com/?ajs_uid=0192fe41-1432-bcf4-65c7-6f45382d6b11&utm_campaign=Member+Event+-+Pure+Buttons+Intro&utm_content=Pure+Buttons+Intro&utm_medium=Email&utm_source=Customer.io" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={pureButtons} alt="Pure Buttons" className="sponsor-logo-placeholder sponsor-logo-placeholder-2" />
+              </a>
             </div>
+            
             <img src={wishingWell} alt="" className="sponsors-well" />
           </div>
         {/*<div className="well-wrap" style={{ width: '90%', height: '800px', position: 'relative' }}>
