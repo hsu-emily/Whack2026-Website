@@ -1157,7 +1157,7 @@ h2 {
 
 .fish-interstitial {
   position: relative;
-  height: 150px;
+  height: 100px;
   z-index: 2;
   pointer-events: none;
 }
@@ -1174,7 +1174,7 @@ h2 {
   right: clamp(7%, 11vw, 14%);
   top: 30%;
   width: clamp(180px, 21vw, 300px);
-  padding: 12px;
+  padding: 20px;
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -2009,10 +2009,21 @@ footer {
   .galaxy-section .tracks-turtle { top: auto; bottom: 10px; right: 4%; }
 
   /* Sponsors: seahorse above the heading, starfish + clownfish below "Reach out!" */
-  .section-6 { padding-top: 50px; padding-bottom: 100px; }
+  .section-6 { padding-top: 50px; padding-bottom: 170px; }
   .section-6 .fish-swimmer { transform: none; width: clamp(110px, 30vw, 140px); }
   .section-6 .fish-swimmer.is-flipped { transform: scaleX(-1); }
   .section-6 .seahorse-swimmer  { top: 40px; left: 6%; }
   .section-6 .starfish-swimmer  { top: auto; bottom: 20px; left: 6%; right: auto; }
   .section-6 .clownfish-swimmer { top: auto; bottom: 20px; right: 6%; left: auto; }
+
+    /* Empty desktop spacers: not needed on phones */
+  .fish-interstitial,
+  .bottom-creature-row { height: 0; }
+
+  /* Sponsors hugs its content instead of filling a full screen */
+  .section-6 { min-height: 0; justify-content: flex-start; }
+  .section-6 .section-lead { margin-bottom: 0; }
+
+  /* FAQ: small top gap, none at the bottom (the wave art fades into the footer) */
+  .section-7 { padding-top: 24px; padding-bottom: 0; }
 }
