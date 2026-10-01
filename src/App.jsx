@@ -445,11 +445,6 @@ function App() {
                 <img src={beamLogo} alt="Beam Initiative" className="sponsor-logo-placeholder sponsor-logo-placeholder-1" />
               </a>
             </div>
-            <div className="sponsor-logo-placeholders">
-              <a href="https://mlh.link/MLH-PureButtons-hackathons" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
-                <img src={purebuttons} alt="Pure Buttons" className="sponsor-logo-placeholder sponsor-logo-placeholder-2" />
-              </a>
-            </div>
             <img src={wishingWell} alt="" className="sponsors-well" />
           </div>
         {/*<div className="well-wrap" style={{ width: '90%', height: '800px', position: 'relative' }}>
