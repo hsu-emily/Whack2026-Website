@@ -149,9 +149,9 @@ export default function GalaxyStream({ intensity = 1, className = '' }) {
       const phone = W < 680
       galaxy = {
         cx: W * (phone ? 0.55 : C.centerX),
-        cy: phone ? H * 0.2 : H * C.centerY,  // behind the frosted cards, clear of the heading
+        cy: phone ? H * 0.21 : H * C.centerY,  // behind the frosted cards, clear of the heading
         R:  phone ? W * 0.42 : Math.min(W, H) * C.radius,
-        glow: phone ? 0.57 : 1,                // dimmer halo + core on phones for legibility
+        glow: phone ? 0.55 : 1,                // dimmer halo + core on phones for legibility
       }
       const density = intensity * (phone ? 0.5 : 1)
       const n = Math.round(C.starCount * density)   // use `density` for sparkles/hero stars too

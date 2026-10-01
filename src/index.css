@@ -208,7 +208,8 @@ body {
    (faux-bolding thickens the strokes and kills the elegance) */
 h1 {
   font-family: 'Great Vibes', cursive;
-  font-size: clamp(2.8rem, 6.5vw, 5.4rem);
+  /*font-size: clamp(2.8rem, 6.5vw, 5.4rem);*/
+  font-size: clamp(3rem, 13vw, 6.5rem);
   font-weight: 400;
   letter-spacing: 0.01em;
   line-height: 1.08;
@@ -731,7 +732,7 @@ h2 {
   background: transparent;
 }
 .section-4 h1 {
-  font-size: clamp(3rem, 13vw, 6.5rem);
+  /*font-size: clamp(3rem, 13vw, 6.5rem);*/
   line-height: 1.15;
   margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
@@ -1548,14 +1549,15 @@ h2 {
 /* the shared h1 rule only scales between ~860-1170px viewports; this section
    scales across the full 320-1800px range so it visibly tracks screen size,
    starting from the smallest phones instead of flattening out below 400px */
-.waves-list h1 {
-  font-size: clamp(1.6rem, 1.08rem + 2.59vw, 4rem);
-}
+/*.waves-list h1 {
+  font-size: clamp(2.6rem, 6vw, 6rem);
+}*/
 
 /* the shared .section-lead rule leaves 3rem below the intro paragraph;
    pull the questions in closer underneath it here specifically */
 .waves-list .section-lead {
-  margin-bottom: clamp(0.5rem, 1.5vw, 1.25rem);
+  /*margin-bottom: clamp(2rem, 1.5vw, 2rem);*/
+  margin-bottom: 2rem;
 }
 
 .wave-q-row {
@@ -1582,7 +1584,7 @@ h2 {
 
 .wave-q {
   font-family: 'Delius', cursive;
-  font-size: clamp(1rem, 0.6rem + 1vw, 2rem);
+  font-size: clamp(1.2rem, 0.7rem + 1vw, 2rem);
   font-weight: 400;
   letter-spacing: -0.01em;
   color: #ffffff;
@@ -1841,7 +1843,7 @@ footer {
   .clownfish-swimmer { width: clamp(145px, 38vw, 200px); }
 
   .section { min-height: var(--mobile-viewport-height, 100svh); padding: 120px 20px 64px; scroll-margin-top: 110px; }
-  h1 { font-size: clamp(2.2rem, 9vw, 3.5rem); }
+  h1 { font-size: clamp(3rem, 13vw, 6.5rem); }
   h2 { font-size: 1.6rem; }
   /* Anchor the artwork and copy to the same viewport-sized stage. The two
      script lines scale together instead of wrapping or drifting right. */

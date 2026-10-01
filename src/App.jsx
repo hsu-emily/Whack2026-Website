@@ -428,7 +428,7 @@ function App() {
         <SeaCreature src={starfish} label="starfish" className="starfish-swimmer" />
         <SeaCreature src={clownfish} label="clownfish" className="clownfish-swimmer" />
         <div className="section-inner centered">
-          <h1>Sponsors ( pending... )</h1>
+          <h1>Sponsors (pending...)</h1>
           {/*/* <div className="sponsor-tiers">
             <div className="sponsor-tier-label">Platinum</div>
             <div className="sponsor-row">
@@ -499,10 +499,10 @@ function App() {
             { q: "What if I've never hacked before?", a: 'You can still attend! We welcome beginners, especially first-time hackers. If you find yourself struggling, we have beginner-friendly workshops and a dedicated mentorship team to help you with any questions.' },
           ]}
         >
-          <p className="section-lead">
-            Here are the most common questions we get. Still curious?{' '}
-            <a href="mailto:ac163@wellesley.edu" style={{ color: 'white' }}>Email us!</a>
-          </p>
+        <p className="section-lead">
+          Here are the most common questions we get. Still curious?{' '}
+          <a href="mailto:ac163@wellesley.edu" style={{ color: 'white' }}>Email us!</a>
+        </p>
         </Waves>
       </section>
 
