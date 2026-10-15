@@ -525,7 +525,9 @@ function App() {
       </section> */}
 
       <footer>
-        © 2026 WHACK Hackathon · Wellesley College · Made with love and too much coffee 
+        <p>© 2026 WHACK Hackathon · Wellesley College · Made with love and too much coffee</p>
+        <br></br>
+        <a className="footer-link" href="https://github.com/MLH/mlh-policies/blob/main/code-of-conduct.md?ajs_uid=0192fe41-1432-bcf4-65c7-6f45382d6b11&utm_campaign=Member+Event+-+Onboarding+Reminder&utm_content=Email+2&utm_medium=Email&utm_source=Customer.io" target='_blank'>MLH Code of Conduct</a>
       </footer>
     </>
   )

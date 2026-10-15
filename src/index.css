@@ -2027,3 +2027,13 @@ footer {
   /* FAQ: small top gap, none at the bottom (the wave art fades into the footer) */
   .section-7 { padding-top: 24px; padding-bottom: 0; }
 }
+
+.footer-link {
+  font-weight:bold;
+  color:#F5E2FF;
+  text-decoration: none;
+}
+
+.footer-link:visited {
+  color:#576BAF;
+}
