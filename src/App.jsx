@@ -494,7 +494,7 @@ function App() {
         <Waves
           heading="Frequently Asked Questions"
           items={[
-            { q: 'Who can participate?', a: 'WHACK is open to all current college and university students. As long as you are enrolled in a degree-seeking program, you can attend.' },
+            { q: 'Who can participate?', a: 'WHACK is open to all current undergraduate students.' },
             { q: 'Do I need a team?', a: "You can apply solo or with a team of up to 4. We also have a team-forming event on Friday evening to help you mingle and find teammates. Once you're in, you can also check out our discord to meet people in advance!" },
             { q: 'Is it free to attend?', a: 'Everything is free! (Including registration, meals, snacks, swag, and workshop access).' },
             { q: 'Does WHACK reimburse travel?', a: "We unfortunately do not reimburse travel." },
