@@ -14,6 +14,7 @@ import clownfish from './assets/clownfish.png'
 import sponsorLogoPlaceholder from './assets/sponsor_logo_placeholder.png'
 import beamLogo from './assets/logos/logo_beam.png'
 import pureButtons from './assets/logos/pure_buttons.png'
+import tin from './assets/logos/tin.png'
 import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
 import Cloud from './components/Cloud'
@@ -468,6 +469,9 @@ function App() {
               </a>
               <a href="https://www.purebuttons.com/?ajs_uid=0192fe41-1432-bcf4-65c7-6f45382d6b11&utm_campaign=Member+Event+-+Pure+Buttons+Intro&utm_content=Pure+Buttons+Intro&utm_medium=Email&utm_source=Customer.io" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
                 <img src={pureButtons} alt="Pure Buttons" className="sponsor-logo-placeholder sponsor-logo-placeholder-2" />
+              </a>
+              <a href="https://tin.computer/" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={tin} alt="Tin" className="sponsor-logo-placeholder sponsor-logo-placeholder-3" />
               </a>
             </div>
             
