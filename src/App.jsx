@@ -429,7 +429,7 @@ function App() {
         <SeaCreature src={starfish} label="starfish" className="starfish-swimmer" />
         <SeaCreature src={clownfish} label="clownfish" className="clownfish-swimmer" />
         <div className="section-inner centered">
-          <h1>Sponsors (pending...)</h1>
+          <h1>Sponsors</h1>
           {/*/* <div className="sponsor-tiers">
             <div className="sponsor-tier-label">Platinum</div>
             <div className="sponsor-row">
