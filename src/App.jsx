@@ -17,6 +17,7 @@ import beamLogo from './assets/logos/logo_beam.png'
 import pureButtons from './assets/logos/pure_buttons.png'
 import tin from './assets/logos/tin.png'
 import laminar from './assets/logos/laminar.png'
+import adaption from './assets/logos/adaption.png'
 
 import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
@@ -478,6 +479,9 @@ function App() {
               </a>
               <a href="https://runlaminar.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
                 <img src={laminar} alt="Laminar" className="sponsor-logo-placeholder sponsor-logo-placeholder-4 laminar-logo" />
+              </a>
+              <a href="https://adaptionlabs.ai/?utm_term=adaptive%20ai&utm_campaign=Adaption+%7C+Core+Keywords+%7C+US+%7C+Kick+Off&utm_source=adwords&utm_medium=ppc&utm_id=23936413376&hsa_acc=1521046270&hsa_cam=23936413376&hsa_grp=203142090611&hsa_ad=812751723287&hsa_src=g&hsa_tgt=kwd-325792589656&hsa_kw=adaptive%20ai&hsa_mt=p&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=23936413376&gbraid=0AAAABDxLqM65KmLASAVwxaQxBdzGTAFs8&gclid=CjwKCAiAqabXBhBUEiwAw_SQpcXqrIIcuuHYld8UQpNhFdJUq4iSLF4EFrfea9UGy_ojqxMZqX_GvBoCzYgQAvD_BwE" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={adaption} alt="Adaption" className="sponsor-logo-placeholder sponsor-logo-placeholder-5 laminar-logo" />
               </a>
             </div>
             
