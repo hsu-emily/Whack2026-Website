@@ -1362,6 +1362,11 @@ h2 {
   filter: drop-shadow(0 0 12px rgba(220, 202, 255, 0.58)) drop-shadow(0 6px 12px rgba(8, 14, 46, 0.28));
 }
 
+.laminar-logo {
+  width:35% !important;
+  height:auto;
+}
+
 .sponsor-logo-placeholder {
   position: absolute;
   width: clamp(72px, 12vw, 140px);
@@ -1375,7 +1380,7 @@ h2 {
 .sponsor-logo-placeholder-1 { left: -1%; top: 22%; animation-delay: -0.8s; background: radial-gradient(circle closest-side, #fff calc(100% - 1.5px), transparent); padding: clamp(9px, 1.45vw, 17px); }
 .sponsor-logo-placeholder-2 { left: 3%; top: 62%; animation-delay: -2.1s; }
 .sponsor-logo-placeholder-3 { right: -5%; top: 12%; animation-delay: -3.4s;  width:25%; height:auto;}
-.sponsor-logo-placeholder-4 { right: -1%; top: 42%; animation-delay: -1.5s; }
+.sponsor-logo-placeholder-4 { right: -13%; top: 42%; animation-delay: -1.5s; }
 .sponsor-logo-placeholder-5 { right: 8%; top: 72%; animation-delay: -4.2s; }
 
 @keyframes sponsorLogoBob {

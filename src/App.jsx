@@ -11,10 +11,13 @@ import starfish from './assets/starfish.png'
 import clownfish from './assets/clownfish.png'
 //import whaleSleep from './assets/logo_sleep.png'
 //import pillow from './assets/pillow.png'
+
 import sponsorLogoPlaceholder from './assets/sponsor_logo_placeholder.png'
 import beamLogo from './assets/logos/logo_beam.png'
 import pureButtons from './assets/logos/pure_buttons.png'
 import tin from './assets/logos/tin.png'
+import laminar from './assets/logos/laminar.png'
+
 import GalaxyStream from './components/GalaxyStream'
 import Star from './components/Star'
 import Cloud from './components/Cloud'
@@ -472,6 +475,9 @@ function App() {
               </a>
               <a href="https://tin.computer/" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
                 <img src={tin} alt="Tin" className="sponsor-logo-placeholder sponsor-logo-placeholder-3" />
+              </a>
+              <a href="https://runlaminar.com" target="_blank" rel="noreferrer" className="sponsor-logo-placeholder-link">
+                <img src={laminar} alt="Laminar" className="sponsor-logo-placeholder sponsor-logo-placeholder-4 laminar-logo" />
               </a>
             </div>
             
