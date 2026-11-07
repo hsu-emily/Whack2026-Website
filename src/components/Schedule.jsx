@@ -16,7 +16,7 @@ const DAYS = {
     date: 'Nov 21, 2026',
     events: [
       { time: '9:30 AM - 11:00 AM', title: 'Check-in'},
-      { time: '10:00 AM - 11:00 AM', title: 'Breakfast'},
+      //{ time: '10:00 AM - 11:00 AM', title: 'Breakfast'},
       { time: '11:00 AM - 12:00 PM', title: 'Opening Ceremony'},
       { time: '12:00 PM - 12:30 PM', title: 'Team Formation'},
       { time: '12:00 PM', title: 'Hack Starts'},
