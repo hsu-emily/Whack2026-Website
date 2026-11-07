@@ -863,8 +863,26 @@ h2 {
 /* Lift the flanking itineraries clear of the lower cloud banks without
    moving the hourglass or changing the stacked mobile schedule. */
 @media (min-width: 1151px) {
+  /* keep each event title on one line; the hourglass art has transparent
+     padding, so a long title can run into that space without hitting the glass */
+  .day-col-title { white-space: nowrap; }
+  /* size each column to its widest row so the line under the date spans the
+     full schedule instead of stopping short of the one-line titles */
+  .day-col { width: max-content; }
+  .day-col .day-col-events { max-width: none; }
+  .day-col-left { margin-right: -9vw; }
+  /* Schedule.jsx measures both itineraries and sets --hg-shift so the glass
+     sits exactly midway between them */
+  .hourglass-frame { translate: var(--hg-shift, 0px) 0; }
   .day-col-left { position: relative; top: calc(-1 * clamp(4rem, 6vw, 6rem) - 24px); }
   .day-col-right { position: relative; top: calc(-1 * clamp(2rem, 3vw, 3rem) - 24px); }
+}
+
+/* Small laptops: day 2 sits close to the screen edge, so its longest title
+   can't fit on one line — let day 2 titles wrap here instead of running off. */
+@media (min-width: 1151px) and (max-width: 1319px) {
+  .day-col-right { width: auto; }
+  .day-col-right .day-col-title { white-space: normal; }
 }
 
 .day-col-head {
@@ -894,16 +912,19 @@ h2 {
 
 .day-col-events {
   list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(10px, 1.1vw, 18px);
-  max-width: clamp(300px, 26vw, 440px);
+  /* time column sizes itself to the longest time in the list, so ranges
+     like "9:30 AM – 11:00 AM" stay on one line and every row lines up */
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  row-gap: clamp(10px, 1.1vw, 18px);
+  column-gap: clamp(10px, 1vw, 16px);
+  max-width: clamp(380px, 34vw, 580px);
 }
 
 .day-col-event {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: clamp(58px, 5vw, 82px) 1fr;
-  gap: clamp(10px, 1vw, 16px);
+  grid-template-columns: subgrid;
 }
 
 .day-col-time {
@@ -913,6 +934,7 @@ h2 {
   opacity: 0.6;
   padding-top: 2px;
   white-space: nowrap;
+  text-align: center;
 }
 
 .day-col-body { display: flex; flex-direction: column; gap: clamp(2px, 0.25vw, 5px); }
@@ -1923,7 +1945,6 @@ footer {
   .day-col-left, .day-col-right { margin: 0; justify-self: center; width: 100%; }
   .day-col.compact-hidden { display: none; }
   .day-col-events { max-width: 100%; }
-  .day-col-event { grid-template-columns: 64px minmax(0, 1fr); }
   .day-col-time { font-size: 0.75rem; }
   .day-col-title { font-size: 1rem; }
   .day-col-desc { font-size: 0.875rem; }
@@ -1947,7 +1968,7 @@ footer {
   .day-col { order: 1; animation: day-fade 0.45s cubic-bezier(.22,1,.36,1); }
   .day-col-left, .day-col-right { margin: 0; justify-self: center; }
   .day-col.compact-hidden { display: none; }
-  .day-col-events { max-width: min(480px, 90vw); }
+  .day-col-events { max-width: min(560px, 90vw); }
 }
 
 /* On compact screens, clouds belong to the hourglass stage rather than the
