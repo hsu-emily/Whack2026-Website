@@ -12,26 +12,32 @@ import Cloud from './Cloud';
 
 const DAYS = {
   1: {
-    label: 'day 1',
+    label: 'Day 1',
     date: 'Nov 21, 2026',
     events: [
-      /*{ time: '10:00 AM', title: 'Check-in', desc: 'Arrive, grab some brunch, and settle in!' },
-      { time: '11:30 AM', title: 'Opening Ceremony', desc: 'Event kickoff, with sponsor intros and theme reveal.' },
-      { time: '12:00 PM', title: 'Team Formation', desc: 'Find your crew or fly solo — mentors on hand.' },
-      { time: '12:00 PM', title: 'Hacking Begins', desc: 'The clock starts. Wish upon a whale and build.' },
-      { time: '6:00 PM', title: 'Dinner', desc: 'Take a break and get some good eats.' },
-      { time: '11:00 PM', title: 'Midnight Snacks', desc: 'Late-night snacks and a cozy mini-game break.' },*/
-      { time: '00:00 AM', title: 'TBD', desc: 'Something fun coming...' },
+      { time: '9:30 AM - 11:00 AM', title: 'Check-in'},
+      { time: '10:00 AM - 11:00 AM', title: 'Breakfast'},
+      { time: '11:00 AM - 12:00 PM', title: 'Opening Ceremony'},
+      { time: '12:00 PM - 12:30 PM', title: 'Team Formation'},
+      { time: '12:00 PM', title: 'Hack Starts'},
+      { time: '1:00 PM - 2:30 PM', title: 'Lunch'},
+      { time: '2:15 PM - 3:00 PM', title: 'Workshop: Test AI (LW 413)'},
+      { time: '3:15 PM - 4:15 PM', title: 'Workshop (MLH): Google AI (LW 413)'},
+      { time: '6:00 PM - 8:00 PM', title: 'Dinner'},
+      { time: '8:30 PM - 9:30 PM', title: 'Game Night Hack Break'},
     ],
   },
   2: {
-    label: 'day 2',
+    label: 'Day 2',
     date: 'Nov 22, 2026',
     events: [
-      { time: '00:00 AM', title: 'TBD', desc: 'Something fun coming...' },
-      /*{ time: '12:00 PM', title: 'Submissions Due', desc: 'Final commits in. Polish that README!!!' },
-      { time: '12:30 PM', title: 'Demos & Judging', desc: 'Show everyone what you made!' },
-      { time: '3:30 PM', title: 'Closing Ceremony', desc: 'Awards, wishes granted, and goodbyes.' },*/
+      { time: '9:30 AM - 10:15 AM', title: 'Workshop: From Hack to Real Product (LW 413)'},
+      { time: '12:00 PM', title: 'Hack Ends'},
+      { time: '12:00 PM - 2:00 PM', title: 'Brunch'},
+      { time: '12:30 PM - 3:00 PM', title: 'Judging'},
+      { time: '3:00 PM - 3:30 PM', title: 'Judge Deliberations'},
+      { time: '3:30 PM - 4:30 PM', title: 'Closing Ceremony'},
+      
     ],
   },
 };
@@ -45,11 +51,11 @@ function DayColumn({ side, day, hiddenWhenCompact }) {
       </div>
       <ul className="day-col-events">
         {day.events.map((e) => (
-          <li className="day-col-event" key={e.time}>
-            <span className="day-col-time">{e.time}</span>
+          <li className="day-col-event" key={e.time + e.title}>
+            <span className="day-col-time">{e.time.replace(/\s*-\s*/, ' – ')}</span>
             <span className="day-col-body">
               <span className="day-col-title">{e.title}</span>
-              <span className="day-col-desc">{e.desc}</span>
+              {e.desc && <span className="day-col-desc">{e.desc}</span>}
             </span>
           </li>
         ))}
@@ -91,6 +97,39 @@ export default function Schedule() {
       cancelAnimationFrame(raf);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
+  // Desktop only: slide the hourglass sideways so it sits exactly midway
+  // between the end of day 1's schedule and the start of day 2's, without
+  // moving either schedule. Re-measured whenever anything changes size.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const desktop = window.matchMedia('(min-width: 1151px)');
+    const frame = stage.querySelector('.hourglass-frame');
+    const left = stage.querySelector('.day-col-left');
+    const right = stage.querySelector('.day-col-right');
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      if (!desktop.matches) { frame.style.removeProperty('--hg-shift'); return; }
+      const current = parseFloat(frame.style.getPropertyValue('--hg-shift')) || 0;
+      const f = frame.getBoundingClientRect();
+      const frameCenter = f.left + f.width / 2 - current; // un-shifted position
+      const midpoint = (left.getBoundingClientRect().right + right.getBoundingClientRect().left) / 2;
+      frame.style.setProperty('--hg-shift', `${(midpoint - frameCenter).toFixed(1)}px`);
+    };
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(measure); };
+    const ro = new ResizeObserver(schedule);
+    [stage, left, right].forEach((el) => ro.observe(el));
+    desktop.addEventListener('change', schedule);
+    document.fonts?.ready.then(schedule);
+    schedule();
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      desktop.removeEventListener('change', schedule);
     };
   }, []);
 
