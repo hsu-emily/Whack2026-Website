@@ -1991,7 +1991,7 @@ footer {
   }
   .schedule-art-clouds .cloud-img { position: absolute; }
   .schedule-art-wisp { top: 0; right: -20%; }
-  .schedule-art-left { top: -100%; left: -36%; }
+  .schedule-art-left { top: calc(40% + 20px); left: -36%; }
   .schedule-art-right { top: 44%; right: -36%; }
   .day-toggle {
     display: grid;
